@@ -53,7 +53,7 @@ export const App = () => {
                     }
                     return (
                         <Appbar.Action
-                            icon={require('../assets/chevron-left.png')}
+                            icon={require('../assets/flat-icon/chevron-left.png')}
                             onPress={props.onPress}
                         />
                     );
@@ -123,7 +123,7 @@ export const App = () => {
                     title: '',
                     headerLeft: (props) => (
                         <Appbar.Action
-                            icon={require('../assets/x.png')}
+                            icon={require('../assets/flat-icon/x.png')}
                             onPress={props.onPress}
                         />
                     ),

@@ -1,3 +1,4 @@
+import { LightBoxProvider } from '@alantoa/lightbox';
 import { NavigationContainer } from '@react-navigation/native';
 import React from 'react';
 import { LogBox } from 'react-native';
@@ -16,9 +17,11 @@ const App = () => {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <PaperProvider theme={theme}>
-          <NavigationContainer>
-            <MainApp />
-          </NavigationContainer>
+          <LightBoxProvider>
+            <NavigationContainer theme={theme}>
+              <MainApp />
+            </NavigationContainer>
+          </LightBoxProvider>
         </PaperProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

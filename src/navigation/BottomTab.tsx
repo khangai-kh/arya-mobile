@@ -1,6 +1,6 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StackScreenProps } from '@react-navigation/stack';
-import { Platform } from 'react-native';
+import { Image, Platform } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { Home } from '../screens/Home';
 import { Messenger } from '../screens/Messenger';
@@ -43,15 +43,14 @@ export const BottomTab = (props: BottomTabProps) => {
                 options={{
                     tabBarLabel: 'Home',
                     tabBarIcon: ({ color }) => (
-                        null
-                        //     <Image
-                        //         source={require('../assets/tabler-icons/home.png')}
-                        //         style={{
-                        //             width: 20,
-                        //             height: 20,
-                        //             tintColor: color
-                        //         }}
-                        //     />
+                        <Image
+                            source={require('../assets/flat-icon/home.png')}
+                            style={{
+                                width: 20,
+                                height: 20,
+                                tintColor: color
+                            }}
+                        />
                     )
                 }}
             />
@@ -61,15 +60,14 @@ export const BottomTab = (props: BottomTabProps) => {
                 options={{
                     tabBarLabel: 'Messenger',
                     tabBarIcon: ({ color }) => (
-                        null
-                        //     <Image
-                        //         source={require('../assets/tabler-icons/home.png')}
-                        //         style={{
-                        //             width: 20,
-                        //             height: 20,
-                        //             tintColor: color
-                        //         }}
-                        //     />
+                        <Image
+                            source={require('../assets/flat-icon/message.png')}
+                            style={{
+                                width: 20,
+                                height: 20,
+                                tintColor: color
+                            }}
+                        />
                     )
                 }}
             />
@@ -79,15 +77,14 @@ export const BottomTab = (props: BottomTabProps) => {
                 options={{
                     tabBarLabel: 'Profile',
                     tabBarIcon: ({ color }) => (
-                        null
-                        //     <Image
-                        //         source={require('../assets/tabler-icons/home.png')}
-                        //         style={{
-                        //             width: 20,
-                        //             height: 20,
-                        //             tintColor: color
-                        //         }}
-                        //     />
+                        <Image
+                            source={require('../assets/flat-icon/profile.png')}
+                            style={{
+                                width: 20,
+                                height: 20,
+                                tintColor: color
+                            }}
+                        />
                     )
                 }}
             />
