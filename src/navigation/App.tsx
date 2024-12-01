@@ -120,7 +120,7 @@ export const App = () => {
                 name="ExternalWeb"
                 component={ExternalWeb}
                 options={{
-                    title: '',
+                    title: 'ExternalWeb',
                     headerLeft: (props) => (
                         <Appbar.Action
                             icon={require('../assets/flat-icon/x.png')}

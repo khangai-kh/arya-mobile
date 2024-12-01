@@ -46,8 +46,8 @@ export const BottomTab = (props: BottomTabProps) => {
                         <Image
                             source={require('../assets/flat-icon/home.png')}
                             style={{
-                                width: 20,
-                                height: 20,
+                                width: 24,
+                                height: 24,
                                 tintColor: color
                             }}
                         />
@@ -63,8 +63,8 @@ export const BottomTab = (props: BottomTabProps) => {
                         <Image
                             source={require('../assets/flat-icon/message.png')}
                             style={{
-                                width: 20,
-                                height: 20,
+                                width: 24,
+                                height: 24,
                                 tintColor: color
                             }}
                         />
@@ -80,8 +80,8 @@ export const BottomTab = (props: BottomTabProps) => {
                         <Image
                             source={require('../assets/flat-icon/profile.png')}
                             style={{
-                                width: 20,
-                                height: 20,
+                                width: 24,
+                                height: 24,
                                 tintColor: color
                             }}
                         />
