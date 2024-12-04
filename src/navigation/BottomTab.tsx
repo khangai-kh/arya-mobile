@@ -44,7 +44,7 @@ export const BottomTab = (props: BottomTabProps) => {
                     tabBarLabel: 'Home',
                     tabBarIcon: ({ color }) => (
                         <Image
-                            source={require('../assets/flat-icon/home.png')}
+                            source={require('../assets/flat-icons/home.png')}
                             style={{
                                 width: 24,
                                 height: 24,
@@ -61,7 +61,7 @@ export const BottomTab = (props: BottomTabProps) => {
                     tabBarLabel: 'Messenger',
                     tabBarIcon: ({ color }) => (
                         <Image
-                            source={require('../assets/flat-icon/message.png')}
+                            source={require('../assets/flat-icons/message.png')}
                             style={{
                                 width: 24,
                                 height: 24,
@@ -78,7 +78,7 @@ export const BottomTab = (props: BottomTabProps) => {
                     tabBarLabel: 'Profile',
                     tabBarIcon: ({ color }) => (
                         <Image
-                            source={require('../assets/flat-icon/profile.png')}
+                            source={require('../assets/flat-icons/profile.png')}
                             style={{
                                 width: 24,
                                 height: 24,

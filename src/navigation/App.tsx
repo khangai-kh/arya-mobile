@@ -1,7 +1,9 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import { Platform } from 'react-native';
-import { Appbar } from 'react-native-paper';
+import { Appbar, useTheme } from 'react-native-paper';
 import { AboutUs } from '../screens/AboutUs';
+import { Announcement } from '../screens/Announcement';
+import { Announcements } from '../screens/Announcements';
 import { Authenticate } from '../screens/Authenticate';
 import { ExternalWeb } from '../screens/ExternalWeb';
 import { ForgotPassword } from '../screens/ForgotPassword';
@@ -14,6 +16,7 @@ import { BottomTab } from './BottomTab';
 export type AppStackParams = {
     AboutUs: undefined;
     Authenticate: undefined;
+    Announcements: undefined;
     CheckIn: undefined;
     ChangePassword: undefined;
     BottomTab: undefined;
@@ -24,6 +27,9 @@ export type AppStackParams = {
     MemberShip: undefined;
     Messenger: undefined;
     Profile: undefined;
+    Announcement: {
+        id: string;
+    };
     ExternalWeb: {
         url: string;
     };
@@ -32,19 +38,21 @@ export type AppStackParams = {
 const AppStack = createStackNavigator<AppStackParams>();
 
 export const App = () => {
+    const { colors } = useTheme();
+
     return (
         <AppStack.Navigator
             initialRouteName="BottomTab"
             screenOptions={{
                 headerShadowVisible: false,
                 headerStyle: {
-                    backgroundColor: '#fff',
+                    backgroundColor: colors.background
                 },
                 headerTitleStyle: {
                     fontFamily: 'Nunito-Bold',
                     fontSize: 16,
                     fontWeight: Platform.OS === 'ios' ? '700' : undefined,
-                    color: 'rgb(26, 37, 77)',
+                    color: 'rgb(65, 64, 66)'
                 },
                 headerTitleAlign: 'center',
                 headerLeft: (props) => {
@@ -53,8 +61,11 @@ export const App = () => {
                     }
                     return (
                         <Appbar.Action
-                            icon={require('../assets/flat-icon/chevron-left.png')}
+                            icon={require('../assets/flat-icons/chevron-left.png')}
                             onPress={props.onPress}
+                            style={{
+                                backgroundColor: colors.onPrimary
+                            }}
                         />
                     );
                 },
@@ -72,6 +83,20 @@ export const App = () => {
                 component={AboutUs}
                 options={{
                     title: 'About Us',
+                }}
+            />
+            <AppStack.Screen
+                name="Announcements"
+                component={Announcements}
+                options={{
+                    title: 'Announcements',
+                }}
+            />
+            <AppStack.Screen
+                name="Announcement"
+                component={Announcement}
+                options={{
+                    headerShown: false
                 }}
             />
             <AppStack.Screen
@@ -123,7 +148,7 @@ export const App = () => {
                     title: 'ExternalWeb',
                     headerLeft: (props) => (
                         <Appbar.Action
-                            icon={require('../assets/flat-icon/x.png')}
+                            icon={require('../assets/flat-icons/x.png')}
                             onPress={props.onPress}
                         />
                     ),

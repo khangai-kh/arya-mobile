@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import { Image, ImageBackground, StyleSheet, TouchableOpacity, TouchableOpacityProps, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import { MD3Colors } from 'react-native-paper/lib/typescript/types';
@@ -24,6 +25,7 @@ const styles = (colors: MD3Colors) => StyleSheet.create({
 });
 
 export const Announcement = (props: AnnouncementProps) => {
+    const { navigate } = useNavigation();
     const { colors } = useTheme();
     const { course } = styles(colors);
     const {
@@ -105,7 +107,7 @@ export const Announcement = (props: AnnouncementProps) => {
                         }}
                     >
                         <Image
-                            source={require('../assets/flat-icon/marker.png')}
+                            source={require('../assets/flat-icons/marker.png')}
                             style={{
                                 width: 14,
                                 height: 14,
@@ -131,7 +133,7 @@ export const Announcement = (props: AnnouncementProps) => {
                         }}
                     >
                         <Image
-                            source={require('../assets/flat-icon/calendar.png')}
+                            source={require('../assets/flat-icons/calendar.png')}
                             style={{
                                 width: 14,
                                 height: 14,

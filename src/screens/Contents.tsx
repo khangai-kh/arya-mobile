@@ -57,7 +57,13 @@ export const Contents = () => {
     ]);
 
     return (
-        <ScrollView style={{ flex: 1 }}>
+        <ScrollView
+            style={{
+                flex: 1,
+                marginHorizontal: 16
+            }}
+            showsVerticalScrollIndicator={false}
+        >
             <View
                 style={{
                     marginTop: 24,
@@ -79,7 +85,7 @@ export const Contents = () => {
                     mode='text'
                     textColor={colors.secondary}
                     onPress={() => {
-
+                        navigate('Announcements');
                     }}
                 >
                     See all
@@ -95,9 +101,12 @@ export const Contents = () => {
                         date={announcement.date}
                         type={announcement.type}
                         style={{
-                            flex: 1,
-                            width: '80%',
                             marginRight: index === announcements.length - 1 ? 0 : 12
+                        }}
+                        onPress={() => {
+                            navigate('Announcement', {
+                                id: announcement.title
+                            });
                         }}
                     />
                 ))}
