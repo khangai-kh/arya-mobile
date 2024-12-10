@@ -136,7 +136,7 @@ export const Contents = () => {
                         padding: 0
                     }}
                     onPress={() => {
-
+                        navigate('Inspirations');
                     }}
                 >
                     See all
@@ -151,6 +151,11 @@ export const Contents = () => {
                     date={inspiration.date}
                     style={{
                         marginBottom: index === inspirations.length - 1 ? 0 : 8
+                    }}
+                    onPress={() => {
+                        navigate('Inspiration', {
+                            id: inspiration.title
+                        });
                     }}
                 />
             ))}

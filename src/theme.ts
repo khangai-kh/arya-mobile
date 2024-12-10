@@ -1,6 +1,7 @@
 import { DefaultTheme } from '@react-navigation/native';
 import { default as merge } from 'deepmerge';
-import { adaptNavigationTheme, MD3LightTheme } from 'react-native-paper';
+import { Platform } from 'react-native';
+import { adaptNavigationTheme, configureFonts, MD3LightTheme } from 'react-native-paper';
 
 const { LightTheme } = adaptNavigationTheme({
     reactNavigationLight: DefaultTheme
@@ -36,122 +37,122 @@ const CustomMD3LightTheme = merge(MD3LightTheme, {
         onSurfaceDisabled: 'rgba(32, 26, 25, 0.38)',
         backdrop: 'rgba(59, 45, 43, 0.4)',
     },
-    // fonts: configureFonts({
-    //     config: {
-    //         displaySmall: {
-    //             fontFamily: 'Nunito-Regular',
-    //             fontSize: 36,
-    //             fontWeight: Platform.OS === 'ios' ? '400' : undefined,
-    //             letterSpacing: 0,
-    //             lineHeight: 44
-    //         },
-    //         displayMedium: {
-    //             fontFamily: 'Nunito-Regular',
-    //             fontSize: 45,
-    //             fontWeight: Platform.OS === 'ios' ? '400' : undefined,
-    //             letterSpacing: 0,
-    //             lineHeight: 52
-    //         },
-    //         displayLarge: {
-    //             fontFamily: 'Nunito-Regular',
-    //             fontSize: 57,
-    //             fontWeight: Platform.OS === 'ios' ? '400' : undefined,
-    //             letterSpacing: -0.25,
-    //             lineHeight: 64
-    //         },
-    //         headlineSmall: {
-    //             fontFamily: 'Nunito-Bold',
-    //             fontSize: 24,
-    //             fontWeight: Platform.OS === 'ios' ? '700' : undefined,
-    //             letterSpacing: 0,
-    //             lineHeight: 32
-    //         },
-    //         headlineMedium: {
-    //             fontFamily: 'Nunito-Bold',
-    //             fontSize: 28,
-    //             fontWeight: Platform.OS === 'ios' ? '700' : undefined,
-    //             letterSpacing: 0,
-    //             lineHeight: 36
-    //         },
-    //         headlineLarge: {
-    //             fontFamily: 'Nunito-Bold',
-    //             fontSize: 32,
-    //             fontWeight: Platform.OS === 'ios' ? '700' : undefined,
-    //             letterSpacing: 0,
-    //             lineHeight: 40
-    //         },
-    //         titleSmall: {
-    //             fontFamily: 'Nunito-Bold',
-    //             fontSize: 14,
-    //             fontWeight: Platform.OS === 'ios' ? '700' : undefined,
-    //             letterSpacing: 0.1,
-    //             lineHeight: 20
-    //         },
-    //         titleMedium: {
-    //             fontFamily: 'Nunito-Bold',
-    //             fontSize: 16,
-    //             fontWeight: Platform.OS === 'ios' ? '700' : undefined,
-    //             letterSpacing: 0.15,
-    //             lineHeight: 24
-    //         },
-    //         titleLarge: {
-    //             fontFamily: 'Nunito-Bold',
-    //             fontSize: 22,
-    //             fontWeight: Platform.OS === 'ios' ? '700' : undefined,
-    //             letterSpacing: 0,
-    //             lineHeight: 28
-    //         },
-    //         labelSmall: {
-    //             fontFamily: 'Nunito-Bold',
-    //             fontSize: 11,
-    //             fontWeight: Platform.OS === 'ios' ? '700' : undefined,
-    //             letterSpacing: 0.5,
-    //             lineHeight: 16
-    //         },
-    //         labelMedium: {
-    //             fontFamily: 'Nunito-Bold',
-    //             fontSize: 12,
-    //             fontWeight: Platform.OS === 'ios' ? '700' : undefined,
-    //             letterSpacing: 0.5,
-    //             lineHeight: 16
-    //         },
-    //         labelLarge: {
-    //             fontFamily: 'Nunito-Bold',
-    //             fontSize: 14,
-    //             fontWeight: Platform.OS === 'ios' ? '700' : undefined,
-    //             letterSpacing: 0.1,
-    //             lineHeight: 20
-    //         },
-    //         bodySmall: {
-    //             fontFamily: 'Nunito-Regular',
-    //             fontSize: 12,
-    //             fontWeight: Platform.OS === 'ios' ? '400' : undefined,
-    //             letterSpacing: 0.4,
-    //             lineHeight: 16
-    //         },
-    //         bodyMedium: {
-    //             fontFamily: 'Nunito-Regular',
-    //             fontSize: 14,
-    //             fontWeight: Platform.OS === 'ios' ? '400' : undefined,
-    //             letterSpacing: 0.25,
-    //             lineHeight: 20
-    //         },
-    //         bodyLarge: {
-    //             fontFamily: 'Nunito-Regular',
-    //             fontSize: 16,
-    //             fontWeight: Platform.OS === 'ios' ? '400' : undefined,
-    //             letterSpacing: 0.5,
-    //             lineHeight: 24
-    //         },
-    //         default: {
-    //             fontFamily: 'Nunito-Regular',
-    //             fontSize: 14,
-    //             fontWeight: Platform.OS === 'ios' ? '400' : undefined,
-    //             letterSpacing: 0.25,
-    //             lineHeight: 20
-    //         }
-    //     }
-    // })
+    fonts: configureFonts({
+        config: {
+            displaySmall: {
+                fontFamily: 'Inter',
+                fontSize: 36,
+                fontWeight: Platform.OS === 'ios' ? '400' : undefined,
+                letterSpacing: 0,
+                lineHeight: 44
+            },
+            displayMedium: {
+                fontFamily: 'Inter',
+                fontSize: 45,
+                fontWeight: Platform.OS === 'ios' ? '400' : undefined,
+                letterSpacing: 0,
+                lineHeight: 52
+            },
+            displayLarge: {
+                fontFamily: 'Inter',
+                fontSize: 57,
+                fontWeight: Platform.OS === 'ios' ? '400' : undefined,
+                letterSpacing: -0.25,
+                lineHeight: 64
+            },
+            headlineSmall: {
+                fontFamily: 'Inter',
+                fontSize: 24,
+                fontWeight: Platform.OS === 'ios' ? '600' : undefined,
+                letterSpacing: 0,
+                lineHeight: 32
+            },
+            headlineMedium: {
+                fontFamily: 'Inter',
+                fontSize: 28,
+                fontWeight: Platform.OS === 'ios' ? '600' : undefined,
+                letterSpacing: 0,
+                lineHeight: 36
+            },
+            headlineLarge: {
+                fontFamily: 'Inter',
+                fontSize: 32,
+                fontWeight: Platform.OS === 'ios' ? '600' : undefined,
+                letterSpacing: 0,
+                lineHeight: 40
+            },
+            titleSmall: {
+                fontFamily: 'Inter',
+                fontSize: 14,
+                fontWeight: Platform.OS === 'ios' ? '600' : undefined,
+                letterSpacing: 0.1,
+                lineHeight: 20
+            },
+            titleMedium: {
+                fontFamily: 'Inter',
+                fontSize: 16,
+                fontWeight: Platform.OS === 'ios' ? '600' : undefined,
+                letterSpacing: 0.15,
+                lineHeight: 24
+            },
+            titleLarge: {
+                fontFamily: 'Inter',
+                fontSize: 24,
+                fontWeight: Platform.OS === 'ios' ? '600' : undefined,
+                letterSpacing: 0,
+                lineHeight: 28
+            },
+            labelSmall: {
+                fontFamily: 'Inter',
+                fontSize: 11,
+                fontWeight: Platform.OS === 'ios' ? '600' : undefined,
+                letterSpacing: 0.5,
+                lineHeight: 16
+            },
+            labelMedium: {
+                fontFamily: 'Inter',
+                fontSize: 12,
+                fontWeight: Platform.OS === 'ios' ? '600' : undefined,
+                letterSpacing: 0.5,
+                lineHeight: 16
+            },
+            labelLarge: {
+                fontFamily: 'Inter',
+                fontSize: 14,
+                fontWeight: Platform.OS === 'ios' ? '600' : undefined,
+                letterSpacing: 0.1,
+                lineHeight: 20
+            },
+            bodySmall: {
+                fontFamily: 'Inter',
+                fontSize: 12,
+                fontWeight: Platform.OS === 'ios' ? '300' : undefined,
+                letterSpacing: 0.4,
+                lineHeight: 16
+            },
+            bodyMedium: {
+                fontFamily: 'Inter',
+                fontSize: 14,
+                fontWeight: Platform.OS === 'ios' ? '300' : undefined,
+                letterSpacing: 0.25,
+                lineHeight: 20
+            },
+            bodyLarge: {
+                fontFamily: 'Inter',
+                fontSize: 16,
+                fontWeight: Platform.OS === 'ios' ? '300' : undefined,
+                letterSpacing: 0.5,
+                lineHeight: 24
+            },
+            default: {
+                fontFamily: 'Inter',
+                fontSize: 14,
+                fontWeight: Platform.OS === 'ios' ? '300' : undefined,
+                letterSpacing: 0.25,
+                lineHeight: 20
+            }
+        }
+    })
 });
 
 export const theme = merge(LightTheme, CustomMD3LightTheme);

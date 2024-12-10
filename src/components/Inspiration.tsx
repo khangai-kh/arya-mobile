@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { Image, StyleSheet, TouchableOpacity, TouchableOpacityProps, View } from 'react-native';
 import { Avatar, Text, useTheme } from 'react-native-paper';
 import { MD3Colors } from 'react-native-paper/lib/typescript/types';
@@ -69,12 +70,15 @@ export const Inspiration = (props: InspirationProps) => {
                 <View
                     style={{
                         flexDirection: 'row',
-                        justifyContent: 'space-between'
+                        justifyContent: 'space-between',
+                        alignItems: 'center'
                     }}
                 >
                     <View
                         style={{
-                            flexDirection: 'row'
+                            flexDirection: 'row',
+                            justifyContent: 'center',
+                            alignItems: 'center'
                         }}
                     >
                         <Avatar.Image
@@ -86,7 +90,7 @@ export const Inspiration = (props: InspirationProps) => {
                             }}
                         />
                         <Text
-                            variant='bodyMedium'
+                            variant='bodySmall'
                             style={{
                                 fontWeight: '300'
                             }}
@@ -95,12 +99,12 @@ export const Inspiration = (props: InspirationProps) => {
                         </Text>
                     </View>
                     <Text
-                        variant='bodyMedium'
+                        variant='bodySmall'
                         style={{
                             fontWeight: '300'
                         }}
                     >
-                        {date}
+                        {dayjs(date).format('DD.MM.YYYY')}
                     </Text>
                 </View>
             </View>

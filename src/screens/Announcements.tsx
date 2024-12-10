@@ -2,7 +2,7 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { useState } from 'react';
 import { View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Chip, Text } from 'react-native-paper';
+import { Chip, Text, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Announcement } from '../components/Announcement';
 import { AppStackParams } from '../navigation/App';
@@ -11,6 +11,7 @@ type AnnouncementsProps = StackScreenProps<AppStackParams, 'Announcements'>;
 export const Announcements = (props: AnnouncementsProps) => {
 
     const { navigation } = props;
+    const { colors } = useTheme();
     const [
         announcements,
         setAnnouncements
@@ -24,12 +25,12 @@ export const Announcements = (props: AnnouncementsProps) => {
             type: "Event",
         },
         {
-            title: "Arya Retreat'24",
+            title: "Arya GSYF Invests $250,000 in PhiTech",
             image: "",
-            body: "Freedom: Manage Your Money, Discover Your Power",
+            body: "Health biotechnology focused on genome technologies",
             location: "Tasigo Hotel Eskişehir",
-            date: "2024-09-24",
-            type: "Event",
+            date: "16.11.2023",
+            type: "Investment",
         }, {
             title: "Arya Retreat'24",
             image: "",
@@ -44,7 +45,7 @@ export const Announcements = (props: AnnouncementsProps) => {
             body: "Freedom: Manage Your Money, Discover Your Power",
             location: "Tasigo Hotel Eskişehir",
             date: "2024-09-24",
-            type: "Event",
+            type: "Investment",
         }, {
             title: "Arya Retreat'24",
             image: "",
@@ -91,6 +92,10 @@ export const Announcements = (props: AnnouncementsProps) => {
             value: 'Success'
         },
     ]);
+    const [
+        category,
+        setCategory
+    ] = useState<String>();
 
     return (
         <SafeAreaView
@@ -117,11 +122,10 @@ export const Announcements = (props: AnnouncementsProps) => {
                             <Chip
                                 key={type.id}
                                 style={{
-                                    backgroundColor: '#fff',
                                     marginRight: index === types.length ? 0 : 4
                                 }}
                                 onPress={() => {
-
+                                    setCategory(type.value);
                                 }}
                             >
                                 <Text>
@@ -144,9 +148,15 @@ export const Announcements = (props: AnnouncementsProps) => {
                                 marginBottom: index === announcements.length - 1 ? 0 : 8
                             }}
                             onPress={() => {
-                                navigation.navigate('Announcement', {
-                                    id: announcement.title
-                                });
+                                if (announcement.type === 'Announcement') {
+                                    navigation.navigate('Announcement', {
+                                        id: announcement.title
+                                    });
+                                } else {
+                                    navigation.navigate('Content', {
+                                        id: announcement.title
+                                    });
+                                }
                             }}
                         />
                     ))}

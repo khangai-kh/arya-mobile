@@ -2,8 +2,8 @@ import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { useState } from 'react';
-import { useWindowDimensions, View } from 'react-native';
-import { IconButton, Text, useTheme } from 'react-native-paper';
+import { Image, useWindowDimensions, View } from 'react-native';
+import { IconButton, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
 import { AppStackParams } from '../navigation/App';
@@ -63,7 +63,14 @@ export const Home = (props: HomeProps) => {
                         alignItems: 'center'
                     }}
                 >
-                    <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#B21D8D' }}>aryaUP</Text>
+                    <Image
+                        source={require('../assets/aryaUP.png')}
+                        style={{
+                            width: 98,
+                            height: 40,
+                        }}
+                        resizeMode='contain'
+                    />
                     <View
                         style={{
                             flexDirection: 'row'
