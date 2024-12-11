@@ -2,13 +2,17 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export type AuthState = {
   accessToken: string | null;
-  user: any;
+  user: {
+    id: string | null;
+  };
   launched: boolean;
 };
 
 const initialState: AuthState = {
   accessToken: null,
-  user: null,
+  user: {
+    id: null
+  },
   launched: false
 };
 

@@ -17,6 +17,7 @@ import { Notifications } from '../screens/Notifications';
 import { OnBoarding } from '../screens/OnBoarding';
 import { SignIn } from '../screens/SignIn';
 import { SignUp } from '../screens/SignUp';
+import { SplashScreen } from '../screens/SplashScreen';
 import { BottomTab } from './BottomTab';
 
 export type AppStackParams = {
@@ -32,6 +33,7 @@ export type AppStackParams = {
     OnBoarding: undefined;
     SignIn: undefined;
     SignUp: undefined;
+    SplashScreen: undefined;
     MemberShip: undefined;
     Messenger: undefined;
     Profile: undefined;
@@ -55,10 +57,9 @@ export const App = () => {
     const { colors } = useTheme();
     const user = useSelector((state: RootState) => state.auth.user);
 
-    console.log(user);
     return (
         <AppStack.Navigator
-            initialRouteName="BottomTab"
+            initialRouteName={user ? "BottomTab" : "SplashScreen"}
             screenOptions={{
                 headerShadowVisible: false,
                 headerStyle: {
@@ -109,6 +110,13 @@ export const App = () => {
                             component={SignUp}
                             options={{
                                 title: 'Sign Up'
+                            }}
+                        />
+                        <AppStack.Screen
+                            name="SplashScreen"
+                            component={SplashScreen}
+                            options={{
+                                headerShown: false
                             }}
                         />
                     </Fragment>
