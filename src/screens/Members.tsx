@@ -1,7 +1,9 @@
 import { CompositeNavigationProp, NavigationProp, useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
+import { View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { useTheme } from 'react-native-paper';
+import { IconButton, Text, useTheme } from 'react-native-paper';
+import { Member } from '../components/Member';
 import { AppStackParams } from '../navigation/App';
 import { BottomTabStackParams } from '../navigation/BottomTab';
 
@@ -13,49 +15,113 @@ export const Members = () => {
     const { colors } = useTheme();
 
     const [
-        announcements,
-        setAnnouncements
+        members,
+        setMembers
     ] = useState([
         {
-            title: "Arya Retreat'24",
+            name: "Merve Kaya",
             image: "",
-            body: "Freedom: Manage Your Money, Discover Your Power",
-            location: "Tasigo Hotel Eskişehir",
-            date: "2024-09-24",
-            type: "Event",
+            role: "Investor",
+            status: "CTO at Nexa Innovations",
+            interests: [
+                {
+                    id: 0,
+                    title: 'Financial Planning',
+                },
+                {
+                    id: 1,
+                    title: 'Budgeting',
+                },
+                {
+                    id: 2,
+                    title: 'Saving',
+                },
+                {
+                    id: 3,
+                    title: 'Debt',
+                },
+                {
+                    id: 4,
+                    title: 'Insurance',
+                }
+            ]
         },
         {
-            title: "Arya Retreat'24",
+            name: "Elif Cetin",
             image: "",
-            body: "Freedom: Manage Your Money, Discover Your Power",
-            location: "Tasigo Hotel Eskişehir",
-            date: "2024-09-24",
-            type: "Event",
-        }
-    ]);
-    const [
-        inspirations,
-        setInspirations
-    ] = useState([
-        {
-            title: "Sustainability and Social Innovation: Who is Really Responsible?",
-            image: "",
-            name: "Hüsna Nur Sontürk",
-            profileImage: "",
-            date: "2024-09-24",
-        },
-        {
-            title: "The Most Important Route of Your Journey: Lifelong Learning",
-            image: "",
-            name: "Beyza Bilgi",
-            profileImage: "",
-            date: "2024-09-24",
+            role: "Premium",
+            status: "Investment Director at Peak Growth Ventures",
+            interests: [
+                {
+                    id: 0,
+                    title: 'Financial Planning',
+                },
+                {
+                    id: 1,
+                    title: 'Budgeting',
+                },
+                {
+                    id: 2,
+                    title: 'Saving',
+                },
+                {
+                    id: 3,
+                    title: 'Debt',
+                },
+                {
+                    id: 4,
+                    title: 'Insurance',
+                }
+            ]
         }
     ]);
 
     return (
-        <ScrollView style={{ flex: 1 }}>
-
-        </ScrollView>
+        <View
+            style={{
+                flex: 1,
+                marginHorizontal: 16
+            }}
+        >
+            <View
+                style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginVertical: 8
+                }}
+            >
+                <Text>
+                    200 members
+                </Text>
+                <IconButton
+                    icon={require('../assets/flat-icons/filter.png')}
+                    size={18}
+                    onPress={() => { }}
+                />
+            </View>
+            <ScrollView
+                style={{ flex: 1 }}
+                showsVerticalScrollIndicator={false}
+            >
+                {members.map((member, index) => (
+                    <Member
+                        name={member.name}
+                        image={member.image}
+                        memberRole={member.role}
+                        status={member.status}
+                        interests={member.interests}
+                        style={{
+                            marginBottom: index === members.length - 1 ? 0 : 8
+                        }}
+                        onPress={() => {
+                            navigate('Member', {
+                                id: member.name
+                            });
+                        }}
+                    />
+                ))}
+            </ScrollView>
+        </View>
     );
 };

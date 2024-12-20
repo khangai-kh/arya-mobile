@@ -99,7 +99,7 @@ export const Home = (props: HomeProps) => {
             </View>
             <View style={{
                 flex: 1,
-                backgroundColor: '#f5f7f9'
+                backgroundColor: '#F2F2F2'
             }}>
                 <TabView
                     renderScene={renderScene}

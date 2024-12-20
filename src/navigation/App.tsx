@@ -12,6 +12,7 @@ import { ExternalWeb } from '../screens/ExternalWeb';
 import { ForgotPassword } from '../screens/ForgotPassword';
 import { Inspiration } from '../screens/Inspiration';
 import { Inspirations } from '../screens/Inspirations';
+import { Member } from '../screens/Member';
 import { MemberShip } from '../screens/MemberShip';
 import { Notifications } from '../screens/Notifications';
 import { OnBoarding } from '../screens/OnBoarding';
@@ -44,6 +45,9 @@ export type AppStackParams = {
         id: string;
     };
     Inspiration: {
+        id: string;
+    };
+    Member: {
         id: string;
     };
     ExternalWeb: {
@@ -170,6 +174,13 @@ export const App = () => {
                             component={OnBoarding}
                             options={{
                                 headerShown: false,
+                            }}
+                        />
+                        <AppStack.Screen
+                            name="Member"
+                            component={Member}
+                            options={{
+                                title: 'Member',
                             }}
                         />
                         <AppStack.Screen
