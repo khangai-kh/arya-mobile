@@ -1,14 +1,14 @@
 import { useNavigation } from '@react-navigation/native';
-import { StyleSheet, TouchableOpacity, TouchableOpacityProps, View } from 'react-native';
+import { Image, StyleSheet, TouchableOpacity, TouchableOpacityProps, View } from 'react-native';
 import { Avatar, Chip, IconButton, Text, useTheme } from 'react-native-paper';
 import { MD3Colors } from 'react-native-paper/lib/typescript/types';
-import { Box } from './common/Box';
 
 type MemberProps = Omit<TouchableOpacityProps, 'activeOpacity'> & {
     name: string;
     image: string;
     memberRole: string;
     status: string;
+    following: boolean;
     interests: {
         id: number,
         title: string;
@@ -39,6 +39,7 @@ export const Member = (props: MemberProps) => {
         memberRole,
         status,
         interests,
+        following,
         ...otherProps
     } = props;
 
@@ -64,23 +65,44 @@ export const Member = (props: MemberProps) => {
                         marginRight: 4
                     }}
                 />
-                <Box
+                <View
                     style={{
                         flex: 1,
                         flexDirection: 'row',
                         justifyContent: 'space-between'
                     }}
                 >
-                    <Box>
-                        <Text
-                            variant="bodyMedium"
-                            numberOfLines={1}
-                            style={{
-                                marginBottom: 4
-                            }}
-                        >
-                            {memberRole}
-                        </Text>
+                    <View
+                        style={{
+                            flex: 1
+                        }}
+                    >
+                        <Chip style={{ backgroundColor: '#f2f2f2' }}>
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                }}
+                            >
+                                <Image
+                                    resizeMode="contain"
+                                    source={require('../assets/flat-icons/diamond.png')}
+                                    style={{
+                                        width: 14,
+                                        height: 14,
+                                        tintColor: '#00AEEF',
+                                        marginRight: 4
+                                    }}
+                                />
+                                <Text
+                                    variant="bodyMedium"
+                                    numberOfLines={1}
+                                >
+                                    {memberRole}
+                                </Text>
+                            </View>
+                        </Chip>
                         <Text
                             variant="titleMedium"
                             numberOfLines={1}
@@ -96,17 +118,32 @@ export const Member = (props: MemberProps) => {
                         >
                             {status}
                         </Text>
-                    </Box>
-                    <IconButton
-                        icon={require('../assets/flat-icons/filter.png')}
-                        size={18}
-                        onPress={() => { }}
-                    />
-                </Box>
+                    </View>
+                    {following ?
+                        <IconButton
+                            icon={require('../assets/flat-icons/following.png')}
+                            size={18}
+                            iconColor='#B61D8D'
+                            style={{
+                                backgroundColor: colors.onPrimary
+                            }}
+                            onPress={() => { }}
+                        />
+                        :
+                        <IconButton
+                            icon={require('../assets/flat-icons/user-add.png')}
+                            size={18}
+                            iconColor='#ffffff'
+                            style={{
+                                backgroundColor: colors.primary
+                            }}
+                            onPress={() => { }}
+                        />
+                    }
+                </View>
             </View>
             <View
                 style={{
-                    flex: 1,
                     flexDirection: 'row',
                     marginTop: 4
                 }}
@@ -144,7 +181,6 @@ export const Member = (props: MemberProps) => {
                     </Text>
                 </Box>
             )} */}
-
         </TouchableOpacity>
     );
 };

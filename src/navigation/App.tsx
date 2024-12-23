@@ -48,7 +48,7 @@ export type AppStackParams = {
         id: string;
     };
     Member: {
-        id: string;
+        role: string;
     };
     ExternalWeb: {
         url: string;
@@ -179,9 +179,9 @@ export const App = () => {
                         <AppStack.Screen
                             name="Member"
                             component={Member}
-                            options={{
-                                title: 'Member',
-                            }}
+                            options={({ route }) => ({
+                                title: route.params.role,
+                            })}
                         />
                         <AppStack.Screen
                             name="MemberShip"

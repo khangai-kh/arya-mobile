@@ -23,6 +23,7 @@ export const Members = () => {
             image: "",
             role: "Investor",
             status: "CTO at Nexa Innovations",
+            following: true,
             interests: [
                 {
                     id: 0,
@@ -51,6 +52,7 @@ export const Members = () => {
             image: "",
             role: "Premium",
             status: "Investment Director at Peak Growth Ventures",
+            following: false,
             interests: [
                 {
                     id: 0,
@@ -110,13 +112,14 @@ export const Members = () => {
                         image={member.image}
                         memberRole={member.role}
                         status={member.status}
+                        following={member.following}
                         interests={member.interests}
                         style={{
                             marginBottom: index === members.length - 1 ? 0 : 8
                         }}
                         onPress={() => {
                             navigate('Member', {
-                                id: member.name
+                                role: member.role
                             });
                         }}
                     />

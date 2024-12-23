@@ -1,12 +1,9 @@
 import { StackScreenProps } from '@react-navigation/stack';
-import dayjs from 'dayjs';
 import { useState } from 'react';
-import { Image, ImageBackground, StyleSheet, View } from 'react-native';
+import { Image, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { default as LinearGradient } from 'react-native-linear-gradient';
-import { Appbar, Button, Card, Text, useTheme } from 'react-native-paper';
+import { Avatar, Button, Chip, Text, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Box } from '../components/common/Box';
 import { AppStackParams } from '../navigation/App';
 
 type MemberProps = StackScreenProps<AppStackParams, 'Member'>;
@@ -22,27 +19,36 @@ export const Member = (props: MemberProps) => {
         member,
         setMember
     ] = useState({
-        title: "Arya Retreat'24",
+        name: "Merve Kaya",
         image: "",
-        body: "Freedom: Manage Your Money, Discover Your Power",
-        information: `The highly anticipated Arya Retreat'24 will take place in Eskişehir between September 27 - 28 - 29! The biggest 3-day event of the year will bring together the leading names of the entrepreneurship and investment ecosystem.
-“Freedom: Manage Your Money, Discover Your Power”, we will focus on discovering our own potential and making our lives shine like stars. You will come together on different topics every day and discover the secrets to become the star of your life.`,
-        location: "Tasigo Hotel Eskişehir",
-        locationDetail: "Dede Mahallesi, Haktanır Sokak No:1 Bademlik, 26030 Odunpazarı/Eskişehir",
-        date: "2024-09-24",
-        type: "Event",
+        role: "Investor",
+        status: "CTO at Nexa Innovations",
+        following: true,
+        interests: [
+            {
+                id: 0,
+                title: 'Financial Planning',
+            },
+            {
+                id: 1,
+                title: 'Budgeting',
+            },
+            {
+                id: 2,
+                title: 'Saving',
+            },
+            {
+                id: 3,
+                title: 'Debt',
+            },
+            {
+                id: 4,
+                title: 'Insurance',
+            }
+        ]
     });
-    const [hosts] = useState([
-        {
-            id: 0,
-            name: 'Ahu Serter',
-            role: 'Arya WIP, Founder, GP & CEO',
-            bio: "Ahu Serter is a serial entrepreneur and investor. She is the founder of Fark Labs, a global innovation and transformation center, Arya Women Investment Platform, a social enterprise and F+Ventures, a corporate venture capital firm. In 2022, she founded Arya Venture Capital Investment Fund, Turkey's first gender-focused impact investment fund."
-        }
-    ]);
 
     return (
-
         <SafeAreaView
             style={{
                 flex: 1
@@ -52,190 +58,128 @@ export const Member = (props: MemberProps) => {
             ]}
         >
             <ScrollView showsVerticalScrollIndicator={false}>
-                <ImageBackground
-                    resizeMode="cover"
-                    source={require('../assets/dummy-image-1.png')}
+                <View
                     style={{
-                        position: 'relative',
-                        paddingTop: '56.25%',
-                        backgroundColor: '#f2f4f7'
+                        padding: 16
                     }}
                 >
-                    <LinearGradient
+                    <View
                         style={{
-                            ...StyleSheet.absoluteFillObject
-                        }}
-                        colors={[
-                            '#00000099',
-                            '#00000000'
-                        ]}
-                    >
-                        <Appbar.Header style={{
-                            backgroundColor: 'transparent'
-                        }}>
-                            <Appbar.Action
-                                icon={require('../assets/flat-icons/chevron-left.png')}
-                                color="#414042"
-                                style={{
-                                    backgroundColor: colors.onPrimary
-                                }}
-                                onPress={() => {
-                                    navigation.goBack();
-                                }}
-                            />
-                        </Appbar.Header>
-                    </LinearGradient>
-                </ImageBackground>
-                <Box
-                    px={16}
-                    mt={24}
-                >
-                    <Box
-                        px={12}
-                        py={3}
-                        style={{
-                            position: 'absolute',
-                            top: 0,
-                            left: 12,
+                            flex: 1,
                             flexDirection: 'row',
                             alignItems: 'center',
-                            borderRadius: 32,
-                            backgroundColor: '#F5EF99'
+                            marginBottom: 12
                         }}
                     >
-                        <Text variant="labelSmall">
-                            {member.type}
-                        </Text>
-                    </Box>
-                    <Text
-                        variant='titleLarge'
-                        style={{
-                            marginTop: 28,
-                            marginBottom: 4
-                        }}
-                    >
-                        {member.title}
-                    </Text>
-                    <Text>
-                        {member.body}
-                    </Text>
-                    <Card
-                        mode='contained'
-                        style={{
-                            marginTop: 12,
-                            backgroundColor: '#fff'
-                        }}
-                    >
-                        <Card.Content>
+                        <Avatar.Image
+                            size={112}
+                            source={require('../assets/Image-54.png')}
+                            style={{
+                                backgroundColor: '#f2f4f7',
+                                marginRight: 12
+                            }}
+                        />
+                        <View>
+                            <Text
+                                variant='titleSmall'>
+                                {member.name}
+                            </Text>
                             <View
                                 style={{
                                     flexDirection: 'row',
                                     alignItems: 'center',
-                                    marginLeft: 8
-                                }}
-                            >
-                                <Image
-                                    source={require('../assets/flat-icons/calendar-outlined.png')}
-                                    style={{
-                                        width: 14,
-                                        height: 14,
-                                        marginRight: 8,
-                                        tintColor: colors.primary
-                                    }}
-                                />
-                                <Text variant="titleSmall">
-                                    {dayjs(member.date).format('MMMM DD,YYYY')}
-                                </Text>
-                            </View>
-                            <View
-                                style={{
-                                    flexDirection: 'row',
-                                    alignItems: 'flex-start',
-                                    marginLeft: 8,
-                                    marginTop: 8
-                                }}
-                            >
-                                <Image
-                                    source={require('../assets/flat-icons/marker-outlined.png')}
-                                    style={{
-                                        width: 14,
-                                        height: 14,
-                                        marginRight: 8,
-                                        tintColor: colors.primary
-                                    }}
-                                />
-                                <View style={{ flex: 1 }}>
-                                    <Text variant="titleSmall">
-                                        {member.location}
-                                    </Text>
-                                    <Text
-                                        variant="bodySmall"
-                                        style={{
-                                            fontWeight: 300
-                                        }}
-                                    >
-                                        {member.locationDetail}
-                                    </Text>
-                                </View>
-                            </View>
-                        </Card.Content>
-                    </Card>
-                    <View
-                        style={{
-                            marginTop: 12
-                        }}
-                    >
-                        <Text>
-                            {member.information}
-                        </Text>
-                        <Text
-                            variant='titleSmall'
-                            style={{
-                                marginVertical: 12,
-                                fontWeight: 500,
-                                textTransform: 'uppercase'
-                            }}
-                        >
-                            Hosts
-                        </Text>
-                        {hosts.map((host, index) => (
-                            <View
-                                style={{
-                                    marginBottom: hosts.length === index ? 0 : 8
+                                    marginVertical: 8
                                 }}
                             >
                                 <View
                                     style={{
-                                        flexDirection: 'row'
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        marginLeft: 8
                                     }}
                                 >
-                                    <Text>
-                                        <Text style={{ textTransform: 'uppercase' }}>{host.name}</Text> - {host.role}
+                                    <Image
+                                        source={require('../assets/flat-icons/marker-outlined.png')}
+                                        style={{
+                                            width: 14,
+                                            height: 14,
+                                            marginRight: 8,
+                                            tintColor: '#414042'
+                                        }}
+                                    />
+                                    <Text variant="bodySmall">
+                                        Ankara
                                     </Text>
                                 </View>
-                                <Text>{host.bio}</Text>
+                                <View
+                                    style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        marginLeft: 8
+                                    }}
+                                >
+                                    <Image
+                                        source={require('../assets/flat-icons/badge.png')}
+                                        style={{
+                                            width: 14,
+                                            height: 14,
+                                            marginRight: 8,
+                                            tintColor: '#414042'
+                                        }}
+                                    />
+                                    <Text variant="bodySmall">
+                                        1 Years Member
+                                    </Text>
+                                </View>
                             </View>
-                        ))}
+                            <Chip style={{
+                                backgroundColor: '#fff'
+                            }}>
+                                <Text variant='bodySmall'>
+                                    Family business
+                                </Text>
+                            </Chip>
+                        </View>
                     </View>
-                </Box>
-            </ScrollView>
-            <Box
-                px={16}
-                py={16}
-                style={{
-                    borderTopWidth: StyleSheet.hairlineWidth,
-                    borderColor: colors.outlineVariant
-                }}
-            >
-                <Button
-                    mode="contained"
-                    onPress={() => {
+                    <Text>
+                        Operations Specialist at Anatolia Logistics | Logistics and Transportation
+                    </Text>
+                    <View
+                        style={{
+                            flex: 1,
+                            flexDirection: 'row'
+                        }}
+                    >
+                        <Button
+                            mode='contained'
+                            buttonColor={colors.primary}
+                            icon={require('../assets/flat-icons/user-add.png')}
+                            style={{
+                                marginRight: 8
+                            }}
+                            onPress={() => {
 
-                    }}
-                >
-                    Join the event
-                </Button>
-            </Box>
+                            }}
+                        >
+                            Connect
+                        </Button>
+                        <Button
+                            mode='contained'
+                            buttonColor={colors.secondary}
+                            icon={require('../assets/flat-icons/comment-alt.png')}
+
+                            onPress={() => {
+
+                            }}
+                        >
+                            Message
+                        </Button>
+                    </View>
+                </View>
+                <View>
+
+                </View>
+            </ScrollView>
         </SafeAreaView>
     );
 };
