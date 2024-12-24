@@ -77,7 +77,12 @@ export const Member = (props: MemberProps) => {
                             flex: 1
                         }}
                     >
-                        <Chip style={{ backgroundColor: '#f2f2f2' }}>
+                        <Chip
+                            style={{
+                                backgroundColor: '#f2f2f2',
+                                alignSelf: 'flex-start',
+                            }}
+                        >
                             <View
                                 style={{
                                     flexDirection: 'row',
@@ -162,25 +167,6 @@ export const Member = (props: MemberProps) => {
                     </Chip>
                 ))}
             </View>
-            {/* {type !== undefined && (
-                <Box
-                    px={12}
-                    py={3}
-                    style={{
-                        position: 'absolute',
-                        top: 12,
-                        left: 12,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        borderRadius: 32,
-                        backgroundColor: '#F5EF99'
-                    }}
-                >
-                    <Text variant="labelSmall">
-                        {type}
-                    </Text>
-                </Box>
-            )} */}
         </TouchableOpacity>
     );
 };

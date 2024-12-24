@@ -132,13 +132,17 @@ export const Member = (props: MemberProps) => {
                                     </Text>
                                 </View>
                             </View>
-                            <Chip style={{
-                                backgroundColor: '#fff'
-                            }}>
+                            <Chip
+                                style={{
+                                    backgroundColor: '#fff',
+                                    alignSelf: 'flex-start',
+                                }}
+                            >
                                 <Text variant='bodySmall'>
                                     Family business
                                 </Text>
                             </Chip>
+
                         </View>
                     </View>
                     <Text>
@@ -146,38 +150,118 @@ export const Member = (props: MemberProps) => {
                     </Text>
                     <View
                         style={{
-                            flex: 1,
+                            flexDirection: 'row',
+                            marginTop: 12
+                        }}
+                    >
+                        <View style={{ flex: 1 }}>
+                            <Button
+                                mode='contained'
+                                buttonColor={colors.primary}
+                                icon={require('../assets/flat-icons/user-add.png')}
+                                style={{
+                                    marginRight: 8
+                                }}
+                                onPress={() => {
+
+                                }}
+                            >
+                                Connect
+                            </Button>
+                        </View>
+                        <View style={{ flex: 1 }}>
+                            <Button
+                                mode='contained'
+                                buttonColor={colors.secondary}
+                                textColor={colors.primary}
+                                icon={require('../assets/flat-icons/comment-alt.png')}
+                                onPress={() => {
+
+                                }}
+                            >
+                                Message
+                            </Button>
+                        </View>
+                    </View>
+                </View>
+                <View
+                    style={{
+                        borderRadius: 16,
+                        backgroundColor: '#fff',
+                        paddingHorizontal: 16,
+                        paddingVertical: 12,
+                    }}
+                >
+                    <Text
+                        variant='titleSmall'
+                    >
+                        Interests
+                    </Text>
+                    <View
+                        style={{
+                            marginTop: 12,
+                            flexDirection: 'row',
+                            flexWrap: 'wrap',
+                            gap: 4
+                        }}
+                    >
+                        {member.interests.map((interest, index) => (
+                            <Chip
+                                key={interest.id}
+                                style={{
+                                    backgroundColor: '#f2f2f2'
+                                }}
+                            >
+                                <Text>
+                                    {interest.title}
+                                </Text>
+                            </Chip>
+                        ))}
+                    </View>
+                </View>
+                <View
+                    style={{
+                        marginTop: 8,
+                        borderRadius: 16,
+                        backgroundColor: '#fff',
+                        paddingHorizontal: 16,
+                        paddingVertical: 12,
+                    }}
+                >
+                    <Text
+                        variant='titleSmall'
+                    >
+                        Startups
+                    </Text>
+                    <View
+                        style={{
+                            marginTop: 12,
                             flexDirection: 'row'
                         }}
                     >
-                        <Button
-                            mode='contained'
-                            buttonColor={colors.primary}
-                            icon={require('../assets/flat-icons/user-add.png')}
+                        <Image
+                            source={require('../assets/wave.png')}
                             style={{
+                                width: 40,
+                                height: 40,
                                 marginRight: 8
                             }}
-                            onPress={() => {
-
-                            }}
-                        >
-                            Connect
-                        </Button>
-                        <Button
-                            mode='contained'
-                            buttonColor={colors.secondary}
-                            icon={require('../assets/flat-icons/comment-alt.png')}
-
-                            onPress={() => {
-
-                            }}
-                        >
-                            Message
-                        </Button>
+                            resizeMode='contain'
+                        />
+                        <View>
+                            <Text variant='titleSmall'>
+                                Green Wave Technologies
+                            </Text>
+                            <Text
+                                variant='bodyMedium'
+                                style={{
+                                    marginTop: 2
+                                }}
+                            >
+                                Empowering Sustainability Through Innovation
+                            </Text>
+                        </View>
                     </View>
-                </View>
-                <View>
-
                 </View>
             </ScrollView>
         </SafeAreaView>

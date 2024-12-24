@@ -1,7 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import { Fragment } from 'react';
 import { Platform } from 'react-native';
-import { Appbar, useTheme } from 'react-native-paper';
+import { Appbar, IconButton, useTheme } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/configureStore';
 import { AboutUs } from '../screens/AboutUs';
@@ -181,6 +181,17 @@ export const App = () => {
                             component={Member}
                             options={({ route }) => ({
                                 title: route.params.role,
+                                headerRight: () => (
+                                    <IconButton
+                                        icon={require('../assets/flat-icons/menu.png')}
+                                        size={24}
+                                        iconColor='#414042'
+                                        style={{
+                                            backgroundColor: '#F8E8F4'
+                                        }}
+                                        onPress={() => { }}
+                                    />
+                                ),
                             })}
                         />
                         <AppStack.Screen
