@@ -5,8 +5,10 @@ import { Appbar, IconButton, useTheme } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/configureStore';
 import { AboutUs } from '../screens/AboutUs';
+import { AcademyStartups } from '../screens/AcademyStartups';
 import { Announcement } from '../screens/Announcement';
 import { Announcements } from '../screens/Announcements';
+import { ClosedDeals } from '../screens/ClosedDeals';
 import { Content } from '../screens/Content';
 import { ExternalWeb } from '../screens/ExternalWeb';
 import { ForgotPassword } from '../screens/ForgotPassword';
@@ -19,14 +21,18 @@ import { OnBoarding } from '../screens/OnBoarding';
 import { SignIn } from '../screens/SignIn';
 import { SignUp } from '../screens/SignUp';
 import { SplashScreen } from '../screens/SplashScreen';
+import { Startups } from '../screens/Startups';
+import { Workshops } from '../screens/Workshops';
 import { BottomTab } from './BottomTab';
 
 export type AppStackParams = {
     AboutUs: undefined;
     Authenticate: undefined;
     Announcements: undefined;
+    AcademyStartups: undefined;
     CheckIn: undefined;
     ChangePassword: undefined;
+    ClosedDeals: undefined;
     BottomTab: undefined;
     Inspirations: undefined;
     ForgotPassword: undefined;
@@ -35,9 +41,11 @@ export type AppStackParams = {
     SignIn: undefined;
     SignUp: undefined;
     SplashScreen: undefined;
+    Startups: undefined;
     MemberShip: undefined;
     Messenger: undefined;
     Profile: undefined;
+    Workshops: undefined;
     Announcement: {
         id: string;
     };
@@ -160,6 +168,34 @@ export const App = () => {
                             component={Content}
                             options={{
                                 headerShown: false
+                            }}
+                        />
+                        <AppStack.Screen
+                            name="AcademyStartups"
+                            component={AcademyStartups}
+                            options={{
+                                title: 'Venture academy startups',
+                            }}
+                        />
+                        <AppStack.Screen
+                            name="ClosedDeals"
+                            component={ClosedDeals}
+                            options={{
+                                title: 'Closed deals',
+                            }}
+                        />
+                        <AppStack.Screen
+                            name="Startups"
+                            component={Startups}
+                            options={{
+                                title: 'Startups in funding round',
+                            }}
+                        />
+                        <AppStack.Screen
+                            name="Workshops"
+                            component={Workshops}
+                            options={{
+                                title: 'Entrepreneur workshops',
                             }}
                         />
                         <AppStack.Screen
