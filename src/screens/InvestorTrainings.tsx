@@ -3,9 +3,10 @@ import { View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppStackParams } from '../navigation/App';
-type AcademyStartupsProps = StackScreenProps<AppStackParams, 'AcademyStartups'>;
 
-export const AcademyStartups = (props: AcademyStartupsProps) => {
+type InvestorTrainingsProps = StackScreenProps<AppStackParams, 'InvestorTrainings'>;
+
+export const InvestorTrainings = (props: InvestorTrainingsProps) => {
 
     const { navigation } = props;
     const { colors } = useTheme();

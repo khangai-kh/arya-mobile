@@ -95,7 +95,7 @@ export const SignIn = connect(null, mapDispatchToProps)((props: StackScreenProps
                     <View
                         style={{
                             flex: 1,
-                            marginTop: '56.25%'
+                            marginTop: '64%'
                         }}
                     >
                         <Text

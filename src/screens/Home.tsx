@@ -10,7 +10,7 @@ import { AppStackParams } from '../navigation/App';
 import { BottomTabStackParams } from '../navigation/BottomTab';
 import { Contents } from './Contents';
 import { Entrepreneurship } from './Entrepreneurship';
-import { Investment } from './Investment';
+import { Investments } from './Investments';
 import { Members } from './Members';
 
 type HomeProps = CompositeScreenProps<BottomTabScreenProps<BottomTabStackParams, 'Home'>, StackScreenProps<AppStackParams>>;
@@ -18,7 +18,7 @@ type HomeProps = CompositeScreenProps<BottomTabScreenProps<BottomTabStackParams,
 const renderScene = SceneMap({
     'contents': Contents,
     'members': Members,
-    'investment': Investment,
+    'investments': Investments,
     'entrepreneurship': Entrepreneurship
 });
 
@@ -39,7 +39,7 @@ export const Home = (props: HomeProps) => {
         key: 'members',
         title: 'Members'
     }, {
-        key: 'investment',
+        key: 'investments',
         title: 'Investment'
     }, {
         key: 'entrepreneurship',

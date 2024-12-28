@@ -119,7 +119,7 @@ export const Member = (props: MemberProps) => {
                                     }}
                                 >
                                     <Image
-                                        source={require('../assets/flat-icons/badge.png')}
+                                        source={require('../assets/flat-icons/badge-outlined.png')}
                                         style={{
                                             width: 14,
                                             height: 14,
@@ -174,7 +174,7 @@ export const Member = (props: MemberProps) => {
                                 mode='contained'
                                 buttonColor={colors.secondary}
                                 textColor={colors.primary}
-                                icon={require('../assets/flat-icons/comment-alt.png')}
+                                icon={require('../assets/flat-icons/comment-alt-outlined.png')}
                                 onPress={() => {
 
                                 }}

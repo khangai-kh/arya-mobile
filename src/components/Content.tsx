@@ -51,7 +51,7 @@ export const Content = (props: ContentProps) => {
                 source={require('../assets/dummy-image-1.png')}
                 style={{
                     borderRadius: 24,
-                    paddingTop: '56.25%',
+                    paddingTop: '64%',
                     backgroundColor: '#f2f4f7'
                 }}
             />

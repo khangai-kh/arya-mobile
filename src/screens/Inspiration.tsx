@@ -49,7 +49,7 @@ First of all, let's talk about the key to adaptation in a changing world. For ex
                     source={require('../assets/dummy-image-1.png')}
                     style={{
                         position: 'relative',
-                        paddingTop: '56.25%',
+                        paddingTop: '64%',
                         backgroundColor: '#f2f4f7'
                     }}
                 >

@@ -3,43 +3,36 @@ import dayjs from 'dayjs';
 import { useState } from 'react';
 import { Image, ImageBackground, StyleSheet, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { default as LinearGradient } from 'react-native-linear-gradient';
+import LinearGradient from 'react-native-linear-gradient';
 import { Appbar, Button, Card, Text, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Box } from '../components/common/Box';
 import { AppStackParams } from '../navigation/App';
+type WorkshopProps = StackScreenProps<AppStackParams, 'Workshop'>;
 
-type AnnouncementProps = StackScreenProps<AppStackParams, 'Announcement'>;
+export const Workshop = (props: WorkshopProps) => {
 
-export const Announcement = (props: AnnouncementProps) => {
-    const {
-        navigation,
-        route
-    } = props;
+    const { navigation } = props;
     const { colors } = useTheme();
 
     const [
-        announcement,
-        setAnnouncement
+        workshop,
+        setWorkshop
     ] = useState({
-        title: "Arya Retreat'24",
+        title: "Entrepreneur Workshops",
         image: "",
-        body: "Freedom: Manage Your Money, Discover Your Power",
-        information: `The highly anticipated Arya Retreat'24 will take place in Eskişehir between September 27 - 28 - 29! The biggest 3-day event of the year will bring together the leading names of the entrepreneurship and investment ecosystem.
-“Freedom: Manage Your Money, Discover Your Power”, we will focus on discovering our own potential and making our lives shine like stars. You will come together on different topics every day and discover the secrets to become the star of your life.`,
-        location: "Tasigo Hotel Eskişehir",
-        locationDetail: "Dede Mahallesi, Haktanır Sokak No:1 Bademlik, 26030 Odunpazarı/Eskişehir",
-        date: "2024-09-24",
-        type: "Event",
+        organizer: "Akbank & Arya",
+        information: `Arya’nın, Akbank partnerliğinde düzenlediği, girişimcilere yönelik dönemlik eğitim serisidir.
+
+Girişimcilerin en çok karşılaştığı problemleri çözmeye yönelik pratik bilgiler ve vakalar içeren Akbank Girişimci Atölyelerimizde; alanında güçlü konuşmacıları, Türkiye’nin başarılı şirket sahibi girişimcileri ile buluşturuyoruz.  Girişimci atölyesinde Verilen Eğitimler
+
+Her yıl yüzlerce girişimcinin, işini büyütmesine destek olan Girişimci Atölyeleri programımıza katılım tamamen ücretsizdir ve herkesin başvurusuna açıktır.
+
+Akbank ve Arya tarafından düzenlenen, atölyeye davet edilen girişimciler, kendilerini geliştirme ve işlerini farklı bir bakış açısıyla değerlendirme şansı yakalar. Etkinlik hybrid olarak gerçekleşecektir.`,
+        location: "Assembly One Tower, Ankara & Online",
+        locationDetail: "Oran, One Tower AVM, Kudüs Cd. 6/A Kat:1, 06550 Çankaya/Ankara",
+        date: `07.06.2024 13:30-18:00`
     });
-    const [hosts] = useState([
-        {
-            id: 0,
-            name: 'Ahu Serter',
-            role: 'Arya WIP, Founder, GP & CEO',
-            bio: "Ahu Serter is a serial entrepreneur and investor. She is the founder of Fark Labs, a global innovation and transformation center, Arya Women Investment Platform, a social enterprise and F+Ventures, a corporate venture capital firm. In 2022, she founded Arya Venture Capital Investment Fund, Turkey's first gender-focused impact investment fund."
-        }
-    ]);
 
     return (
         <SafeAreaView
@@ -56,7 +49,7 @@ export const Announcement = (props: AnnouncementProps) => {
                     source={require('../assets/dummy-image-1.png')}
                     style={{
                         position: 'relative',
-                        paddingTop: '64%',
+                        paddingTop: '60%',
                         backgroundColor: '#f2f4f7'
                     }}
                 >
@@ -103,7 +96,7 @@ export const Announcement = (props: AnnouncementProps) => {
                         }}
                     >
                         <Text variant="labelSmall">
-                            {announcement.type}
+                            Workshop
                         </Text>
                     </Box>
                     <Text
@@ -113,10 +106,10 @@ export const Announcement = (props: AnnouncementProps) => {
                             marginBottom: 4
                         }}
                     >
-                        {announcement.title}
+                        {workshop.title}
                     </Text>
                     <Text>
-                        {announcement.body}
+                        {workshop.organizer}
                     </Text>
                     <Card
                         mode='contained'
@@ -143,7 +136,7 @@ export const Announcement = (props: AnnouncementProps) => {
                                     }}
                                 />
                                 <Text variant="titleSmall">
-                                    {dayjs(announcement.date).format('MMMM DD,YYYY')}
+                                    {dayjs(workshop.date).format('MMMM DD,YYYY')}
                                 </Text>
                             </View>
                             <View
@@ -165,7 +158,7 @@ export const Announcement = (props: AnnouncementProps) => {
                                 />
                                 <View style={{ flex: 1 }}>
                                     <Text variant="titleSmall">
-                                        {announcement.location}
+                                        {workshop.location}
                                     </Text>
                                     <Text
                                         variant="bodySmall"
@@ -173,7 +166,7 @@ export const Announcement = (props: AnnouncementProps) => {
                                             fontWeight: 300
                                         }}
                                     >
-                                        {announcement.locationDetail}
+                                        {workshop.locationDetail}
                                     </Text>
                                 </View>
                             </View>
@@ -185,36 +178,8 @@ export const Announcement = (props: AnnouncementProps) => {
                         }}
                     >
                         <Text>
-                            {announcement.information}
+                            {workshop.information}
                         </Text>
-                        <Text
-                            variant='titleSmall'
-                            style={{
-                                marginVertical: 12,
-                                fontWeight: 500,
-                                textTransform: 'uppercase'
-                            }}
-                        >
-                            Hosts
-                        </Text>
-                        {hosts.map((host, index) => (
-                            <View
-                                style={{
-                                    marginBottom: hosts.length === index ? 0 : 8
-                                }}
-                            >
-                                <View
-                                    style={{
-                                        flexDirection: 'row'
-                                    }}
-                                >
-                                    <Text>
-                                        <Text style={{ textTransform: 'uppercase' }}>{host.name}</Text> - {host.role}
-                                    </Text>
-                                </View>
-                                <Text>{host.bio}</Text>
-                            </View>
-                        ))}
                     </View>
                 </Box>
             </ScrollView>
@@ -228,6 +193,7 @@ export const Announcement = (props: AnnouncementProps) => {
             >
                 <Button
                     mode="contained"
+                    disabled
                     onPress={() => {
 
                     }}

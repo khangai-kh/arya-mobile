@@ -1,13 +1,13 @@
 import { CompositeNavigationProp, NavigationProp, useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Entrepreneur } from '../components/Entrepreneur';
+import { Investment } from '../components/Investment';
 import { AppStackParams } from '../navigation/App';
 import { BottomTabStackParams } from '../navigation/BottomTab';
 
 type UseNavigationProps = CompositeNavigationProp<NavigationProp<BottomTabStackParams, 'Home'>, NavigationProp<AppStackParams>>;
 
-export const Entrepreneurship = () => {
+export const Investments = () => {
     const { navigate } = useNavigation<UseNavigationProps>();
 
     const [
@@ -23,12 +23,16 @@ export const Entrepreneurship = () => {
             type: "closedDeals",
         },
         {
-            title: "Venture Academy Startups",
-            type: "academyStartups",
+            title: "Better.Future.Circles.Days",
+            type: "betterFutureCirclesDays",
         },
         {
-            title: "Entrepreneur Workshops",
-            type: "workshops",
+            title: "Investor Trainings",
+            type: "investorTrainings",
+        },
+        {
+            title: "Angel Investor License (BKY)",
+            type: "BKYLicense",
         }
     ]);
 
@@ -42,7 +46,7 @@ export const Entrepreneurship = () => {
             showsVerticalScrollIndicator={false}
         >
             {menuItems.map((item, index) => (
-                <Entrepreneur
+                <Investment
                     title={item.title}
                     type={item.type}
                     style={{
@@ -53,11 +57,14 @@ export const Entrepreneurship = () => {
                             navigate('Startups');
                         } else if (item.type === 'closedDeals') {
                             navigate('ClosedDeals');
-                        } else if (item.type === 'academyStartups') {
-                            navigate('AcademyStartups');
-                        } else if (item.type === 'workshops') {
-                            navigate('Workshops');
+                        } else if (item.type === 'betterFutureCirclesDays') {
+                            navigate('BetterFutureCirclesDays');
+                        } else if (item.type === 'investorTrainings') {
+                            navigate('InvestorTrainings');
+                        } else if (item.type === 'BKYLicense') {
+                            navigate('BKYLicense');
                         }
+
                     }}
                 />
             ))}

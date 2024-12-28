@@ -47,7 +47,7 @@ Arya GSYF's decision to invest in PhiTech was driven by a team of highly compete
                     source={require('../assets/dummy-image-1.png')}
                     style={{
                         position: 'relative',
-                        paddingTop: '56.25%',
+                        paddingTop: '64%',
                         backgroundColor: '#f2f4f7'
                     }}
                 >

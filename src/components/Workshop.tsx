@@ -4,13 +4,12 @@ import { Text, useTheme } from 'react-native-paper';
 import { MD3Colors } from 'react-native-paper/lib/typescript/types';
 import { Box } from './common/Box';
 
-type AnnouncementProps = Omit<TouchableOpacityProps, 'activeOpacity'> & {
-    title: string;
+type WorkshopProps = Omit<TouchableOpacityProps, 'activeOpacity'> & {
+    name: string;
     image: string;
-    body: string;
+    organizer: string;
     location: string;
     date: string;
-    type: string;
 };
 
 const styles = (colors: MD3Colors) => StyleSheet.create({
@@ -24,18 +23,17 @@ const styles = (colors: MD3Colors) => StyleSheet.create({
     }
 });
 
-export const Announcement = (props: AnnouncementProps) => {
+export const Workshop = (props: WorkshopProps) => {
     const { navigate } = useNavigation();
     const { colors } = useTheme();
     const { course } = styles(colors);
     const {
         style,
-        title,
+        name,
         image,
-        body,
+        organizer,
         location,
         date,
-        type,
         ...otherProps
     } = props;
 
@@ -56,25 +54,23 @@ export const Announcement = (props: AnnouncementProps) => {
                     backgroundColor: '#f2f4f7'
                 }}
             />
-            {type !== undefined && (
-                <Box
-                    px={12}
-                    py={3}
-                    style={{
-                        position: 'absolute',
-                        top: 12,
-                        left: 12,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        borderRadius: 32,
-                        backgroundColor: '#F5EF99'
-                    }}
-                >
-                    <Text variant="labelSmall">
-                        {type}
-                    </Text>
-                </Box>
-            )}
+            <Box
+                px={12}
+                py={3}
+                style={{
+                    position: 'absolute',
+                    top: 12,
+                    left: 12,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    borderRadius: 32,
+                    backgroundColor: '#F5EF99'
+                }}
+            >
+                <Text variant="labelSmall">
+                    Workshop
+                </Text>
+            </Box>
             <Box
                 px={12}
                 py={8}
@@ -83,7 +79,7 @@ export const Announcement = (props: AnnouncementProps) => {
                     variant="titleMedium"
                     numberOfLines={1}
                 >
-                    {title}
+                    {name}
                 </Text>
                 <Text
                     variant="bodyMedium"
@@ -93,7 +89,7 @@ export const Announcement = (props: AnnouncementProps) => {
                         marginBottom: 8
                     }}
                 >
-                    {body}
+                    {organizer}
                 </Text>
                 <View
                     style={{

@@ -10,7 +10,7 @@ const { LightTheme } = adaptNavigationTheme({
 const CustomMD3LightTheme = merge(MD3LightTheme, {
     ...DefaultTheme,
     dark: false,
-    roundness: 32,
+    roundness: 8,
     colors: {
         primary: 'rgb(182, 29, 141)',
         onPrimary: 'rgb(248,232,244)',

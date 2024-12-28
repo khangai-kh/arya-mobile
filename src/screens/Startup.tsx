@@ -3,9 +3,10 @@ import { View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppStackParams } from '../navigation/App';
-type AcademyStartupsProps = StackScreenProps<AppStackParams, 'AcademyStartups'>;
 
-export const AcademyStartups = (props: AcademyStartupsProps) => {
+type StartupProps = StackScreenProps<AppStackParams, 'Startup'>;
+
+export const Startup = (props: StartupProps) => {
 
     const { navigation } = props;
     const { colors } = useTheme();
@@ -26,6 +27,7 @@ export const AcademyStartups = (props: AcademyStartupsProps) => {
                     marginHorizontal: 16
                 }}
             >
+
             </View>
         </SafeAreaView>
     );

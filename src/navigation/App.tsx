@@ -8,12 +8,15 @@ import { AboutUs } from '../screens/AboutUs';
 import { AcademyStartups } from '../screens/AcademyStartups';
 import { Announcement } from '../screens/Announcement';
 import { Announcements } from '../screens/Announcements';
+import { BetterFutureCirclesDays } from '../screens/BetterFutureCirclesDays';
+import { BKYLicense } from '../screens/BKYLicense';
 import { ClosedDeals } from '../screens/ClosedDeals';
 import { Content } from '../screens/Content';
 import { ExternalWeb } from '../screens/ExternalWeb';
 import { ForgotPassword } from '../screens/ForgotPassword';
 import { Inspiration } from '../screens/Inspiration';
 import { Inspirations } from '../screens/Inspirations';
+import { InvestorTrainings } from '../screens/InvestorTrainings';
 import { Member } from '../screens/Member';
 import { MemberShip } from '../screens/MemberShip';
 import { Notifications } from '../screens/Notifications';
@@ -21,7 +24,9 @@ import { OnBoarding } from '../screens/OnBoarding';
 import { SignIn } from '../screens/SignIn';
 import { SignUp } from '../screens/SignUp';
 import { SplashScreen } from '../screens/SplashScreen';
+import { Startup } from '../screens/Startup';
 import { Startups } from '../screens/Startups';
+import { Workshop } from '../screens/Workshop';
 import { Workshops } from '../screens/Workshops';
 import { BottomTab } from './BottomTab';
 
@@ -30,11 +35,15 @@ export type AppStackParams = {
     Authenticate: undefined;
     Announcements: undefined;
     AcademyStartups: undefined;
+    BetterFutureCirclesDays: undefined;
+    BottomTab: undefined;
+    BKYLicense: undefined;
     CheckIn: undefined;
     ChangePassword: undefined;
     ClosedDeals: undefined;
-    BottomTab: undefined;
+    Events: undefined;
     Inspirations: undefined;
+    InvestorTrainings: undefined;
     ForgotPassword: undefined;
     Notifications: undefined;
     OnBoarding: undefined;
@@ -57,6 +66,12 @@ export type AppStackParams = {
     };
     Member: {
         role: string;
+    };
+    Workshop: {
+        id: string;
+    };
+    Startup: {
+        id: string;
     };
     ExternalWeb: {
         url: string;
@@ -164,17 +179,38 @@ export const App = () => {
                             }}
                         />
                         <AppStack.Screen
-                            name="Content"
-                            component={Content}
-                            options={{
-                                headerShown: false
-                            }}
-                        />
-                        <AppStack.Screen
                             name="AcademyStartups"
                             component={AcademyStartups}
                             options={{
                                 title: 'Venture academy startups',
+                            }}
+                        />
+                        <AppStack.Screen
+                            name="BetterFutureCirclesDays"
+                            component={BetterFutureCirclesDays}
+                            options={{
+                                title: 'Better.Future.Circles.Days',
+                            }}
+                        />
+                        <AppStack.Screen
+                            name="BKYLicense"
+                            component={BKYLicense}
+                            options={{
+                                title: 'BKY License',
+                            }}
+                        />
+                        <AppStack.Screen
+                            name="InvestorTrainings"
+                            component={InvestorTrainings}
+                            options={{
+                                title: 'Investor trainings',
+                            }}
+                        />
+                        <AppStack.Screen
+                            name="Content"
+                            component={Content}
+                            options={{
+                                headerShown: false
                             }}
                         />
                         <AppStack.Screen
@@ -185,10 +221,24 @@ export const App = () => {
                             }}
                         />
                         <AppStack.Screen
+                            name="Startup"
+                            component={Startup}
+                            options={{
+                                title: 'Startup',
+                            }}
+                        />
+                        <AppStack.Screen
                             name="Startups"
                             component={Startups}
                             options={{
                                 title: 'Startups in funding round',
+                            }}
+                        />
+                        <AppStack.Screen
+                            name="Workshop"
+                            component={Workshop}
+                            options={{
+                                headerShown: false
                             }}
                         />
                         <AppStack.Screen
