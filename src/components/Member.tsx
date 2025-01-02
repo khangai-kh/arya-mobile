@@ -124,27 +124,18 @@ export const Member = (props: MemberProps) => {
                             {status}
                         </Text>
                     </View>
-                    {following ?
-                        <IconButton
-                            icon={require('../assets/flat-icons/following.png')}
-                            size={18}
-                            iconColor='#B61D8D'
-                            style={{
-                                backgroundColor: colors.onPrimary
-                            }}
-                            onPress={() => { }}
-                        />
-                        :
-                        <IconButton
-                            icon={require('../assets/flat-icons/user-add.png')}
-                            size={18}
-                            iconColor='#ffffff'
-                            style={{
-                                backgroundColor: colors.primary
-                            }}
-                            onPress={() => { }}
-                        />
-                    }
+                    <IconButton
+                        icon={following
+                            ? require('../assets/flat-icons/following.png')
+                            : require('../assets/flat-icons/user-add.png')
+                        }
+                        size={18}
+                        iconColor={following ? '#B61D8D' : '#ffffff'}
+                        style={{
+                            backgroundColor: following ? colors.onPrimary : colors.primary
+                        }}
+                        onPress={() => { }}
+                    />
                 </View>
             </View>
             <View
