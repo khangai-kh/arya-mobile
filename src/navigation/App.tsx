@@ -182,7 +182,18 @@ export const App = () => {
                             name="AcademyStartups"
                             component={AcademyStartups}
                             options={{
-                                title: 'Venture academy startups'
+                                title: 'Venture academy startups',
+                                headerRight: () => (
+                                    <IconButton
+                                        icon={require('../assets/flat-icons/search.png')}
+                                        size={24}
+                                        iconColor='#414042'
+                                        style={{
+                                            backgroundColor: '#F8E8F4'
+                                        }}
+                                        onPress={() => { }}
+                                    />
+                                ),
                             }}
                         />
                         <AppStack.Screen
@@ -218,6 +229,17 @@ export const App = () => {
                             component={ClosedDeals}
                             options={{
                                 title: 'Closed deals',
+                                headerRight: () => (
+                                    <IconButton
+                                        icon={require('../assets/flat-icons/search.png')}
+                                        size={24}
+                                        iconColor='#414042'
+                                        style={{
+                                            backgroundColor: '#F8E8F4'
+                                        }}
+                                        onPress={() => { }}
+                                    />
+                                ),
                             }}
                         />
                         <AppStack.Screen

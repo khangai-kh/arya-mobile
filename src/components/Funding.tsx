@@ -11,7 +11,6 @@ type FundingProps = Omit<TouchableOpacityProps, 'activeOpacity'> & {
     types: {
         id: number;
         value: string;
-        color: string;
     }[];
     following: boolean,
     status: string,
@@ -68,7 +67,7 @@ export const Funding = (props: FundingProps) => {
             return '#00AEEF';
         } else if (value === 'Academy') {
             return '#F99F1C';
-        } else if (value === 'Closed deal') {
+        } else if (value === 'Closed deals') {
             return '#A09FA0';
         } else if (value === 'Graduate') {
             return '#4CB748';
@@ -175,7 +174,6 @@ export const Funding = (props: FundingProps) => {
                 style={{
                     flexDirection: 'row',
                     flexWrap: 'wrap',
-                    padding: 12,
                     borderRadius: 12,
                     borderWidth: 1,
                     borderColor: '#e0e0e0',
@@ -186,22 +184,121 @@ export const Funding = (props: FundingProps) => {
                     <View
                         key={index}
                         style={{
-                            width: '48%', // Each item takes up 48% of the width
-                            marginBottom: 8,
-                            flexDirection: 'column',
-                            borderRightWidth: (index % 2 === 0 && index !== data.length - 1) ? 1 : 0, // Right border for left column
+                            width: '50%',
+                            borderRightWidth: index % 2 === 0 ? 1 : 0,
                             borderRightColor: '#e0e0e0',
-                            borderBottomWidth: index < data.length - 2 ? 1 : 0, // Bottom border for all rows except the last row
+                            borderBottomWidth: index < data.length - 2 ? 1 : 0,
                             borderBottomColor: '#e0e0e0',
-                            paddingRight: 8,
-                            paddingBottom: 8,
+                            paddingVertical: 8,
+                            paddingHorizontal: 12,
                         }}
                     >
-                        <Text style={{ fontSize: 12, color: '#6e6e6e' }}>{item.label}:</Text>
-                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#000' }}>{item.value}</Text>
+                        <Text
+                            variant='bodySmall'
+                            style={{
+                                color: '#A09FA0'
+                            }}
+                        >
+                            {item.label}:
+                        </Text>
+                        <Text
+                            style={{
+                                fontSize: 14,
+                                fontWeight: 500,
+                                color: '#414042'
+                            }}
+                        >
+                            {item.value}
+                        </Text>
                     </View>
                 ))}
             </View>
+            {/* //TODO: activate bottom when data is not array */}
+            {/* <View
+                style={{
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    borderRadius: 12,
+                    borderWidth: 1,
+                    borderColor: '#e0e0e0',
+                    backgroundColor: '#fff',
+                }}
+            >
+                <View
+                    style={{
+                        width: '50%',
+                        borderRightWidth: 1,
+                        borderRightColor: '#e0e0e0',
+                        borderBottomWidth: 1,
+                        borderBottomColor: '#e0e0e0',
+                        paddingVertical: 8,
+                        paddingHorizontal: 12,
+                    }}
+                >
+                    <Text style={{ fontSize: 12, color: '#6e6e6e' }}>Status:</Text>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#000' }}>Prototype ready</Text>
+                </View>
+                <View
+                    style={{
+                        width: '50%',
+                        borderBottomWidth: 1,
+                        borderBottomColor: '#e0e0e0',
+                        paddingVertical: 8,
+                        paddingHorizontal: 12,
+                    }}
+                >
+                    <Text style={{ fontSize: 12, color: '#6e6e6e' }}>Investment status:</Text>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#000' }}>Pre-seed</Text>
+                </View>
+                <View
+                    style={{
+                        width: '50%',
+                        borderRightWidth: 1,
+                        borderRightColor: '#e0e0e0',
+                        borderBottomWidth: 1,
+                        borderBottomColor: '#e0e0e0',
+                        paddingVertical: 8,
+                        paddingHorizontal: 12,
+                    }}
+                >
+                    <Text style={{ fontSize: 12, color: '#6e6e6e' }}>Total investment:</Text>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#000' }}>$400K</Text>
+                </View>
+                <View
+                    style={{
+                        width: '50%',
+                        borderBottomWidth: 1,
+                        borderBottomColor: '#e0e0e0',
+                        paddingVertical: 8,
+                        paddingHorizontal: 12,
+                    }}
+                >
+                    <Text style={{ fontSize: 12, color: '#6e6e6e' }}>Valuation:</Text>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#000' }}>$3M</Text>
+                </View>
+                <View
+                    style={{
+                        width: '50%',
+                        borderRightWidth: 1,
+                        borderRightColor: '#e0e0e0',
+                        paddingVertical: 8,
+                        paddingHorizontal: 12,
+                    }}
+                >
+                    <Text style={{ fontSize: 12, color: '#6e6e6e' }}>Target amount:</Text>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#000' }}>$500K</Text>
+                </View>
+                <View
+                    style={{
+                        width: '50%',
+                        paddingVertical: 8,
+                        paddingHorizontal: 12,
+                    }}
+                >
+                    <Text style={{ fontSize: 12, color: '#6e6e6e' }}>Amount collected:</Text>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#000' }}>$350K</Text>
+                </View>
+            </View> */}
         </TouchableOpacity>
     );
 };

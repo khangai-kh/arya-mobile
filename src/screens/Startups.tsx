@@ -22,8 +22,7 @@ export const Startups = (props: StartupsProps) => {
             types: [
                 {
                     id: 0,
-                    value: 'Funding round',
-                    color: '#00AEEF'
+                    value: 'Funding round'
                 }
             ],
             title: 'EcoPulse',
@@ -40,13 +39,11 @@ export const Startups = (props: StartupsProps) => {
             types: [
                 {
                     id: 0,
-                    value: 'Funding round',
-                    color: '#F99F1C'
+                    value: 'Funding round'
                 },
                 {
                     id: 1,
-                    value: 'Academy',
-                    color: '#00AEEF'
+                    value: 'Academy'
                 }
             ],
             title: 'Medi Connect',

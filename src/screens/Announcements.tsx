@@ -122,11 +122,10 @@ export const Announcements = (props: AnnouncementsProps) => {
                             <Chip
                                 key={type.id}
                                 style={{
+                                    backgroundColor: category === type.value ? colors.primary : '#fff',
                                     marginRight: index === types.length ? 0 : 4
                                 }}
-                                onPress={() => {
-                                    setCategory(type.value);
-                                }}
+                                onPress={() => setCategory(type.value)}
                             >
                                 <Text>
                                     {type.value}

@@ -83,7 +83,7 @@ export const Contents = () => {
                 </Text>
                 <Button
                     mode='text'
-                    textColor={colors.secondary}
+                    textColor="#00AEEF"
                     onPress={() => {
                         navigate('Announcements');
                     }}
@@ -130,7 +130,7 @@ export const Contents = () => {
                 </Text>
                 <Button
                     mode='text'
-                    textColor={colors.secondary}
+                    textColor="#00AEEF"
                     style={{
                         margin: 0,
                         padding: 0
