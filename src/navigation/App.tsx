@@ -12,11 +12,13 @@ import { BetterFutureCirclesDays } from '../screens/BetterFutureCirclesDays';
 import { BKYLicense } from '../screens/BKYLicense';
 import { ClosedDeals } from '../screens/ClosedDeals';
 import { Content } from '../screens/Content';
+import { DisclosureText } from '../screens/DisclosureText';
 import { ExternalWeb } from '../screens/ExternalWeb';
 import { ForgotPassword } from '../screens/ForgotPassword';
 import { Inspiration } from '../screens/Inspiration';
 import { Inspirations } from '../screens/Inspirations';
 import { InvestorTrainings } from '../screens/InvestorTrainings';
+import { IPILicense } from '../screens/IPILicence';
 import { Member } from '../screens/Member';
 import { MemberShip } from '../screens/MemberShip';
 import { Notifications } from '../screens/Notifications';
@@ -26,6 +28,8 @@ import { SignUp } from '../screens/SignUp';
 import { SplashScreen } from '../screens/SplashScreen';
 import { Startup } from '../screens/Startup';
 import { Startups } from '../screens/Startups';
+import { Success } from '../screens/Success';
+import { Training } from '../screens/Training';
 import { Workshop } from '../screens/Workshop';
 import { Workshops } from '../screens/Workshops';
 import { BottomTab } from './BottomTab';
@@ -41,6 +45,7 @@ export type AppStackParams = {
     CheckIn: undefined;
     ChangePassword: undefined;
     ClosedDeals: undefined;
+    DisclosureText: undefined;
     Events: undefined;
     Inspirations: undefined;
     InvestorTrainings: undefined;
@@ -51,6 +56,7 @@ export type AppStackParams = {
     SignUp: undefined;
     SplashScreen: undefined;
     Startups: undefined;
+    Success: undefined;
     MemberShip: undefined;
     Messenger: undefined;
     Profile: undefined;
@@ -64,6 +70,9 @@ export type AppStackParams = {
     Inspiration: {
         id: string;
     };
+    IPILicense: {
+        agreed: boolean;
+    };
     Member: {
         role: string;
     };
@@ -71,6 +80,9 @@ export type AppStackParams = {
         id: string;
     };
     Startup: {
+        id: string;
+    };
+    Training: {
         id: string;
     };
     ExternalWeb: {
@@ -243,6 +255,13 @@ export const App = () => {
                             }}
                         />
                         <AppStack.Screen
+                            name="DisclosureText"
+                            component={DisclosureText}
+                            options={{
+                                title: 'Disclosure text',
+                            }}
+                        />
+                        <AppStack.Screen
                             name="Startup"
                             component={Startup}
                             options={{
@@ -289,6 +308,13 @@ export const App = () => {
                             }}
                         />
                         <AppStack.Screen
+                            name="IPILicense"
+                            component={IPILicense}
+                            options={{
+                                title: 'IPI License form',
+                            }}
+                        />
+                        <AppStack.Screen
                             name="OnBoarding"
                             component={OnBoarding}
                             options={{
@@ -325,6 +351,20 @@ export const App = () => {
                             component={Inspirations}
                             options={{
                                 title: 'Inspirations',
+                            }}
+                        />
+                        <AppStack.Screen
+                            name="Success"
+                            component={Success}
+                            options={{
+                                headerShown: false
+                            }}
+                        />
+                        <AppStack.Screen
+                            name="Training"
+                            component={Training}
+                            options={{
+                                headerShown: false
                             }}
                         />
                         <AppStack.Screen

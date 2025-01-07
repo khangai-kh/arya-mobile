@@ -59,6 +59,11 @@ export const Inspirations = (props: InspirationsProps) => {
                             style={{
                                 marginBottom: index === inspirations.length - 1 ? 0 : 8
                             }}
+                            onPress={() => {
+                                navigation.navigate('Inspiration', {
+                                    id: inspiration.title
+                                });
+                            }}
                         />
                     ))}
                 </ScrollView>

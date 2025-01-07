@@ -2,7 +2,7 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { useState } from 'react';
 import { View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { IconButton, Text, useTheme } from 'react-native-paper';
+import { Button, IconButton, Text, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Funding } from '../components/Funding';
 import { AppStackParams } from '../navigation/App';
@@ -57,6 +57,9 @@ export const AcademyStartups = (props: AcademyStartupsProps) => {
             totalInvestment: '$150K'
         },
     ]);
+
+    const [value, setValue] = useState('active');
+
     return (
         <SafeAreaView
             style={{
@@ -78,8 +81,7 @@ export const AcademyStartups = (props: AcademyStartupsProps) => {
                         style={{
                             flexDirection: 'row',
                             alignItems: 'center',
-                            justifyContent: 'space-between',
-                            marginBottom: 16
+                            justifyContent: 'space-between'
                         }}
                     >
                         <Text>
@@ -90,6 +92,48 @@ export const AcademyStartups = (props: AcademyStartupsProps) => {
                             size={18}
                             onPress={() => { }}
                         />
+                    </View>
+                    <View
+                        style={{
+                            flex: 1,
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            backgroundColor: '#fff',
+                            borderRadius: 32,
+                            marginVertical: 16
+                        }}
+                    >
+                        <View
+                            style={{
+                                flex: 1
+                            }}
+                        >
+                            <Button
+                                mode={value === 'active' ? 'contained' : 'text'}
+                                onPress={(e) => {
+                                    e.preventDefault;
+                                    setValue('active');
+                                }}
+                            >
+                                Active (25)
+                            </Button>
+                        </View>
+                        <View
+                            style={{
+                                flex: 1
+                            }}
+                        >
+                            <Button
+                                mode={value === 'graduates' ? 'contained' : 'text'}
+                                onPress={(e) => {
+                                    e.preventDefault;
+                                    setValue('graduates');
+                                }}
+                            >
+                                Graduates (100)
+                            </Button>
+                        </View>
                     </View>
                     {academyStartups.map((startup, index) => (
                         <Funding

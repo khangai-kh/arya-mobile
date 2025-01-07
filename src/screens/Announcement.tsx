@@ -32,6 +32,7 @@ export const Announcement = (props: AnnouncementProps) => {
         date: "2024-09-24",
         type: "Event",
     });
+
     const [hosts] = useState([
         {
             id: 0,

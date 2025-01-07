@@ -1,7 +1,9 @@
 import { StackScreenProps } from '@react-navigation/stack';
-import { View } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import { Image, View } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
+import { Button, Text, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Box } from '../components/common/Box';
 import { AppStackParams } from '../navigation/App';
 
 type BKYLicenseProps = StackScreenProps<AppStackParams, 'BKYLicense'>;
@@ -20,14 +22,50 @@ export const BKYLicense = (props: BKYLicenseProps) => {
                 'bottom'
             ]}
         >
-            <View
-                style={{
-                    flex: 1,
-                    marginTop: 24,
-                    marginHorizontal: 16
-                }}
+            <ScrollView showsVerticalScrollIndicator={false}>
+                <Image
+                    source={require('../assets/bky.png')}
+                    style={{
+                        marginTop: 25,
+                        borderRadius: 32,
+                        width: '100%',
+                        height: 200,
+                    }}
+                />
+                <View
+                    style={{
+                        marginTop: 24,
+                        paddingHorizontal: 16
+                    }}
+                >
+                    <Text
+                        variant='titleLarge'
+                        style={{
+                            marginBottom: 12
+                        }}
+                    >
+                        Angel Investor License from Arya
+                    </Text>
+                    <Text>
+                        By obtaining an Individual Participation Investor (IPI) License, you can benefit from tax advantages under the provisional Article 82 of the Income Tax Law. This license allows full taxpayer real persons who pay tax with their declaration to benefit from tax deductions of 2.5mn TL per year for their investments in joint stock companies. Please fill out the form to apply for a license and get more information.arya's Angel Investor License
+                    </Text>
+                </View>
+            </ScrollView>
+            <Box
+                px={16}
+                py={16}
             >
-            </View>
+                <Button
+                    mode="contained"
+                    onPress={() => {
+                        navigation.navigate('IPILicense', {
+                            agreed: false
+                        });
+                    }}
+                >
+                    Apply for BKY License
+                </Button>
+            </Box>
         </SafeAreaView>
     );
 };
