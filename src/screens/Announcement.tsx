@@ -54,7 +54,7 @@ export const Announcement = (props: AnnouncementProps) => {
             <ScrollView showsVerticalScrollIndicator={false}>
                 <ImageBackground
                     resizeMode="cover"
-                    source={require('../assets/dummy-image-1.png')}
+                    source={require('../assets/dummy-image-1.jpeg')}
                     style={{
                         position: 'relative',
                         paddingTop: '64%',

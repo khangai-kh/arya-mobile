@@ -45,7 +45,7 @@ export const Inspiration = (props: InspirationProps) => {
         >
             <Image
                 resizeMode="cover"
-                source={require('../assets/dummy-image-1.png')}
+                source={require('../assets/dummy-image-1.jpeg')}
                 style={{
                     marginRight: 8,
                     borderRadius: 18,

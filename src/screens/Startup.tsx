@@ -106,7 +106,7 @@ export const Startup = (props: StartupProps) => {
                     >
                         <Avatar.Image
                             size={80}
-                            source={require('../assets/dummy-product-4.png')}
+                            source={require('../assets/dummy-product-4.jpeg')}
                             style={{
                                 backgroundColor: '#f2f4f7',
                                 marginRight: 8
@@ -374,7 +374,7 @@ export const Startup = (props: StartupProps) => {
                     >
                         <Image
                             resizeMode="cover"
-                            source={require('../assets/dummy-product-1.png')}
+                            source={require('../assets/dummy-product-1.jpeg')}
                             style={{
                                 marginRight: 8,
                                 borderRadius: 12,
@@ -385,7 +385,7 @@ export const Startup = (props: StartupProps) => {
                         />
                         <Image
                             resizeMode="cover"
-                            source={require('../assets/dummy-product-2.png')}
+                            source={require('../assets/dummy-product-2.jpeg')}
                             style={{
                                 marginRight: 8,
                                 borderRadius: 12,
@@ -396,7 +396,7 @@ export const Startup = (props: StartupProps) => {
                         />
                         <Image
                             resizeMode="cover"
-                            source={require('../assets/dummy-product-3.png')}
+                            source={require('../assets/dummy-product-3.jpeg')}
                             style={{
                                 marginRight: 8,
                                 borderRadius: 12,

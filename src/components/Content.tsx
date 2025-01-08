@@ -48,7 +48,7 @@ export const Content = (props: ContentProps) => {
         >
             <ImageBackground
                 resizeMode="cover"
-                source={require('../assets/dummy-image-1.png')}
+                source={require('../assets/dummy-image-1.jpeg')}
                 style={{
                     borderRadius: 24,
                     paddingTop: '64%',

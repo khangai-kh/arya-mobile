@@ -46,7 +46,7 @@ By the end, you'll not only understand how venture capital shapes the future of 
             <ScrollView showsVerticalScrollIndicator={false}>
                 <ImageBackground
                     resizeMode="cover"
-                    source={require('../assets/dummy-image-1.png')}
+                    source={require('../assets/dummy-image-1.jpeg')}
                     style={{
                         position: 'relative',
                         paddingTop: '64%',

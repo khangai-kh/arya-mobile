@@ -46,7 +46,7 @@ First of all, let's talk about the key to adaptation in a changing world. For ex
             <ScrollView showsVerticalScrollIndicator={false}>
                 <ImageBackground
                     resizeMode="cover"
-                    source={require('../assets/dummy-image-1.png')}
+                    source={require('../assets/dummy-image-1.jpeg')}
                     style={{
                         position: 'relative',
                         paddingTop: '64%',

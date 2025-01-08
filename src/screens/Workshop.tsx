@@ -46,10 +46,10 @@ Akbank ve Arya tarafından düzenlenen, atölyeye davet edilen girişimciler, ke
             <ScrollView showsVerticalScrollIndicator={false}>
                 <ImageBackground
                     resizeMode="cover"
-                    source={require('../assets/dummy-image-1.png')}
-                    style={{
+                    source={require('../assets/dummy-image-1.jpeg')}
+                          style={{
                         position: 'relative',
-                        paddingTop: '60%',
+                    ddingTop: '60%',
                         backgroundColor: '#f2f4f7'
                     }}
                 >
