@@ -73,6 +73,7 @@ export const Funding = (props: FundingProps) => {
             return '#4CB748';
         }
     };
+
     return (
         <TouchableOpacity
             {...otherProps}

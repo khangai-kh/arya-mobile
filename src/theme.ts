@@ -62,22 +62,22 @@ const CustomMD3LightTheme = merge(MD3LightTheme, {
             },
             headlineSmall: {
                 fontFamily: 'Inter',
-                fontSize: 24,
-                fontWeight: Platform.OS === 'ios' ? '600' : undefined,
+                fontSize: 20,
+                fontWeight: Platform.OS === 'ios' ? '500' : undefined,
                 letterSpacing: 0,
                 lineHeight: 32
             },
             headlineMedium: {
                 fontFamily: 'Inter',
-                fontSize: 28,
-                fontWeight: Platform.OS === 'ios' ? '600' : undefined,
+                fontSize: 24,
+                fontWeight: Platform.OS === 'ios' ? '500' : undefined,
                 letterSpacing: 0,
                 lineHeight: 36
             },
             headlineLarge: {
                 fontFamily: 'Inter',
                 fontSize: 32,
-                fontWeight: Platform.OS === 'ios' ? '600' : undefined,
+                fontWeight: Platform.OS === 'ios' ? '500' : undefined,
                 letterSpacing: 0,
                 lineHeight: 40
             },

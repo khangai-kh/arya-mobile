@@ -92,7 +92,7 @@ export const Home = (props: HomeProps) => {
                             containerColor={colors.onPrimary}
                             icon={require('../assets/flat-icons/info.png')}
                             size={24}
-                            onPress={() => { }}
+                            onPress={() => navigation.navigate('AboutUs')}
                         />
                     </View>
                 </View>

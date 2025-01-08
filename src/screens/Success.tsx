@@ -66,7 +66,7 @@ export const Success = (props: SuccessProps) => {
                         navigation.navigate('BottomTab');
                     }}
                 >
-                    Submit
+                    Homepage
                 </Button>
             </Box>
         </SafeAreaView>

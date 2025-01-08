@@ -108,12 +108,11 @@ export const Startups = (props: StartupsProps) => {
                             style={{
                                 marginBottom: index === startups.length - 1 ? 0 : 8
                             }}
-                            disabled
-                        // onPress={() => {
-                        //     navigation.navigate('Startup', {
-                        //         id: startup.title
-                        //     });
-                        // }}
+                            onPress={() => {
+                                navigation.navigate('Startup', {
+                                    id: startup.title
+                                });
+                            }}
                         />
                     ))}
                 </View>

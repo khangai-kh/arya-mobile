@@ -1,6 +1,6 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import { Fragment } from 'react';
-import { Platform } from 'react-native';
+import { Platform, View } from 'react-native';
 import { Appbar, IconButton, useTheme } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/configureStore';
@@ -266,6 +266,33 @@ export const App = () => {
                             component={Startup}
                             options={{
                                 title: 'Startup',
+                                headerRight: () => (
+                                    <View
+                                        style={{
+                                            flexDirection: 'row'
+                                        }}
+                                    >
+                                        <IconButton
+                                            icon={require('../assets/flat-icons/heart-outlined.png')}
+                                            size={24}
+                                            iconColor='#414042'
+                                            style={{
+                                                backgroundColor: '#F8E8F4'
+                                            }}
+                                            onPress={() => { }}
+                                        />
+                                        <IconButton
+                                            icon={require('../assets/flat-icons/menu.png')}
+                                            size={24}
+                                            iconColor='#414042'
+                                            style={{
+                                                backgroundColor: '#F8E8F4',
+                                                marginLeft: 4
+                                            }}
+                                            onPress={() => { }}
+                                        />
+                                    </View>
+                                ),
                             }}
                         />
                         <AppStack.Screen

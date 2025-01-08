@@ -1,4 +1,5 @@
 import { StackScreenProps } from '@react-navigation/stack';
+import { Text } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppStackParams } from '../navigation/App';
 
@@ -11,10 +12,17 @@ export const Events = (props: EventsProps) => {
                 flex: 1
             }}
             edges={[
-                'bottom'
+                'top'
             ]}
         >
-
+            <Text
+                variant='titleMedium'
+                style={{
+                    textAlign: 'center'
+                }}
+            >
+                Events
+            </Text>
         </SafeAreaView>
     );
 };

@@ -43,6 +43,46 @@ export const Member = (props: MemberProps) => {
         ...otherProps
     } = props;
 
+    const checkRole = (role: string) => {
+        if (role === 'Investor') {
+            return (
+                <Image
+                    resizeMode="contain"
+                    source={require('../assets/flat-icons/diamond.png')}
+                    style={{
+                        width: 14,
+                        height: 14,
+                        tintColor: '#00AEEF',
+                        marginRight: 4
+                    }}
+                />);
+        } else if (role === 'Premium') {
+            return (
+                <Image
+                    resizeMode="contain"
+                    source={require('../assets/flat-icons/crown.png')}
+                    style={{
+                        width: 14,
+                        height: 14,
+                        tintColor: '#B61D8D',
+                        marginRight: 4
+                    }}
+                />);
+        } else if (role === 'Entrepreneur') {
+            return (
+                <Image
+                    resizeMode="contain"
+                    source={require('../assets/flat-icons/rocket.png')}
+                    style={{
+                        width: 14,
+                        height: 14,
+                        tintColor: '#F99F1C',
+                        marginRight: 4
+                    }}
+                />);
+        }
+    };
+
     return (
         <TouchableOpacity
             {...otherProps}
@@ -90,18 +130,9 @@ export const Member = (props: MemberProps) => {
                                     alignItems: 'center',
                                 }}
                             >
-                                <Image
-                                    resizeMode="contain"
-                                    source={require('../assets/flat-icons/diamond.png')}
-                                    style={{
-                                        width: 14,
-                                        height: 14,
-                                        tintColor: '#00AEEF',
-                                        marginRight: 4
-                                    }}
-                                />
+                                {checkRole(memberRole)}
                                 <Text
-                                    variant="bodyMedium"
+                                    variant="bodySmall"
                                     numberOfLines={1}
                                 >
                                     {memberRole}
