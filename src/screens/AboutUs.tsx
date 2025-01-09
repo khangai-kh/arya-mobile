@@ -3,7 +3,9 @@ import { Dimensions, Image, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Avatar, Button, Text, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { SimpleGrid } from 'react-native-super-grid';
 import { Box } from '../components/common/Box';
+import { Special } from '../components/Special';
 import { AppStackParams } from '../navigation/App';
 
 type AboutUsProps = StackScreenProps<AppStackParams, 'AboutUs'>;
@@ -16,32 +18,32 @@ export const AboutUs = (props: AboutUsProps) => {
     const specials = [
         {
             id: 0,
-            icon: '',
+            icon: 'graduation-cap',
             value: 'Entrepreneur and investor development trainings'
         },
         {
             id: 1,
-            icon: '',
+            icon: 'confetti',
             value: 'Corporate collaborations '
         },
         {
             id: 2,
-            icon: '',
+            icon: 'diamond',
             value: 'Special trainings for our members'
         },
         {
             id: 3,
-            icon: '',
+            icon: 'comment-user',
             value: 'Mentoring matches'
         },
         {
             id: 4,
-            icon: '',
+            icon: 'chat-arrow-grow',
             value: 'Investment readiness acceleration programs'
         },
         {
             id: 5,
-            icon: '',
+            icon: 'calendar',
             value: 'Inspiring events and club meetings '
         }
     ];
@@ -213,31 +215,25 @@ export const AboutUs = (props: AboutUsProps) => {
                             While carrying out projects focused on culture-based inequalities and social impact, she has assumed the role of strategist and impact advocate within the entrepreneurship, investment and civil society ecosystem.
                         </Text>
                     </View>
-                    <View>
-                        {/* <Grid
-                            style={{
-                                flex: 1
-                            }}
-                            columns={2}
-                            spacing={8}
-                            containerPadding={0}
-                            parentWidth={width - 32}
-                        >
-                            {specials.map((special, index) => (
+                    <View
+                        style={{
+                            flex: 1,
+                            marginTop: 24,
+                            alignItems: 'center'
+                        }}
+                    >
+                        <SimpleGrid
+                            listKey={'specials'}
+                            itemDimension={(width - 100) / 3}
+                            data={specials}
+                            spacing={16}
+                            renderItem={({ item }) => (
                                 <Special
-                                    icon={special.icon}
-                                    value={special.value}
+                                    icon={item.icon}
+                                    value={item.value}
                                 />
-                            ))}
-                        </Grid> */}
-                        {/* <Text
-                            variant='labelMedium'
-                            style={{
-                                color: colors.primary
-                            }}
-                        >
-                            Entrepreneur and investor development trainings
-                        </Text> */}
+                            )}
+                        />
                     </View>
                 </View>
             </ScrollView>

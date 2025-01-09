@@ -22,16 +22,10 @@ export const Workshop = (props: WorkshopProps) => {
         title: "Entrepreneur Workshops",
         image: "",
         organizer: "Akbank & Arya",
-        information: `Arya’nın, Akbank partnerliğinde düzenlediği, girişimcilere yönelik dönemlik eğitim serisidir.
-
-Girişimcilerin en çok karşılaştığı problemleri çözmeye yönelik pratik bilgiler ve vakalar içeren Akbank Girişimci Atölyelerimizde; alanında güçlü konuşmacıları, Türkiye’nin başarılı şirket sahibi girişimcileri ile buluşturuyoruz.  Girişimci atölyesinde Verilen Eğitimler
-
-Her yıl yüzlerce girişimcinin, işini büyütmesine destek olan Girişimci Atölyeleri programımıza katılım tamamen ücretsizdir ve herkesin başvurusuna açıktır.
-
-Akbank ve Arya tarafından düzenlenen, atölyeye davet edilen girişimciler, kendilerini geliştirme ve işlerini farklı bir bakış açısıyla değerlendirme şansı yakalar. Etkinlik hybrid olarak gerçekleşecektir.`,
+        information: `Arya'nın, Akbank partnerliğinde düzenlediği, girişimcilere yönelik dönemlik eğitim serisidir. Girişimcilerin en çok karşılaştığı problemleri çözmeye yönelik pratik bilgiler ve vakalar içeren Akbank Girişimci Atölyelerimizde; alanında güçlü konuşmacıları, Türkiye'nin başarılı şirket sahibi girişimcileri ile buluşturuyoruz.  Girişimci atölyesinde Verilen Eğitimler Her yıl yüzlerce girişimcinin, işini büyütmesine destek olan Girişimci Atölyeleri programımıza katılım tamamen ücretsizdir ve herkesin başvurusuna açıktır. Akbank ve Arya tarafından düzenlenen, atölyeye davet edilen girişimciler, kendilerini geliştirme ve işlerini farklı bir bakış açısıyla değerlendirme şansı yakalar. Etkinlik hybrid olarak gerçekleşecektir.`,
         location: "Assembly One Tower, Ankara & Online",
         locationDetail: "Oran, One Tower AVM, Kudüs Cd. 6/A Kat:1, 06550 Çankaya/Ankara",
-        date: `07.06.2024 13:30-18:00`
+        date: `07.06.2024 13: 30-18:00`
     });
 
     return (
@@ -47,9 +41,9 @@ Akbank ve Arya tarafından düzenlenen, atölyeye davet edilen girişimciler, ke
                 <ImageBackground
                     resizeMode="cover"
                     source={require('../assets/dummy-image-1.jpeg')}
-                          style={{
+                    style={{
                         position: 'relative',
-                    ddingTop: '60%',
+                        paddingTop: '60%',
                         backgroundColor: '#f2f4f7'
                     }}
                 >

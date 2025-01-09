@@ -24,7 +24,7 @@ export const BKYLicense = (props: BKYLicenseProps) => {
         >
             <ScrollView showsVerticalScrollIndicator={false}>
                 <Image
-                    source={require('../assets/bky.png')}
+                    source={require('../assets/bky.jpeg')}
                     style={{
                         marginTop: 25,
                         borderRadius: 32,
