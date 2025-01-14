@@ -66,7 +66,7 @@ First of all, let's talk about the key to adaptation in a changing world. For ex
                             backgroundColor: 'transparent'
                         }}>
                             <Appbar.Action
-                                icon={require('../assets/flat-icons/chevron-left.png')}
+                                icon={require('../assets/flat-icons/angle-small-left.png')}
                                 color="#414042"
                                 style={{
                                     backgroundColor: colors.onPrimary

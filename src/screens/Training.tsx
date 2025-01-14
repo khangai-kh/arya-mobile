@@ -66,7 +66,7 @@ By the end, you'll not only understand how venture capital shapes the future of 
                             backgroundColor: 'transparent'
                         }}>
                             <Appbar.Action
-                                icon={require('../assets/flat-icons/chevron-left.png')}
+                                icon={require('../assets/flat-icons/angle-small-left.png')}
                                 color="#414042"
                                 style={{
                                     backgroundColor: colors.onPrimary

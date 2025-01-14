@@ -2,7 +2,7 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { useState } from 'react';
 import { Image, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Avatar, Button, Chip, Text, useTheme } from 'react-native-paper';
+import { Appbar, Avatar, Button, Chip, Text, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppStackParams } from '../navigation/App';
 
@@ -21,7 +21,7 @@ export const Member = (props: MemberProps) => {
     ] = useState({
         name: "Merve Kaya",
         image: "",
-        role: "Investor",
+        role: "Entrepreneur",
         status: "CTO at Nexa Innovations",
         following: true,
         interests: [
@@ -48,6 +48,46 @@ export const Member = (props: MemberProps) => {
         ]
     });
 
+    const checkRole = (role: string) => {
+        if (role === 'Investor') {
+            return (
+                <Image
+                    resizeMode="contain"
+                    source={require('../assets/flat-icons/diamond.png')}
+                    style={{
+                        width: 14,
+                        height: 14,
+                        tintColor: '#00AEEF',
+                        marginRight: 4
+                    }}
+                />);
+        } else if (role === 'Premium') {
+            return (
+                <Image
+                    resizeMode="contain"
+                    source={require('../assets/flat-icons/crown.png')}
+                    style={{
+                        width: 14,
+                        height: 14,
+                        tintColor: '#B61D8D',
+                        marginRight: 4
+                    }}
+                />);
+        } else if (role === 'Entrepreneur') {
+            return (
+                <Image
+                    resizeMode="contain"
+                    source={require('../assets/flat-icons/rocket.png')}
+                    style={{
+                        width: 14,
+                        height: 14,
+                        tintColor: '#F99F1C',
+                        marginRight: 4
+                    }}
+                />);
+        }
+    };
+
     return (
         <SafeAreaView
             style={{
@@ -58,6 +98,52 @@ export const Member = (props: MemberProps) => {
             ]}
         >
             <ScrollView showsVerticalScrollIndicator={false}>
+                <Appbar.Header style={{
+                    backgroundColor: 'transparent'
+                }}>
+                    <Appbar.Action
+                        icon={require('../assets/flat-icons/angle-small-left.png')}
+                        color="#414042"
+                        style={{
+                            backgroundColor: colors.onPrimary
+                        }}
+                        onPress={() => {
+                            navigation.goBack();
+                        }}
+                    />
+                    <Appbar.Content
+                        title={
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}
+                            >
+                                <Text
+                                    variant='titleMedium'
+                                    style={{
+                                        marginRight: 8
+                                    }}
+                                >
+                                    {member.role}
+                                </Text>
+                                {checkRole(member.role)}
+                            </View>
+                        }
+                    />
+                    <Appbar.Action
+                        icon={require('../assets/flat-icons/menu.png')}
+                        color="#414042"
+                        size={24}
+                        style={{
+                            backgroundColor: colors.onPrimary
+                        }}
+                        onPress={() => {
+
+                        }}
+                    />
+                </Appbar.Header>
                 <View
                     style={{
                         padding: 16

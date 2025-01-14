@@ -99,7 +99,7 @@ export const Members = () => {
                 <IconButton
                     icon={require('../assets/flat-icons/filter.png')}
                     size={18}
-                    onPress={() => { }}
+                    onPress={() => navigate("Filter")}
                 />
             </View>
             <ScrollView
@@ -119,7 +119,7 @@ export const Members = () => {
                         }}
                         onPress={() => {
                             navigate('Member', {
-                                role: member.role
+                                id: member.name
                             });
                         }}
                     />

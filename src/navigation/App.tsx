@@ -20,14 +20,17 @@ import { Inspirations } from '../screens/Inspirations';
 import { InvestorTrainings } from '../screens/InvestorTrainings';
 import { IPILicense } from '../screens/IPILicence';
 import { Member } from '../screens/Member';
+import { MemberFilter } from '../screens/MemberFilter';
 import { MemberShip } from '../screens/MemberShip';
 import { Notifications } from '../screens/Notifications';
 import { OnBoarding } from '../screens/OnBoarding';
+import { Search } from '../screens/Search';
 import { SignIn } from '../screens/SignIn';
 import { SignUp } from '../screens/SignUp';
 import { SplashScreen } from '../screens/SplashScreen';
 import { Startup } from '../screens/Startup';
 import { Startups } from '../screens/Startups';
+import { StartupsFilter } from '../screens/StartupsFilter';
 import { Success } from '../screens/Success';
 import { Training } from '../screens/Training';
 import { Workshop } from '../screens/Workshop';
@@ -52,12 +55,15 @@ export type AppStackParams = {
     ForgotPassword: undefined;
     Notifications: undefined;
     OnBoarding: undefined;
+    Search: undefined;
     SignIn: undefined;
     SignUp: undefined;
     SplashScreen: undefined;
     Startups: undefined;
+    StartupsFilter: undefined;
     Success: undefined;
     MemberShip: undefined;
+    MemberFilter: undefined;
     Messenger: undefined;
     Profile: undefined;
     Workshops: undefined;
@@ -74,7 +80,7 @@ export type AppStackParams = {
         agreed: boolean;
     };
     Member: {
-        role: string;
+        id: string;
     };
     Workshop: {
         id: string;
@@ -117,7 +123,7 @@ export const App = () => {
                     }
                     return (
                         <Appbar.Action
-                            icon={require('../assets/flat-icons/chevron-left.png')}
+                            icon={require('../assets/flat-icons/angle-small-left.png')}
                             onPress={props.onPress}
                             style={{
                                 backgroundColor: colors.onPrimary
@@ -130,6 +136,13 @@ export const App = () => {
             <AppStack.Group>
                 {user === null && (
                     <Fragment>
+                        <AppStack.Screen
+                            name="SplashScreen"
+                            component={SplashScreen}
+                            options={{
+                                headerShown: false
+                            }}
+                        />
                         <AppStack.Screen
                             name="SignIn"
                             component={SignIn}
@@ -149,13 +162,6 @@ export const App = () => {
                             component={SignUp}
                             options={{
                                 title: 'Sign Up'
-                            }}
-                        />
-                        <AppStack.Screen
-                            name="SplashScreen"
-                            component={SplashScreen}
-                            options={{
-                                headerShown: false
                             }}
                         />
                     </Fragment>
@@ -262,6 +268,13 @@ export const App = () => {
                             }}
                         />
                         <AppStack.Screen
+                            name="Search"
+                            component={Search}
+                            options={{
+                                headerShown: false
+                            }}
+                        />
+                        <AppStack.Screen
                             name="Startup"
                             component={Startup}
                             options={{
@@ -293,6 +306,13 @@ export const App = () => {
                                         />
                                     </View>
                                 ),
+                            }}
+                        />
+                        <AppStack.Screen
+                            name="StartupsFilter"
+                            component={StartupsFilter}
+                            options={{
+                                headerShown: false
                             }}
                         />
                         <AppStack.Screen
@@ -351,26 +371,22 @@ export const App = () => {
                         <AppStack.Screen
                             name="Member"
                             component={Member}
-                            options={({ route }) => ({
-                                title: route.params.role,
-                                headerRight: () => (
-                                    <IconButton
-                                        icon={require('../assets/flat-icons/menu.png')}
-                                        size={24}
-                                        iconColor='#414042'
-                                        style={{
-                                            backgroundColor: '#F8E8F4'
-                                        }}
-                                        onPress={() => { }}
-                                    />
-                                ),
-                            })}
+                            options={{
+                                headerShown: false
+                            }}
                         />
                         <AppStack.Screen
                             name="MemberShip"
                             component={MemberShip}
                             options={{
                                 title: 'Membership',
+                            }}
+                        />
+                        <AppStack.Screen
+                            name="MemberFilter"
+                            component={MemberFilter}
+                            options={{
+                                headerShown: false
                             }}
                         />
                         <AppStack.Screen

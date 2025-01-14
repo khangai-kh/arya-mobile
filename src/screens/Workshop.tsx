@@ -60,7 +60,7 @@ export const Workshop = (props: WorkshopProps) => {
                             backgroundColor: 'transparent'
                         }}>
                             <Appbar.Action
-                                icon={require('../assets/flat-icons/chevron-left.png')}
+                                icon={require('../assets/flat-icons/angle-small-left.png')}
                                 color="#414042"
                                 style={{
                                     backgroundColor: colors.onPrimary

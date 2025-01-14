@@ -80,13 +80,13 @@ export const Home = (props: HomeProps) => {
                             containerColor={colors.onPrimary}
                             icon={require('../assets/flat-icons/search.png')}
                             size={24}
-                            onPress={() => { }}
+                            onPress={() => navigation.navigate('Search')}
                         />
                         <IconButton
                             containerColor={colors.onPrimary}
                             icon={require('../assets/flat-icons/bell.png')}
                             size={24}
-                            onPress={() => { }}
+                            onPress={() => navigation.navigate('Notifications')}
                         />
                         <IconButton
                             containerColor={colors.onPrimary}

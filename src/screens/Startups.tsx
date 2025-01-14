@@ -57,6 +57,7 @@ export const Startups = (props: StartupsProps) => {
             totalInvestment: '$150K'
         },
     ]);
+
     return (
         <SafeAreaView
             style={{
@@ -88,7 +89,7 @@ export const Startups = (props: StartupsProps) => {
                         <IconButton
                             icon={require('../assets/flat-icons/filter.png')}
                             size={18}
-                            onPress={() => { }}
+                            onPress={() => { navigation.navigate('StartupsFilter'); }}
                         />
                     </View>
                     {startups.map((startup, index) => (

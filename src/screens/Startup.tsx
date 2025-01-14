@@ -347,7 +347,7 @@ export const Startup = (props: StartupProps) => {
                                 }}
                                 onPress={() => {
                                     navigation.navigate('Member', {
-                                        role: founder.role
+                                        id: founder.name
                                     });
                                 }}
                             />
