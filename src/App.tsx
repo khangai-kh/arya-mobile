@@ -6,28 +6,37 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { App as MainApp } from './navigation/App';
-import { ReduxProvider } from './redux/ReduxProvider';
 import { theme } from './theme';
+import { Provider } from 'react-redux';
+import { persistor, store } from './redux/configureStore';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { PersistGate } from 'redux-persist/integration/react';
 
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state',
 ]);
 
+const queryClient = new QueryClient();
+
 const App = () => {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <ReduxProvider>
-        <SafeAreaProvider>
-          <PaperProvider theme={theme}>
-            <LightBoxProvider>
-              <NavigationContainer theme={theme}>
-                <MainApp />
-              </NavigationContainer>
-            </LightBoxProvider>
-          </PaperProvider>
-        </SafeAreaProvider>
-      </ReduxProvider>
-    </GestureHandlerRootView>
+    <Provider store={store}>
+      <PersistGate persistor={persistor}>
+        <QueryClientProvider client={queryClient}>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+              <SafeAreaProvider>
+                <PaperProvider theme={theme}>
+                  <LightBoxProvider>
+                    <NavigationContainer theme={theme}>
+                      <MainApp />
+                    </NavigationContainer>
+                  </LightBoxProvider>
+                </PaperProvider>
+              </SafeAreaProvider>
+          </GestureHandlerRootView>
+        </QueryClientProvider>
+      </PersistGate>
+    </Provider>
   );
 };
 

@@ -3,7 +3,7 @@ import { Button } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 import { AppStackParams } from '../navigation/App';
-import { setAccessToken, setUser } from '../redux/auth/slice';
+import { setAccessToken, setUser } from '../redux/auth/reducer';
 
 type ProfileProps = StackScreenProps<AppStackParams, 'Profile'> & {
     setAccessToken: (accessToken: string | null) => void;
