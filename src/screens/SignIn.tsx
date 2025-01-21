@@ -3,21 +3,20 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  View,
   StyleSheet,
+  View,
 } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
-import { RootState, useAppDispatch } from '../redux/configureStore';
-import { signIn as signInAction } from '../redux/auth/actions';
 import { Box } from '../components/common/Box';
 import { TextInput } from '../components/common/TextInput';
 import { TextInputSecure } from '../components/common/TextInputSecure';
+import { signIn as signInAction } from '../redux/auth/actions';
+import { RootState, useAppDispatch } from '../redux/configureStore';
 
 export const SignIn = (): JSX.Element => {
   const dispatch = useAppDispatch();
-  //const { colors } = useTheme();
 
   const { errorMessage, status: signInStatus } = useSelector(
     (state: RootState) => state.auth,
@@ -34,11 +33,7 @@ export const SignIn = (): JSX.Element => {
           password,
         }),
       ).unwrap();
-      // If sign-in succeeds:
-      // e.g. await dispatch(fetchProfile());
-      // navigation.navigate('Home');
     } catch (error) {
-      // Handle error here if needed
       console.error(error);
     }
   };
@@ -60,7 +55,6 @@ export const SignIn = (): JSX.Element => {
             <Text style={styles.subtitle}>
               Hi! Welcome back, you’ve been missed
             </Text>
-
             <Box mt={32} px={16} py={24}>
               <Text variant="titleSmall">Email</Text>
               <TextInput
@@ -72,7 +66,6 @@ export const SignIn = (): JSX.Element => {
                 onChangeText={setEmail}
                 style={styles.input}
               />
-
               <Text variant="titleSmall">Password</Text>
               <TextInputSecure
                 placeholder="********"
@@ -81,22 +74,9 @@ export const SignIn = (): JSX.Element => {
                 onChangeText={setPassword}
                 onSubmitEditing={handleSignIn}
               />
-
               {errorMessage ? (
                 <Text style={styles.errorText}>{errorMessage}</Text>
               ) : null}
-
-              {/* Uncomment later : TODO: API+Email /
-               <Pressable
-                 onPress={() => navigation.navigate('ForgotPassword')}
-                 style={styles.forgotButton}
-               >
-                 <Text style={[styles.forgotText, { color: colors.secondary }]}>
-                   Forgot password?
-                 </Text>
-               </Pressable>
-              */}
-
               <Button
                 mode="contained"
                 style={styles.signInButton}
@@ -113,7 +93,6 @@ export const SignIn = (): JSX.Element => {
   );
 };
 
-// It’s generally cleaner to separate styles into a StyleSheet:
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -126,7 +105,7 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     flex: 1,
-    marginTop: 64, // Using a numeric value is generally more predictable than a percentage.
+    marginTop: 64,
   },
   title: {
     textAlign: 'center',
