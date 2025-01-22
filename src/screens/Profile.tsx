@@ -1,40 +1,42 @@
+/* eslint-disable react/react-in-jsx-scope */
 import { StackScreenProps } from '@react-navigation/stack';
 import { Button } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 import { AppStackParams } from '../navigation/App';
-import { setAccessToken, setUser } from '../redux/auth/reducer';
+import { setAuthToken } from '../redux/auth/reducer';
 
 type ProfileProps = StackScreenProps<AppStackParams, 'Profile'> & {
-    setAccessToken: (accessToken: string | null) => void;
-    setUser: (user: any) => void;
+    setAuthToken: (accessToken: string | null) => void;
 };
 
 const mapDispatchToProps = {
-    setAccessToken,
-    setUser,
+    setAuthToken,
 };
 
 export const Profile = connect(null, mapDispatchToProps)((props: ProfileProps) => {
-    const { navigation, setAccessToken, setUser } = props;
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const { navigation, setAuthToken } = props;
 
     const handleLogout = () => {
-        setAccessToken(null);
-        setUser(null);
+        setAuthToken(null);
+
 
         navigation.navigate('SplashScreen');
     };
 
     return (
         <SafeAreaView
+            // eslint-disable-next-line react-native/no-inline-styles
             style={{
-                flex: 1
+                flex: 1,
             }}
             edges={['top']}
         >
             <Button
                 mode="contained"
                 onPress={handleLogout}
+                // eslint-disable-next-line react-native/no-inline-styles
                 style={{
                     marginTop: 20,
                     marginHorizontal: 16,

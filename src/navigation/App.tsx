@@ -100,7 +100,7 @@ const AppStack = createStackNavigator<AppStackParams>();
 
 export const App = () => {
     const { colors } = useTheme();
-    const user = useSelector((state: RootState) => state.auth.user);
+    const user = useSelector((state: RootState) => state.auth);
 
     return (
         <AppStack.Navigator
