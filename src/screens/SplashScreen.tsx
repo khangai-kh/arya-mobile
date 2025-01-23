@@ -10,7 +10,6 @@ export const SplashScreen = (props: SplashScreenProps) => {
 
     const {
         navigation,
-        route
     } = props;
     const { width, height } = useWindowDimensions();
     return (

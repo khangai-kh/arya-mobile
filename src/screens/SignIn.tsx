@@ -22,8 +22,8 @@ export const SignIn = (): JSX.Element => {
     (state: RootState) => state.auth,
   );
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('duygu.aydin@gmail.com');
+  const [password, setPassword] = useState('123123');
 
   const handleSignIn = async () => {
     try {

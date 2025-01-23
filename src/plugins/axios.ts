@@ -13,25 +13,33 @@ export type CustomResponse<T> = {
 export const API = axios.create({
     baseURL: baseURL,
     headers: {
-        'X-Requested-With': 'XMLHttpRequest',
+        accept: 'application/json',
+        'Content-Type': 'application/json',
     },
 });
 
 const onFulfilled = async (config: any) => {
     const { auth } = store.getState();
-    if (auth?.authToken) {
-        config.headers.authorization = `Bearer ${auth.authToken}`;
+    if (auth?.token) {
+        config.headers.authorization = `Bearer ${auth.token}`;
     }
     return config;
 };
 
 const onRejected = (error: any) => {
-    if (error?.response?.status === 401) {
-        store.dispatch(setAuthToken(null));
-        //store.dispatch(setProfile(null));
+    if (error.response) {
+        if (error.response.status === 401) {
+            console.log('Unauthorized, clearing auth token.');
+            store.dispatch(setAuthToken(null));
+        }
+        console.error('API Error Response:', error.response.data);
+    } else if (error.request) {
+        console.error('Network Error: No response received.', error.request);
+    } else {
+        console.error('Unexpected Error:', error.message);
     }
     return Promise.reject(error);
-};
+}
 
 API.interceptors.request.use(
     onFulfilled,

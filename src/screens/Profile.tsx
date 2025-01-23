@@ -1,4 +1,5 @@
-/* eslint-disable react/react-in-jsx-scope */
+/* eslint-disable react-native/no-inline-styles */
+import React from 'react';
 import { StackScreenProps } from '@react-navigation/stack';
 import { Button } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -14,29 +15,27 @@ const mapDispatchToProps = {
     setAuthToken,
 };
 
-export const Profile = connect(null, mapDispatchToProps)((props: ProfileProps) => {
-    // eslint-disable-next-line @typescript-eslint/no-shadow
-    const { navigation, setAuthToken } = props;
-
+const ProfileComponent = ({ navigation, setAuthToken }: ProfileProps) => {
     const handleLogout = () => {
         setAuthToken(null);
-
-
-        navigation.navigate('SplashScreen');
+        navigation.reset({
+            index: 0,
+            routes: [{ name: 'SplashScreen' }],
+        });
     };
 
     return (
         <SafeAreaView
-            // eslint-disable-next-line react-native/no-inline-styles
             style={{
                 flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
             }}
             edges={['top']}
         >
             <Button
                 mode="contained"
                 onPress={handleLogout}
-                // eslint-disable-next-line react-native/no-inline-styles
                 style={{
                     marginTop: 20,
                     marginHorizontal: 16,
@@ -46,4 +45,6 @@ export const Profile = connect(null, mapDispatchToProps)((props: ProfileProps) =
             </Button>
         </SafeAreaView>
     );
-});
+};
+
+export const Profile = connect(null, mapDispatchToProps)(ProfileComponent);

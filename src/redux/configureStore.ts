@@ -16,7 +16,7 @@ const authPersistConfig: PersistConfig<AuthState> = {
     key: 'auth',
     storage: storage,
     whitelist: [
-        'authToken',
+        'token',
     ],
 };
 

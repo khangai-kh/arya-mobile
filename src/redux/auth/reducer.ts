@@ -2,13 +2,13 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { signIn } from './actions';
 
 export type AuthState = {
-    authToken: string | null;
+    token: string | null;
     errorMessage: string | null;
     status: 'idle' | 'pending';
 };
 
 const initialState: AuthState = {
-    authToken: null,
+    token: null,
     errorMessage: null,
     status: 'idle',
 };
@@ -18,7 +18,7 @@ const authSlice = createSlice({
     initialState,
     reducers: {
         setAuthToken(state, { payload }: PayloadAction<string | null>) {
-            state.authToken = payload;
+            state.token = payload;
         },
         setErrorMessage(state, { payload }: PayloadAction<string | null>) {
             state.errorMessage = payload;
@@ -31,12 +31,12 @@ const authSlice = createSlice({
                 state.status = 'pending';
             })
             .addCase(signIn.fulfilled, (state, { payload }) => {
-                state.authToken = payload;
+                state.token = payload;
                 state.errorMessage = null;
                 state.status = 'idle';
             })
             .addCase(signIn.rejected, (state, { payload }) => {
-                state.authToken = null;
+                state.token = null;
                 state.errorMessage = payload ?? null;
                 state.status = 'idle';
             });

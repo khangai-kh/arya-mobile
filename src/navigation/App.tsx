@@ -1,3 +1,6 @@
+/* eslint-disable react/no-unstable-nested-components */
+/* eslint-disable react/react-in-jsx-scope */
+/* eslint-disable react-native/no-inline-styles */
 import { createStackNavigator } from '@react-navigation/stack';
 import { Fragment } from 'react';
 import { Platform, View } from 'react-native';
@@ -100,11 +103,11 @@ const AppStack = createStackNavigator<AppStackParams>();
 
 export const App = () => {
     const { colors } = useTheme();
-    const user = useSelector((state: RootState) => state.auth);
+    const authToken = useSelector((state: RootState) => state.auth.token);
 
     return (
         <AppStack.Navigator
-            initialRouteName={user ? "BottomTab" : "SplashScreen"}
+            initialRouteName={authToken ? "BottomTab" : "SplashScreen"}
             screenOptions={{
                 headerShadowVisible: false,
                 headerStyle: {
@@ -134,7 +137,7 @@ export const App = () => {
             }}
         >
             <AppStack.Group>
-                {user === null && (
+                {authToken === null && (
                     <Fragment>
                         <AppStack.Screen
                             name="SplashScreen"
@@ -147,26 +150,26 @@ export const App = () => {
                             name="SignIn"
                             component={SignIn}
                             options={{
-                                headerShown: false
+                                headerShown: false,
                             }}
                         />
                         <AppStack.Screen
                             name="ForgotPassword"
                             component={ForgotPassword}
                             options={{
-                                title: 'Forgot Password'
+                                title: 'Forgot Password',
                             }}
                         />
                         <AppStack.Screen
                             name="SignUp"
                             component={SignUp}
                             options={{
-                                title: 'Sign Up'
+                                title: 'Sign Up',
                             }}
                         />
                     </Fragment>
                 )}
-                {user && (
+                {authToken && (
                     <Fragment>
                         <AppStack.Screen
                             name="BottomTab"
@@ -193,7 +196,7 @@ export const App = () => {
                             name="Announcement"
                             component={Announcement}
                             options={{
-                                headerShown: false
+                                headerShown: false,
                             }}
                         />
                         <AppStack.Screen
@@ -207,7 +210,7 @@ export const App = () => {
                                         size={24}
                                         iconColor='#414042'
                                         style={{
-                                            backgroundColor: '#F8E8F4'
+                                            backgroundColor: '#F8E8F4',
                                         }}
                                         onPress={() => { }}
                                     />
@@ -288,19 +291,19 @@ export const App = () => {
                                         <IconButton
                                             icon={require('../assets/flat-icons/heart-outlined.png')}
                                             size={24}
-                                            iconColor='#414042'
+                                            iconColor="#414042"
                                             style={{
-                                                backgroundColor: '#F8E8F4'
+                                                backgroundColor: '#F8E8F4',
                                             }}
                                             onPress={() => { }}
                                         />
                                         <IconButton
                                             icon={require('../assets/flat-icons/menu.png')}
                                             size={24}
-                                            iconColor='#414042'
+                                            iconColor="#414042"
                                             style={{
                                                 backgroundColor: '#F8E8F4',
-                                                marginLeft: 4
+                                                marginLeft: 4,
                                             }}
                                             onPress={() => { }}
                                         />
@@ -312,7 +315,7 @@ export const App = () => {
                             name="StartupsFilter"
                             component={StartupsFilter}
                             options={{
-                                headerShown: false
+                                headerShown: false,
                             }}
                         />
                         <AppStack.Screen
@@ -324,9 +327,9 @@ export const App = () => {
                                     <IconButton
                                         icon={require('../assets/flat-icons/search.png')}
                                         size={24}
-                                        iconColor='#414042'
+                                        iconColor="#414042"
                                         style={{
-                                            backgroundColor: '#F8E8F4'
+                                            backgroundColor: '#F8E8F4',
                                         }}
                                         onPress={() => { }}
                                     />
@@ -372,7 +375,7 @@ export const App = () => {
                             name="Member"
                             component={Member}
                             options={{
-                                headerShown: false
+                                headerShown: false,
                             }}
                         />
                         <AppStack.Screen
@@ -386,7 +389,7 @@ export const App = () => {
                             name="MemberFilter"
                             component={MemberFilter}
                             options={{
-                                headerShown: false
+                                headerShown: false,
                             }}
                         />
                         <AppStack.Screen
@@ -400,14 +403,14 @@ export const App = () => {
                             name="Success"
                             component={Success}
                             options={{
-                                headerShown: false
+                                headerShown: false,
                             }}
                         />
                         <AppStack.Screen
                             name="Training"
                             component={Training}
                             options={{
-                                headerShown: false
+                                headerShown: false,
                             }}
                         />
                         <AppStack.Screen

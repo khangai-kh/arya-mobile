@@ -1,9 +1,18 @@
 import { API } from '../../plugins/axios';
 import { SignInDto } from './dto/sign-in.dto';
 
-const endpoint = '/api/login';
-
 export const signIn = async (dto: SignInDto): Promise<string> => {
-    return await API.post<{ token: string; }>(`${endpoint}/token`, dto)
-        .then(async ({ data }) => data.token);
+    try {
+        console.log('Sending sign-in request:', dto);
+        const response = await API.post<{ token: string }>('/api/login', dto);
+        console.log('Sign-in response:', response);
+        if (response.token) {
+            return response.token;
+        }
+        throw new Error('Token is missing in the response.');
+    } catch (error: any) {
+        console.error('Error during sign-in:', error.message);
+        throw error;
+    }
 };
+
