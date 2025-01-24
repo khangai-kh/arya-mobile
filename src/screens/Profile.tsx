@@ -4,10 +4,10 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { Button } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
-import { AppStackParams } from '../navigation/App';
+import { MainStackParams } from '../models/navigation';
 import { setAuthToken } from '../redux/auth/reducer';
 
-type ProfileProps = StackScreenProps<AppStackParams, 'Profile'> & {
+type ProfileProps = StackScreenProps<MainStackParams, 'Profile'> & {
     setAuthToken: (accessToken: string | null) => void;
 };
 
@@ -15,9 +15,9 @@ const mapDispatchToProps = {
     setAuthToken,
 };
 
-const ProfileComponent = ({ navigation, setAuthToken }: ProfileProps) => {
+const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: ProfileProps) => {
     const handleLogout = () => {
-        setAuthToken(null);
+        setAuthTokenProp(null);
         navigation.reset({
             index: 0,
             routes: [{ name: 'SplashScreen' }],

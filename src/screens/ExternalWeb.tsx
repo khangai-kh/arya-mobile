@@ -1,9 +1,9 @@
 import { StackScreenProps } from '@react-navigation/stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { default as WebView } from 'react-native-webview';
-import { AppStackParams } from '../navigation/App';
+import { MainStackParams } from '../models/navigation';
 
-type ExternalWebProps = StackScreenProps<AppStackParams, 'ExternalWeb'>;
+type ExternalWebProps = StackScreenProps<MainStackParams, 'ExternalWeb'>;
 
 export const ExternalWeb = (props: ExternalWebProps) => {
     const { url } = props.route.params;

@@ -3,9 +3,9 @@ import { Image, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Box } from '../components/common/Box';
-import { AppStackParams } from '../navigation/App';
+import { MainStackParams } from '../models/navigation';
 
-type SuccessProps = StackScreenProps<AppStackParams, 'Success'>;
+type SuccessProps = StackScreenProps<MainStackParams, 'Success'>;
 
 export const Success = (props: SuccessProps) => {
 

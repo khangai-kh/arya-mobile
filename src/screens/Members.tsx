@@ -4,10 +4,10 @@ import { View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { IconButton, Text, useTheme } from 'react-native-paper';
 import { Member } from '../components/Member';
-import { AppStackParams } from '../navigation/App';
-import { BottomTabStackParams } from '../navigation/BottomTab';
+import { MainStackParams } from '../models/navigation';
+import { BottomTabStackParams } from '../navigation/user/tabs/BottomTab';
 
-type UseNavigationProps = CompositeNavigationProp<NavigationProp<BottomTabStackParams, 'Home'>, NavigationProp<AppStackParams>>;
+type UseNavigationProps = CompositeNavigationProp<NavigationProp<BottomTabStackParams, 'Home'>, NavigationProp<MainStackParams>>;
 
 export const Members = () => {
 

@@ -4,9 +4,9 @@ import { View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Appbar, Searchbar, Text, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AppStackParams } from '../navigation/App';
+import { MainStackParams } from '../models/navigation';
 
-type SearchProps = StackScreenProps<AppStackParams, 'Search'>;
+type SearchProps = StackScreenProps<MainStackParams, 'Search'>;
 
 export const Search = (props: SearchProps) => {
     const {

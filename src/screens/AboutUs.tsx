@@ -1,4 +1,4 @@
-import { StackScreenProps } from '@react-navigation/stack';
+// import { StackScreenProps } from '@react-navigation/stack';
 import { Dimensions, Image, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Avatar, Button, Text, useTheme } from 'react-native-paper';
@@ -6,11 +6,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { SimpleGrid } from 'react-native-super-grid';
 import { Box } from '../components/common/Box';
 import { Special } from '../components/Special';
-import { AppStackParams } from '../navigation/App';
+// import { MainStackParams } from '../models/navigation';
 
-type AboutUsProps = StackScreenProps<AppStackParams, 'AboutUs'>;
+// type AboutUsProps = StackScreenProps<MainStackParams, 'AboutUs'>;
 
-export const AboutUs = (props: AboutUsProps) => {
+export const AboutUs = () => {
 
     const { width } = Dimensions.get('window');
     const { colors } = useTheme();

@@ -5,8 +5,8 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Workshop } from '../components/Workshop';
-import { AppStackParams } from '../navigation/App';
-type WorkshopsProps = StackScreenProps<AppStackParams, 'Workshops'>;
+import { MainStackParams } from '../models/navigation';
+type WorkshopsProps = StackScreenProps<MainStackParams, 'Workshops'>;
 
 export const Workshops = (props: WorkshopsProps) => {
 

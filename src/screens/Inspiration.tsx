@@ -6,9 +6,9 @@ import { default as LinearGradient } from 'react-native-linear-gradient';
 import { Appbar, Avatar, Text, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Box } from '../components/common/Box';
-import { AppStackParams } from '../navigation/App';
+import { MainStackParams } from '../models/navigation';
 
-type InspirationProps = StackScreenProps<AppStackParams, 'Inspiration'>;
+type InspirationProps = StackScreenProps<MainStackParams, 'Inspiration'>;
 
 export const Inspiration = (props: InspirationProps) => {
     const {

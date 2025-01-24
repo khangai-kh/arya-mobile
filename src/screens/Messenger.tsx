@@ -1,8 +1,8 @@
 import { StackScreenProps } from '@react-navigation/stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AppStackParams } from '../navigation/App';
+import { MainStackParams } from '../models/navigation';
 
-type MessengerProps = StackScreenProps<AppStackParams, 'Messenger'>;
+type MessengerProps = StackScreenProps<MainStackParams, 'Messenger'>;
 
 export const Messenger = (props: MessengerProps) => {
     return (

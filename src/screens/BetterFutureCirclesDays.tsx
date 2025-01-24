@@ -5,8 +5,8 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Announcement } from '../components/Announcement';
-import { AppStackParams } from '../navigation/App';
-type BetterFutureCirclesDaysProps = StackScreenProps<AppStackParams, 'BetterFutureCirclesDays'>;
+import { MainStackParams } from '../models/navigation';
+type BetterFutureCirclesDaysProps = StackScreenProps<MainStackParams, 'BetterFutureCirclesDays'>;
 
 export const BetterFutureCirclesDays = (props: BetterFutureCirclesDaysProps) => {
 

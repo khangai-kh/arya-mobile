@@ -6,9 +6,9 @@ import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { Appbar, Button, Chip, Searchbar, Switch, Text, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Box } from '../components/common/Box';
-import { AppStackParams } from '../navigation/App';
+import { MainStackParams } from '../models/navigation';
 
-type FilterProps = StackScreenProps<AppStackParams, 'MemberFilter'>;
+type FilterProps = StackScreenProps<MainStackParams, 'MemberFilter'>;
 
 export const MemberFilter = (props: FilterProps) => {
     const { navigation } = props;

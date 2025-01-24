@@ -2,10 +2,10 @@ import { CompositeNavigationProp, NavigationProp, useNavigation } from '@react-n
 import { useState } from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Investment } from '../components/Investment';
-import { AppStackParams } from '../navigation/App';
-import { BottomTabStackParams } from '../navigation/BottomTab';
+import { MainStackParams } from '../models/navigation';
+import { BottomTabStackParams } from '../navigation/user/tabs/BottomTab';
 
-type UseNavigationProps = CompositeNavigationProp<NavigationProp<BottomTabStackParams, 'Home'>, NavigationProp<AppStackParams>>;
+type UseNavigationProps = CompositeNavigationProp<NavigationProp<BottomTabStackParams, 'Home'>, NavigationProp<MainStackParams>>;
 
 export const Investments = () => {
     const { navigate } = useNavigation<UseNavigationProps>();

@@ -1,8 +1,8 @@
 import { StackScreenProps } from '@react-navigation/stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AppStackParams } from '../navigation/App';
+import { MainStackParams } from '../models/navigation';
 
-type NotificationsProps = StackScreenProps<AppStackParams, 'Notifications'>;
+type NotificationsProps = StackScreenProps<MainStackParams, 'Notifications'>;
 
 export const Notifications = (props: NotificationsProps) => {
     return (

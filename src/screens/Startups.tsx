@@ -5,9 +5,9 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { IconButton, Text, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Funding } from '../components/Funding';
-import { AppStackParams } from '../navigation/App';
+import { MainStackParams } from '../models/navigation';
 
-type StartupsProps = StackScreenProps<AppStackParams, 'Startups'>;
+type StartupsProps = StackScreenProps<MainStackParams, 'Startups'>;
 
 export const Startups = (props: StartupsProps) => {
 

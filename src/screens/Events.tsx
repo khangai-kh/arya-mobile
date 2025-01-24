@@ -1,9 +1,9 @@
 import { StackScreenProps } from '@react-navigation/stack';
 import { Text } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AppStackParams } from '../navigation/App';
+import { MainStackParams } from '../models/navigation';
 
-type EventsProps = StackScreenProps<AppStackParams, 'Events'>;
+type EventsProps = StackScreenProps<MainStackParams, 'Events'>;
 
 export const Events = (props: EventsProps) => {
     return (

@@ -6,14 +6,14 @@ import { Image, useWindowDimensions, View } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
-import { AppStackParams } from '../navigation/App';
-import { BottomTabStackParams } from '../navigation/BottomTab';
+import { MainStackParams } from '../models/navigation';
+import { BottomTabStackParams } from '../navigation/user/tabs/BottomTab';
 import { Contents } from './Contents';
 import { Entrepreneurship } from './Entrepreneurship';
 import { Investments } from './Investments';
 import { Members } from './Members';
 
-type HomeProps = CompositeScreenProps<BottomTabScreenProps<BottomTabStackParams, 'Home'>, StackScreenProps<AppStackParams>>;
+type HomeProps = CompositeScreenProps<BottomTabScreenProps<BottomTabStackParams, 'Home'>, StackScreenProps<MainStackParams>>;
 
 const renderScene = SceneMap({
     'contents': Contents,

@@ -1,8 +1,8 @@
 import { StackScreenProps } from '@react-navigation/stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AppStackParams } from '../navigation/App';
+import { MainStackParams } from '../models/navigation';
 
-type ForgotPasswordProps = StackScreenProps<AppStackParams, 'ForgotPassword'>;
+type ForgotPasswordProps = StackScreenProps<MainStackParams, 'ForgotPassword'>;
 
 export const ForgotPassword = (props: ForgotPasswordProps) => {
     return (

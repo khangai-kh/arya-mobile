@@ -5,8 +5,8 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Inspiration } from '../components/Inspiration';
-import { AppStackParams } from '../navigation/App';
-type InspirationsProps = StackScreenProps<AppStackParams, 'Inspirations'>;
+import { MainStackParams } from '../models/navigation';
+type InspirationsProps = StackScreenProps<MainStackParams, 'Inspirations'>;
 
 export const Inspirations = (props: InspirationsProps) => {
 

@@ -4,9 +4,9 @@ import { Image, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Appbar, Avatar, Button, Chip, Text, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AppStackParams } from '../navigation/App';
+import { MainStackParams } from '../models/navigation';
 
-type MemberProps = StackScreenProps<AppStackParams, 'Member'>;
+type MemberProps = StackScreenProps<MainStackParams, 'Member'>;
 
 export const Member = (props: MemberProps) => {
     const {

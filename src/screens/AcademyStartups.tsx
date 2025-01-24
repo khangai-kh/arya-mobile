@@ -1,22 +1,13 @@
-import { StackScreenProps } from '@react-navigation/stack';
 import { useState } from 'react';
 import { View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Button, IconButton, Text, useTheme } from 'react-native-paper';
+import { Button, IconButton, Text } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Funding } from '../components/Funding';
-import { AppStackParams } from '../navigation/App';
 
-type AcademyStartupsProps = StackScreenProps<AppStackParams, 'AcademyStartups'>;
-
-export const AcademyStartups = (props: AcademyStartupsProps) => {
-
-    const { navigation } = props;
-    const { colors } = useTheme();
-
+export const AcademyStartups = () => {
     const [
         academyStartups,
-        setAcademyStartups
     ] = useState([
         {
             types: [

@@ -4,9 +4,9 @@ import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { Appbar, Button, Text, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Box } from '../components/common/Box';
-import { AppStackParams } from '../navigation/App';
+import { MainStackParams } from '../models/navigation';
 
-type StartupsFilterProps = StackScreenProps<AppStackParams, 'StartupsFilter'>;
+type StartupsFilterProps = StackScreenProps<MainStackParams, 'StartupsFilter'>;
 
 export const StartupsFilter = (props: StartupsFilterProps) => {
 

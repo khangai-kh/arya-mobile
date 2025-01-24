@@ -6,9 +6,9 @@ import { Avatar, Button, Chip, Divider, IconButton, Modal, Portal, Text, useThem
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Box } from '../components/common/Box';
 import { Founder } from '../components/Founder';
-import { AppStackParams } from '../navigation/App';
+import { MainStackParams } from '../models/navigation';
 
-type StartupProps = StackScreenProps<AppStackParams, 'Startup'>;
+type StartupProps = StackScreenProps<MainStackParams, 'Startup'>;
 
 export const Startup = (props: StartupProps) => {
 

@@ -5,9 +5,9 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Training } from '../components/Training';
-import { AppStackParams } from '../navigation/App';
+import { MainStackParams } from '../models/navigation';
 
-type InvestorTrainingsProps = StackScreenProps<AppStackParams, 'InvestorTrainings'>;
+type InvestorTrainingsProps = StackScreenProps<MainStackParams, 'InvestorTrainings'>;
 
 export const InvestorTrainings = (props: InvestorTrainingsProps) => {
 

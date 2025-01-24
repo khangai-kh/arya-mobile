@@ -1,162 +1,97 @@
+import React from 'react';
 import { StackScreenProps } from '@react-navigation/stack';
 import { useState } from 'react';
-import { View } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { View, ScrollView, StyleSheet } from 'react-native';
 import { Chip, Text, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Announcement } from '../components/Announcement';
-import { AppStackParams } from '../navigation/App';
-type AnnouncementsProps = StackScreenProps<AppStackParams, 'Announcements'>;
+import { MainStackParams } from '../models/navigation';
 
-export const Announcements = (props: AnnouncementsProps) => {
+type AnnouncementsProps = StackScreenProps<MainStackParams, 'Announcements'>;
 
-    const { navigation } = props;
+export const Announcements = ({ navigation }: AnnouncementsProps) => {
     const { colors } = useTheme();
-    const [
-        announcements,
-        setAnnouncements
-    ] = useState([
+    const [announcements] = useState([
         {
-            title: "Arya Retreat'24",
-            image: "",
-            body: "Freedom: Manage Your Money, Discover Your Power",
-            location: "Tasigo Hotel Eskişehir",
-            date: "2024-09-24",
-            type: "Event",
+            title: 'Arya Retreat\'24',
+            image: '',
+            body: 'Freedom: Manage Your Money, Discover Your Power',
+            location: 'Tasigo Hotel Eskişehir',
+            date: '2024-09-24',
+            type: 'Event',
         },
         {
-            title: "Arya GSYF Invests $250,000 in PhiTech",
-            image: "",
-            body: "Health biotechnology focused on genome technologies",
-            location: "Tasigo Hotel Eskişehir",
-            date: "16.11.2023",
-            type: "Investment",
-        }, {
-            title: "Arya Retreat'24",
-            image: "",
-            body: "Freedom: Manage Your Money, Discover Your Power",
-            location: "Tasigo Hotel Eskişehir",
-            date: "2024-09-24",
-            type: "Event",
+            title: 'Arya GSYF Invests $250,000 in PhiTech',
+            image: '',
+            body: 'Health biotechnology focused on genome technologies',
+            location: 'Tasigo Hotel Eskişehir',
+            date: '16.11.2023',
+            type: 'Investment',
         },
         {
-            title: "Arya Retreat'24",
-            image: "",
-            body: "Freedom: Manage Your Money, Discover Your Power",
-            location: "Tasigo Hotel Eskişehir",
-            date: "2024-09-24",
-            type: "Investment",
-        }, {
-            title: "Arya Retreat'24",
-            image: "",
-            body: "Freedom: Manage Your Money, Discover Your Power",
-            location: "Tasigo Hotel Eskişehir",
-            date: "2024-09-24",
-            type: "Event",
-        },
-        {
-            title: "Arya Retreat'24",
-            image: "",
-            body: "Freedom: Manage Your Money, Discover Your Power",
-            location: "Tasigo Hotel Eskişehir",
-            date: "2024-09-24",
-            type: "Event",
-        }
-    ]);
-    const [
-        types,
-        setTypes
-    ] = useState([
-        {
-            id: 0,
-            value: 'Event'
-        },
-        {
-            id: 1,
-            value: 'Investment'
-        },
-        {
-            id: 2,
-            value: 'Funding'
-        },
-        {
-            id: 3,
-            value: 'Workshop'
-        },
-        {
-            id: 4,
-            value: 'Webinar'
-        },
-        {
-            id: 5,
-            value: 'Success'
+            title: 'Arya Retreat\'24',
+            image: '',
+            body: 'Freedom: Manage Your Money, Discover Your Power',
+            location: 'Tasigo Hotel Eskişehir',
+            date: '2024-09-24',
+            type: 'Event',
         },
     ]);
-    const [
-        category,
-        setCategory
-    ] = useState<String>();
+
+    const [types] = useState([
+        { id: 0, value: 'Event' },
+        { id: 1, value: 'Investment' },
+        { id: 2, value: 'Funding' },
+        { id: 3, value: 'Workshop' },
+        { id: 4, value: 'Webinar' },
+        { id: 5, value: 'Success' },
+    ]);
+
+    const [category, setCategory] = useState<string | undefined>();
 
     return (
-        <SafeAreaView
-            style={{
-                flex: 1
-            }}
-            edges={[
-                'bottom'
-            ]}
-        >
-            <View
-                style={{
-                    flex: 1,
-                    marginTop: 24,
-                    marginHorizontal: 16
-                }}
-            >
-                <View style={{ marginBottom: 16 }}>
-                    <ScrollView
-                        showsHorizontalScrollIndicator={false}
-                        horizontal
-                    >
-                        {types.map((type, index) => (
+        <SafeAreaView style={styles.safeArea} edges={['bottom']}>
+            <View style={styles.container}>
+                {/* Category Chips */}
+                <View style={styles.chipContainer}>
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                        {types.map((type) => (
                             <Chip
                                 key={type.id}
-                                style={{
-                                    backgroundColor: category === type.value ? colors.primary : '#fff',
-                                    marginRight: index === types.length ? 0 : 4
-                                }}
+                                style={[
+                                    styles.chip,
+                                    category === type.value && { backgroundColor: colors.primary },
+                                ]}
                                 onPress={() => setCategory(type.value)}
                             >
-                                <Text>
+                                <Text
+                                    style={{
+                                        color: category === type.value ? colors.onPrimary : colors.primary,
+                                    }}
+                                >
                                     {type.value}
                                 </Text>
                             </Chip>
                         ))}
                     </ScrollView>
                 </View>
+
+                {/* Announcements List */}
                 <ScrollView showsVerticalScrollIndicator={false}>
                     {announcements.map((announcement, index) => (
                         <Announcement
-                            title={announcement.title}
-                            image={announcement.image}
-                            body={announcement.body}
-                            location={announcement.location}
-                            date={announcement.date}
-                            type={announcement.type}
-                            style={{
-                                marginBottom: index === announcements.length - 1 ? 0 : 8
-                            }}
-                            onPress={() => {
-                                if (announcement.type === 'Announcement') {
-                                    navigation.navigate('Announcement', {
-                                        id: announcement.title
-                                    });
-                                } else {
-                                    navigation.navigate('Content', {
-                                        id: announcement.title
-                                    });
-                                }
-                            }}
+                            key={`${announcement.title}-${index}`}
+                            {...announcement}
+                            style={[
+                                styles.announcement,
+                                index === announcements.length - 1 && styles.lastAnnouncement,
+                            ]}
+                            onPress={() =>
+                                navigation.navigate(
+                                    announcement.type === 'Announcement' ? 'Announcement' : 'Content',
+                                    { id: announcement.title }
+                                )
+                            }
                         />
                     ))}
                 </ScrollView>
@@ -164,3 +99,26 @@ export const Announcements = (props: AnnouncementsProps) => {
         </SafeAreaView>
     );
 };
+
+const styles = StyleSheet.create({
+    safeArea: {
+        flex: 1,
+    },
+    container: {
+        flex: 1,
+        marginTop: 24,
+        marginHorizontal: 16,
+    },
+    chipContainer: {
+        marginBottom: 16,
+    },
+    chip: {
+        marginRight: 8,
+    },
+    announcement: {
+        marginBottom: 8,
+    },
+    lastAnnouncement: {
+        marginBottom: 0,
+    },
+});

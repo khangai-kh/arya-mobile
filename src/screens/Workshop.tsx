@@ -7,8 +7,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import { Appbar, Button, Card, Text, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Box } from '../components/common/Box';
-import { AppStackParams } from '../navigation/App';
-type WorkshopProps = StackScreenProps<AppStackParams, 'Workshop'>;
+import { MainStackParams } from '../models/navigation';
+type WorkshopProps = StackScreenProps<MainStackParams, 'Workshop'>;
 
 export const Workshop = (props: WorkshopProps) => {
 

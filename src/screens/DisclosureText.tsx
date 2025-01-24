@@ -4,9 +4,9 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { Button, Text, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Box } from '../components/common/Box';
-import { AppStackParams } from '../navigation/App';
+import { MainStackParams } from '../models/navigation';
 
-type DisclosureTextProps = StackScreenProps<AppStackParams, 'DisclosureText'>;
+type DisclosureTextProps = StackScreenProps<MainStackParams, 'DisclosureText'>;
 
 export const DisclosureText = (props: DisclosureTextProps) => {
 
