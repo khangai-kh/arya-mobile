@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Image, View } from 'react-native';
 import { Drawer } from 'react-native-drawer-layout';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-import { Appbar, Button, Chip, Searchbar, Switch, Text, useTheme } from 'react-native-paper';
+import { Appbar, Button, Checkbox, Chip, Searchbar, Switch, Text, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Box } from '../components/common/Box';
 import { MainStackParams } from '../models/navigation';
@@ -21,12 +21,17 @@ export const MemberFilter = (props: FilterProps) => {
     const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
     const [open, setOpen] = useState<boolean>(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [currentFilter, setCurrentFilter] = useState<string | undefined>(undefined);
 
     const filters = [
         { id: 0, title: 'Profile type' },
         { id: 1, title: 'Interest' },
         { id: 2, title: 'Sector' },
         { id: 3, title: 'Location' },
+    ];
+    const currentFilterItems = [
+        { id: 0, title: 'VC investor' },
+        { id: 1, title: 'Angel investor' }
     ];
 
     const roles = [
@@ -63,37 +68,78 @@ export const MemberFilter = (props: FilterProps) => {
                     <Appbar.Content
                         title={
                             <Text variant='titleMedium'>
-                                Filter
+                                {currentFilter}
                             </Text>
                         }
                     />
                 </Appbar.Header>
+                {currentFilter !== 'Profile type' && (
+                    <View
+                        style={{
+                            margin: 16
+                        }}
+                    >
+                        <Searchbar
+                            icon={require('../assets/flat-icons/search.png')}
+                            clearIcon={require('../assets/flat-icons/cross-circle.png')}
+                            // iconColor='#CFCFCF'
+                            placeholder="Search Arya"
+                            onChangeText={setSearchQuery}
+                            value={searchQuery}
+                            style={{
+                                backgroundColor: '#fff'
+                            }}
+                        />
+                    </View>
+                )}
                 <View
                     style={{
-                        margin: 16
+                        marginTop: 24
                     }}
                 >
-                    <Searchbar
-                        icon={require('../assets/flat-icons/search.png')}
-                        clearIcon={require('../assets/flat-icons/cross-circle.png')}
-                        // iconColor='#CFCFCF'
-                        placeholder="Search Arya"
-                        onChangeText={setSearchQuery}
-                        value={searchQuery}
-                        style={{
-                            backgroundColor: '#fff'
-                        }}
-                    />
+                    {currentFilterItems.map((item, index) => (
+                        <View
+                            style={{
+                                backgroundColor: '#fff',
+                                paddingHorizontal: 16,
+                                borderTopLeftRadius: index === 0 ? 16 : 0,
+                                borderTopRightRadius: index === 0 ? 16 : 0,
+                                borderBottomLeftRadius: currentFilterItems.length === index + 1 ? 16 : 0,
+                                borderBottomRightRadius: currentFilterItems.length === index + 1 ? 16 : 0,
+                            }}
+                        >
+                            <View
+                                style={{
+                                    borderBottomColor: '#F2F2F2',
+                                    paddingVertical: 12,
+                                    borderBottomWidth: currentFilterItems.length === index + 1 ? 0 : 1,
+                                    flexDirection: 'row',
+                                    alignItems: 'center'
+                                }}
+                            >
+                                <Checkbox.Android
+                                    status={'unchecked'}
+                                    color="#fff"
+                                    uncheckedColor="#A09FA0"
+                                    onPress={() => { }}
+                                />
+                                <Text>
+                                    {item.title}
+                                </Text>
+                            </View>
+                        </View>
+                    ))}
                 </View>
             </ScrollView>
             <Box
                 px={16}
                 py={16}
+                mb={32}
             >
                 <Button
                     mode="contained"
                     onPress={() => {
-                        setOpen(false);
+
                     }}
                 >
                     Apply
@@ -264,6 +310,7 @@ export const MemberFilter = (props: FilterProps) => {
                                     marginTop: filters.length >= index ? 8 : 0
                                 }}
                                 onPress={() => {
+                                    setCurrentFilter(filter.title);
                                     setOpen(true);
                                 }}
                             >

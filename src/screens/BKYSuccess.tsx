@@ -5,9 +5,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Box } from '../components/common/Box';
 import { MainStackParams } from '../models/navigation';
 
-type SuccessProps = StackScreenProps<MainStackParams, 'Success'>;
+type BKYSuccessProps = StackScreenProps<MainStackParams, 'BKYSuccess'>;
 
-export const Success = (props: SuccessProps) => {
+export const BKYSuccess = (props: BKYSuccessProps) => {
 
     const {
         navigation,
@@ -49,7 +49,7 @@ export const Success = (props: SuccessProps) => {
                     </Text>
                 </View>
                 <Image
-                    source={require('../assets/success.png')}
+                    source={require('../assets/bky-success.png')}
                     style={{
                         width: 136,
                         height: 300

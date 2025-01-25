@@ -7,6 +7,7 @@ export type MainStackParams = {
     BetterFutureCirclesDays: undefined;
     BottomTab: undefined;
     BKYLicense: undefined;
+    BKYSuccess: undefined;
     CheckIn: undefined;
     ChangePassword: undefined;
     ClosedDeals: undefined;
@@ -20,10 +21,10 @@ export type MainStackParams = {
     Search: undefined;
     SignIn: undefined;
     SignUp: undefined;
+    SignUpSuccess: undefined;
     SplashScreen: undefined;
     Startups: undefined;
     StartupsFilter: undefined;
-    Success: undefined;
     MemberShip: undefined;
     MemberFilter: undefined;
     Messenger: undefined;

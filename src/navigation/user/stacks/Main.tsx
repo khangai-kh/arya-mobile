@@ -1,13 +1,15 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { IconButton } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import { IconButton } from 'react-native-paper';
+import { MainStackParams } from '../../../models/navigation';
 import { AboutUs } from '../../../screens/AboutUs';
 import { AcademyStartups } from '../../../screens/AcademyStartups';
 import { Announcement } from '../../../screens/Announcement';
 import { Announcements } from '../../../screens/Announcements';
 import { BetterFutureCirclesDays } from '../../../screens/BetterFutureCirclesDays';
 import { BKYLicense } from '../../../screens/BKYLicense';
+import { BKYSuccess } from '../../../screens/BKYSuccess';
 import { ClosedDeals } from '../../../screens/ClosedDeals';
 import { Content } from '../../../screens/Content';
 import { DisclosureText } from '../../../screens/DisclosureText';
@@ -24,16 +26,14 @@ import { Search } from '../../../screens/Search';
 import { Startup } from '../../../screens/Startup';
 import { Startups } from '../../../screens/Startups';
 import { StartupsFilter } from '../../../screens/StartupsFilter';
-import { Success } from '../../../screens/Success';
 import { Training } from '../../../screens/Training';
 import { Workshop } from '../../../screens/Workshop';
 import { Workshops } from '../../../screens/Workshops';
 import { BottomTab } from '../tabs/BottomTab';
-import { MainStackParams } from '../../../models/navigation';
 
 const Stack = createNativeStackNavigator<MainStackParams>();
 
-const SearchIconButton = ({ onPress }: { onPress: () => void }) => (
+const SearchIconButton = ({ onPress }: { onPress: () => void; }) => (
   <IconButton
     icon={require('../../../assets/flat-icons/search.png')}
     size={24}
@@ -48,13 +48,13 @@ const StartupHeaderRight = () => (
       icon={require('../../../assets/flat-icons/heart-outlined.png')}
       size={24}
       style={styles.heartIconButton}
-      onPress={() => {}}
+      onPress={() => { }}
     />
     <IconButton
       icon={require('../../../assets/flat-icons/menu.png')}
       size={24}
       style={styles.menuIconButton}
-      onPress={() => {}}
+      onPress={() => { }}
     />
   </View>
 );
@@ -101,7 +101,7 @@ export const MainStack = () => {
           component={AcademyStartups}
           options={{
             title: 'Venture academy startups',
-            headerRight: () => <SearchIconButton onPress={() => {}} />,
+            headerRight: () => <SearchIconButton onPress={() => { }} />,
           }}
         />
         <Stack.Screen
@@ -137,7 +137,7 @@ export const MainStack = () => {
           component={ClosedDeals}
           options={{
             title: 'Closed deals',
-            headerRight: () => <SearchIconButton onPress={() => {}} />,
+            headerRight: () => <SearchIconButton onPress={() => { }} />,
           }}
         />
         <Stack.Screen
@@ -174,7 +174,7 @@ export const MainStack = () => {
           component={Startups}
           options={{
             title: 'Startups in funding round',
-            headerRight: () => <SearchIconButton onPress={() => {}} />,
+            headerRight: () => <SearchIconButton onPress={() => { }} />,
           }}
         />
         <Stack.Screen
@@ -241,8 +241,8 @@ export const MainStack = () => {
           }}
         />
         <Stack.Screen
-          name="Success"
-          component={Success}
+          name="BKYSuccess"
+          component={BKYSuccess}
           options={{
             headerShown: false,
           }}

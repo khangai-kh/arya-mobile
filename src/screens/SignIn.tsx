@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import {
   KeyboardAvoidingView,
@@ -17,6 +18,7 @@ import { RootState, useAppDispatch } from '../redux/configureStore';
 
 export const SignIn = (): JSX.Element => {
   const dispatch = useAppDispatch();
+  const { navigate } = useNavigation();
 
   const { errorMessage, status: signInStatus } = useSelector(
     (state: RootState) => state.auth,
@@ -39,7 +41,7 @@ export const SignIn = (): JSX.Element => {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['bottom']}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <KeyboardAvoidingView
         style={styles.keyboardView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -55,7 +57,7 @@ export const SignIn = (): JSX.Element => {
             <Text style={styles.subtitle}>
               Hi! Welcome back, you’ve been missed
             </Text>
-            <Box mt={32} px={16} py={24}>
+            <Box mt={32} px={16}>
               <Text variant="titleSmall">Email</Text>
               <TextInput
                 autoCapitalize="none"
@@ -73,10 +75,30 @@ export const SignIn = (): JSX.Element => {
                 value={password}
                 onChangeText={setPassword}
                 onSubmitEditing={handleSignIn}
+                style={{
+                  marginTop: 12,
+                  marginBottom: 16
+                }}
               />
               {errorMessage ? (
                 <Text style={styles.errorText}>{errorMessage}</Text>
               ) : null}
+              <View
+                style={{
+                  flex: 1,
+                  alignSelf: 'flex-end'
+                }}
+              >
+                <Text
+                  variant='titleMedium'
+                  style={{
+                    color: '#00AEEF'
+                  }}
+                  onPress={() => navigate('ForgotPassword')}
+                >
+                  Forgot password ?
+                </Text>
+              </View>
               <Button
                 mode="contained"
                 style={styles.signInButton}
@@ -105,7 +127,7 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     flex: 1,
-    marginTop: 64,
+    marginTop: 80,
   },
   title: {
     textAlign: 'center',

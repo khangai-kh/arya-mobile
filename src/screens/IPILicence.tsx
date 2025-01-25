@@ -1,9 +1,9 @@
+import { StackScreenProps } from '@react-navigation/stack';
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Button, Checkbox, Text, TextInput, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StackScreenProps } from '@react-navigation/stack';
 import { Box } from '../components/common/Box';
 import { MainStackParams } from '../models/navigation';
 
@@ -101,7 +101,7 @@ export const IPILicense = ({ navigation, route }: IPILicenseProps) => {
         <Button
           mode="contained"
           disabled={!checked}
-          onPress={() => navigation.navigate('Success')}
+          onPress={() => navigation.navigate('BKYSuccess')}
         >
           Submit
         </Button>

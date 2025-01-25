@@ -1,10 +1,13 @@
-import React, { Fragment } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React, { Fragment } from 'react';
+import { MainStackParams } from '../../models/navigation';
+import { ForgotPassword } from '../../screens/ForgotPassword';
 import { SignIn } from '../../screens/SignIn';
- //import { SignUp } from '../../screens/SignUp';
+import { SignUp } from '../../screens/SignUp';
+import { SignUpSuccess } from '../../screens/SignUpSuccess';
 import { SplashScreen } from '../../screens/SplashScreen';
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<MainStackParams>();
 
 export const Guest = () => {
     return (
@@ -30,20 +33,27 @@ export const Guest = () => {
                             headerShown: false,
                         }}
                     />
-                    {/* <Stack.Screen
+                    <Stack.Screen
                         name="ForgotPassword"
                         component={ForgotPassword}
                         options={{
-                            title: 'Forgot Password',
+                            headerShown: false,
                         }}
                     />
                     <Stack.Screen
                         name="SignUp"
                         component={SignUp}
                         options={{
-                            title: 'Sign Up',
+                            headerShown: false,
                         }}
-                    />*/}
+                    />
+                    <Stack.Screen
+                        name="SignUpSuccess"
+                        component={SignUpSuccess}
+                        options={{
+                            headerShown: false,
+                        }}
+                    />
                 </Fragment>
             </Stack.Group>
         </Stack.Navigator>

@@ -1,15 +1,15 @@
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import {
   Image,
   KeyboardAvoidingView,
   Platform,
+  StyleSheet,
   useWindowDimensions,
   View,
-  StyleSheet,
 } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
 
 type NavigationType = {
   navigate: (screen: string) => void;
@@ -45,19 +45,45 @@ export const SplashScreen = (): JSX.Element => {
             “Shining stars are not afraid of others shining.”
           </Text>
           <Button mode="contained" style={styles.discoverButton}>
-            Discover Arya
+            <Text
+              variant='titleMedium'
+              style={{
+                color: '#fff'
+              }}
+            >
+              Discover Arya
+            </Text>
           </Button>
           <Button mode="contained" style={styles.joinButton}>
-            Ready to join Arya
+            <Text
+              variant='titleMedium'
+              style={{
+                color: '#414042'
+              }}
+              onPress={() => navigation.navigate('SignUp')}
+            >
+              Ready to join Arya
+            </Text>
           </Button>
           <View style={styles.signInContainer}>
-            <Text>Already have an account?</Text>
-            <Button
-              mode="text"
+            <Text
+              variant='titleSmall'
+              style={{
+                fontWeight: '500'
+              }}
+            >
+              Already have an account?
+            </Text>
+            <Text
+              variant='titleSmall'
+              style={{
+                color: '#B61D8D',
+                marginLeft: 4
+              }}
               onPress={() => navigation.navigate('SignIn')}
             >
               Sign in
-            </Button>
+            </Text>
           </View>
         </View>
       </KeyboardAvoidingView>
@@ -99,6 +125,7 @@ const styles = StyleSheet.create({
   joinButton: {
     marginTop: 12,
     backgroundColor: '#fff',
+    color: '#414042'
   },
   signInContainer: {
     marginTop: 32,
