@@ -39,6 +39,8 @@ export const Announcement = (props: AnnouncementProps) => {
         ...otherProps
     } = props;
 
+    const formattedDate = new Date(date).toLocaleString();
+
     return (
         <TouchableOpacity
             {...otherProps}
@@ -67,7 +69,7 @@ export const Announcement = (props: AnnouncementProps) => {
                         flexDirection: 'row',
                         alignItems: 'center',
                         borderRadius: 32,
-                        backgroundColor: '#F5EF99'
+                        backgroundColor: '#F5EF99',
                     }}
                 >
                     <Text variant="labelSmall">
@@ -79,31 +81,42 @@ export const Announcement = (props: AnnouncementProps) => {
                 px={12}
                 py={8}
             >
+                {/* Title with Single Line Wrapping */}
                 <Text
                     variant="titleMedium"
                     numberOfLines={1}
+                    style={{ flexShrink: 1, width: '100%' }} 
                 >
                     {title}
                 </Text>
+
+                {/* Body with Two Line Wrapping */}
                 <Text
                     variant="bodyMedium"
-                    numberOfLines={1}
+                    numberOfLines={2} 
+                    ellipsizeMode="tail"
                     style={{
                         marginTop: 4,
-                        marginBottom: 8
+                        marginBottom: 8,
+                        flexShrink: 1,
+                        width: 300,
                     }}
                 >
                     {body}
                 </Text>
+
                 <View
                     style={{
-                        flexDirection: 'row'
+                        flexDirection: 'row',
+                        flexWrap: 'wrap' // Allow items to wrap if needed
                     }}
                 >
+                    {/* Location */}
                     <View
                         style={{
                             flexDirection: 'row',
-                            alignItems: 'center'
+                            alignItems: 'center',
+                            flexShrink: 1
                         }}
                     >
                         <Image
@@ -119,17 +132,21 @@ export const Announcement = (props: AnnouncementProps) => {
                             variant="bodyMedium"
                             numberOfLines={1}
                             style={{
-                                fontWeight: 300
+                                fontWeight: '300',
+                                flexShrink: 1
                             }}
                         >
                             {location}
                         </Text>
                     </View>
+
+                    {/* Date */}
                     <View
                         style={{
                             flexDirection: 'row',
                             alignItems: 'center',
-                            marginLeft: 8
+                            marginLeft: 8,
+                            flexShrink: 1
                         }}
                     >
                         <Image
@@ -145,10 +162,11 @@ export const Announcement = (props: AnnouncementProps) => {
                             variant="bodyMedium"
                             numberOfLines={1}
                             style={{
-                                fontWeight: 300
+                                fontWeight: '300',
+                                flexShrink: 1
                             }}
                         >
-                            {date}
+                            {formattedDate}
                         </Text>
                     </View>
                 </View>

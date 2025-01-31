@@ -1,7 +1,5 @@
 
 export interface BaseEntityModel {
-    readonly createdAt: string;
-    readonly modifiedAt: string | null;
-    readonly modifiedId: number | null;
+    readonly created_at: string;
     readonly isValid: boolean;
 }
