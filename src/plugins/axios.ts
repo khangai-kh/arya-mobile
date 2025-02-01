@@ -1,5 +1,5 @@
 import { default as axios } from 'axios';
-import { baseURL } from '../constants/env';
+import config from '../config/config';
 import { setAuthToken } from '../redux/auth/reducer';
 import { store } from '../redux/configureStore';
 //import { setProfile } from '../redux/profile/reducer';
@@ -11,7 +11,7 @@ export type CustomResponse<T> = {
 };
 
 export const API = axios.create({
-    baseURL: baseURL,
+    baseURL: config.apiUrl,
     headers: {
         'Content-Type': 'application/json',
     },
