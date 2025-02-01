@@ -20,47 +20,13 @@ export const Contents = () => {
     const { colors } = useTheme();
     const { token } = useSelector((state: RootState) => state.auth);
 
-    const [contents, setContents] = useState<ContentModel[]>([
-        // {
-        //     id: 1,
-        //     title: "Arya Retreat'24",
-        //     description: "Freedom: Manage Your Money, Discover Your Power", // Adjusted for optional fields
-        //     image_url: "", // Placeholder for required field
-        //     location: "Tasigo Hotel Eskişehir",
-        //     created_at: new Date("2024-09-24"),
-        //     content_type_id: 1,
-        //     isValid: true, // Placeholder for required field
-        //     createdUser: null, // Default to null if not available
-        // },
-        // {
-        //     id: 2,
-        //     title: "Arya Retreat'24",
-        //     description: "Freedom: Manage Your Money, Discover Your Power",
-        //     image_url: "",
-        //     location: "Tasigo Hotel Eskişehir",
-        //     created_at: new Date("2024-09-24"),
-        //     content_type_id: 1,
-        //     isValid: true,
-        //     createdUser: null,
-        // },
-        // {
-        //     id: 2,
-        //     title: "Arya Retreat'24",
-        //     description: "Freedom: Manage Your Money, Discover Your Power",
-        //     image_url: "",
-        //     location: "Tasigo Hotel Eskişehir",
-        //     created_at: new Date("2024-09-24"),
-        //     content_type_id: 1,
-        //     isValid: true,
-        //     createdUser: null,
-        // },
-    ]);
+    const [contents, setContents] = useState<ContentModel[]>([ ]);
 
     const { isFetching, refetch } = useQuery(
         ['announcements', DEFAULT_PAGE, PAGE_SIZE, token],
         () => {
             return API.get('/api/contents', {
-                params: { 
+                params: {
                     page: DEFAULT_PAGE,
                     page_size: PAGE_SIZE,
                 },
@@ -73,7 +39,6 @@ export const Contents = () => {
             },
         }
     );
-    
     const [inspirations, setInspirations] = useState([
         {
             title: "Sustainability and Social Innovation: Who is Really Responsible?",

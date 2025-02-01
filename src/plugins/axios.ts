@@ -13,7 +13,6 @@ export type CustomResponse<T> = {
 export const API = axios.create({
     baseURL: baseURL,
     headers: {
-        accept: 'application/json',
         'Content-Type': 'application/json',
     },
 });

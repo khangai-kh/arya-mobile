@@ -1,6 +1,6 @@
 import { StackScreenProps } from '@react-navigation/stack';
 import React from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Box } from '../../components/common/Box';
@@ -12,40 +12,67 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/configureStore';
 import CustomCheckbox from '../../components/forms/CustomCheckbox';
 import { Formik } from 'formik';
-import { userValidationSchema }  from '../../utils/validation-schemas';
+import { userValidationSchema } from '../../utils/validation-schemas';
+import { API } from '../../plugins/axios';
 
 type SignUpProps = StackScreenProps<MainStackParams, 'SignUp'>;
 
 export const UserRegister = ({ navigation }: SignUpProps) => {
-    const { errorMessage, status: signInStatus } = useSelector(
+  const { errorMessage, status: signInStatus } = useSelector(
     (state: RootState) => state.auth,
   );
 
   return (
-    <SafeAreaView style={{ flex: 1 }} edges={['top']}>
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
       <KeyboardAvoidingView
-        style={{ flex: 1 }}
+        style={styles.flexContainer}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ flexGrow: 1 }}
+          contentContainerStyle={styles.scrollViewContent}
         >
-          <View style={{ flex: 1, marginTop: 40 }}>
-            <Text variant="titleLarge" style={{ textAlign: 'center' }}>
-              Create Account
-            </Text>
-            <Text style={{ textAlign: 'center', marginTop: 4, paddingHorizontal: 80 }}>
+          <View style={styles.container}>
+            <Text variant="titleLarge" style={styles.title}>Create Account</Text>
+            <Text style={styles.description}>
               Fill your information below or register with your social account
             </Text>
             <Formik
-              initialValues={{ fullName: '', email: '', password: '', termsAccepted: false }}
+              initialValues={{ fullName: '', email: '', password: '', termsAccepted: false, general: '' }}
               validationSchema={userValidationSchema}
-              onSubmit={(values) => {
-                navigation.navigate('SignUpSuccess');
+              onSubmit={async (values, { setSubmitting, setErrors }) => {
+                try {
+                    const payload = JSON.stringify({
+                        email: values.email,
+                        password: values.password,
+                        full_name: values.fullName,
+                      });
+                      console.log('User ', payload);
+                      const response = await API.post(
+                        'api/users',
+                        payload,
+                      );
+                      console.log('User created successfully:', response.data);
+                  console.log('User created successfully:', response.data);
+                  navigation.navigate('SignUpSuccess');
+                } catch (error: any) {
+                  console.error('Error registering user:', error);
+                  setErrors({ general: error.message || 'Registration failed' });
+                } finally {
+                  setSubmitting(false);
+                }
               }}
             >
-              {({ handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue }) => (
+              {({
+                handleChange,
+                handleBlur,
+                handleSubmit,
+                values,
+                errors,
+                touched,
+                setFieldValue,
+                isSubmitting,
+              }) => (
                 <Box mt={32} px={16}>
                   <Text variant="titleSmall">Full Name</Text>
                   <TextInput
@@ -56,10 +83,10 @@ export const UserRegister = ({ navigation }: SignUpProps) => {
                     value={values.fullName}
                     onChangeText={handleChange('fullName')}
                     onBlur={handleBlur('fullName')}
-                    style={{ marginTop: 12, marginBottom: 8 }}
+                    style={styles.input}
                   />
                   {touched.fullName && errors.fullName && (
-                    <Text style={{ color: 'red' }}>{errors.fullName}</Text>
+                    <Text style={styles.errorText}>{errors.fullName}</Text>
                   )}
 
                   <Text variant="titleSmall">Email</Text>
@@ -71,10 +98,10 @@ export const UserRegister = ({ navigation }: SignUpProps) => {
                     value={values.email}
                     onChangeText={handleChange('email')}
                     onBlur={handleBlur('email')}
-                    style={{ marginTop: 12, marginBottom: 8 }}
+                    style={styles.input}
                   />
                   {touched.email && errors.email && (
-                    <Text style={{ color: 'red' }}>{errors.email}</Text>
+                    <Text style={styles.errorText}>{errors.email}</Text>
                   )}
 
                   <Text variant="titleSmall">Password</Text>
@@ -84,31 +111,30 @@ export const UserRegister = ({ navigation }: SignUpProps) => {
                     value={values.password}
                     onChangeText={handleChange('password')}
                     onBlur={handleBlur('password')}
-                    style={{ marginTop: 12, marginBottom: 8 }}
+                    style={styles.input}
                   />
                   {touched.password && errors.password && (
-                    <Text style={{ color: 'red' }}>{errors.password}</Text>
+                    <Text style={styles.errorText}>{errors.password}</Text>
+                  )}
+
+                  {errors.general && (
+                    <Text style={styles.generalError}>{errors.general}</Text>
                   )}
 
                   {errorMessage ? (
-                    <Text style={{ color: 'red', textAlign: 'center', marginTop: 16 }}>
-                      {errorMessage}
-                    </Text>
+                    <Text style={styles.generalError}>{errorMessage}</Text>
                   ) : null}
 
-                  <View style={{ marginTop: 16, flexDirection: 'row', alignItems: 'center' }}>
+                  <View style={styles.termsContainer}>
                     <CustomCheckbox
                       checked={values.termsAccepted}
                       onToggle={() => setFieldValue('termsAccepted', !values.termsAccepted)}
                     />
-                    <Text
-                      variant='titleMedium'
-                      style={{ marginLeft: 8, flexShrink: 1, fontWeight: '500' }}
-                    >
+                    <Text variant="titleMedium" style={styles.termsText}>
                       Agree with{' '}
                       <Text
-                        variant='titleMedium'
-                        style={{ color: '#00AEEF', fontWeight: '500' }}
+                        variant="titleMedium"
+                        style={styles.termsLink}
                         onPress={() => navigation.navigate('DisclosureText')}
                       >
                         Terms & Conditions
@@ -116,13 +142,13 @@ export const UserRegister = ({ navigation }: SignUpProps) => {
                     </Text>
                   </View>
                   {touched.termsAccepted && errors.termsAccepted && (
-                    <Text style={{ color: 'red' }}>{errors.termsAccepted}</Text>
+                    <Text style={styles.errorText}>{errors.termsAccepted}</Text>
                   )}
 
                   <Button
                     mode="contained"
-                    style={{ marginTop: 24 }}
-                    loading={signInStatus === 'pending'}
+                    style={styles.submitButton}
+                    loading={isSubmitting || signInStatus === 'pending'}
                     onPress={() => handleSubmit()}
                   >
                     Register
@@ -136,3 +162,56 @@ export const UserRegister = ({ navigation }: SignUpProps) => {
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
+  flexContainer: {
+    flex: 1,
+  },
+  scrollViewContent: {
+    flexGrow: 1,
+  },
+  container: {
+    flex: 1,
+    marginTop: 40,
+  },
+  title: {
+    textAlign: 'center',
+  },
+  description: {
+    textAlign: 'center',
+    marginTop: 4,
+    paddingHorizontal: 80,
+  },
+  input: {
+    marginTop: 12,
+    marginBottom: 8,
+  },
+  errorText: {
+    color: 'red',
+  },
+  generalError: {
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 16,
+  },
+  termsContainer: {
+    marginTop: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  termsText: {
+    marginLeft: 8,
+    flexShrink: 1,
+    fontWeight: '500',
+  },
+  termsLink: {
+    color: '#00AEEF',
+    fontWeight: '500',
+  },
+  submitButton: {
+    marginTop: 24,
+  },
+});
