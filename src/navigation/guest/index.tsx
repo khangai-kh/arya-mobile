@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { Fragment } from 'react';
 import { MainStackParams } from '../../models/navigation';
+import { CreateProfile } from '../../screens/CreateProfile';
 import { ForgotPassword } from '../../screens/ForgotPassword';
 import { SignIn } from '../../screens/SignIn';
 import { SignUp } from '../../screens/SignUp';
@@ -50,6 +51,13 @@ export const Guest = () => {
                     <Stack.Screen
                         name="SignUpSuccess"
                         component={SignUpSuccess}
+                        options={{
+                            headerShown: false,
+                        }}
+                    />
+                    <Stack.Screen
+                        name="CreateProfile"
+                        component={CreateProfile}
                         options={{
                             headerShown: false,
                         }}

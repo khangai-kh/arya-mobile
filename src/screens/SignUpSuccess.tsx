@@ -71,7 +71,7 @@ export const SignUpSuccess = (props: SignUpSuccessProps) => {
                 <Button
                     mode="contained"
                     onPress={() => {
-                        navigation.navigate('SignIn');
+                        navigation.navigate('CreateProfile');
                     }}
                 >
                     Get Started

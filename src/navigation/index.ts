@@ -10,7 +10,7 @@ export const Navigation = () => {
         );
     } else {
         return (
-           Guest()
+            Guest()
         );
     }
 };

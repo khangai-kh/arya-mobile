@@ -91,7 +91,7 @@ const CustomMD3LightTheme = merge(MD3LightTheme, {
       titleMedium: {
         fontFamily: 'Inter',
         fontSize: 16,
-        fontWeight: Platform.OS === 'ios' ? '600' : undefined,
+        fontWeight: Platform.OS === 'ios' ? '500' : undefined,
         letterSpacing: 0.15,
         lineHeight: 24
       },

@@ -11,6 +11,7 @@ export type MainStackParams = {
     CheckIn: undefined;
     ChangePassword: undefined;
     ClosedDeals: undefined;
+    CreateProfile: undefined;
     DisclosureText: undefined;
     Events: undefined;
     Inspirations: undefined;
