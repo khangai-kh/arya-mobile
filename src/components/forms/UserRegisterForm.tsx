@@ -17,6 +17,22 @@ import { API } from '../../plugins/axios';
 
 type SignUpProps = StackScreenProps<MainStackParams, 'SignUp'>;
 
+const generateRandomString = (length: number) => {
+  return Math.random().toString(36).substring(2, 2 + length);
+};
+
+const generateRandomEmail = () => {
+  return `user_${generateRandomString(6)}@example.com`;
+};
+
+const generateRandomPassword = () => {
+  return generateRandomString(10);
+};
+
+const generateRandomFullName = () => {
+  return `User ${generateRandomString(5)}`;
+};
+
 export const UserRegister = ({ navigation }: SignUpProps) => {
   const { errorMessage, status: signInStatus } = useSelector(
     (state: RootState) => state.auth,
@@ -38,7 +54,13 @@ export const UserRegister = ({ navigation }: SignUpProps) => {
               Fill your information below or register with your social account
             </Text>
             <Formik
-              initialValues={{ fullName: '', email: '', password: '', termsAccepted: false, general: '' }}
+              initialValues={{
+                fullName: generateRandomFullName(),
+                email: generateRandomEmail(),
+                password: generateRandomPassword(),
+                termsAccepted: false,
+                general: ''
+              }}
               validationSchema={userValidationSchema}
               onSubmit={async (values, { setSubmitting, setErrors }) => {
                 try {
@@ -162,6 +184,8 @@ export const UserRegister = ({ navigation }: SignUpProps) => {
     </SafeAreaView>
   );
 };
+
+export default UserRegister;
 
 const styles = StyleSheet.create({
   safeArea: {

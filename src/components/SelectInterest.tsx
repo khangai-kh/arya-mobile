@@ -1,14 +1,15 @@
-import { TouchableOpacity } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import React from 'react';
+import { TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { Button, Text } from 'react-native-paper';
-import { Box } from './common/Box';
 import { View } from './common/View';
+import { Box } from './common/Box';
 
 type SelectInterestProps = {
     interests: {
         id: number;
         type: string;
         title: string;
+        icon: JSX.Element; // Add an icon for each interest
     }[];
     selectedInterests: {
         id: number;
@@ -18,6 +19,7 @@ type SelectInterestProps = {
     onSelect: (value: string) => void;
     onNextButton: () => void;
 };
+
 export const SelectInterest = (props: SelectInterestProps) => {
     const {
         interests,
@@ -27,75 +29,96 @@ export const SelectInterest = (props: SelectInterestProps) => {
     } = props;
 
     return (
-        <View
-            style={{
-                flex: 1
-            }}
-        >
+        <View style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false}>
-                <View
-                    style={{
-                        marginTop: 24,
-                        paddingHorizontal: 16
-                    }}
-                >
-                    <Text
-                        variant='titleLarge'
-                        style={{
-                            textAlign: 'center'
-                        }}
-                    >
+                <View style={styles.content}>
+                    <Text variant="titleLarge" style={styles.title}>
                         Select up to 5 Interests
                     </Text>
-                    <Text
-                        variant='bodyMedium'
-                        style={{
-                            marginTop: 12,
-                            textAlign: 'center'
-                        }}
-                    >
+                    <Text variant="bodyMedium" style={styles.subtitle}>
                         Discover meaningful connections by selecting your interests
                     </Text>
-                    <View
-                        style={{
-                            marginTop: 24
-                        }}
-                    >
-                        {interests.map((interest, index) => (
-                            <TouchableOpacity
-                                key={index}
-                                style={{
-                                    flex: 1,
-                                    // backgroundColor: selectedInterests === interest.title ? '#F5EF99' : '#fff',
-                                    padding: 16,
-                                    borderRadius: 24,
-                                    flexDirection: 'row',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center',
-                                    marginBottom: interests.length >= index ? 8 : 0
-                                }}
-                                onPress={() => onSelect(interest.title)}
-                            >
-                                <Text variant='titleMedium'>
-                                    {interest.title}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
+                    <View style={styles.interestsContainer}>
+                        {interests.map((interest) => {
+                            const isSelected = selectedInterests.some(
+                                (selected) => selected.id === interest.id
+                            );
+
+                            return (
+                                <TouchableOpacity
+                                    key={interest.id}
+                                    style={[
+                                        styles.interestBox,
+                                        isSelected && styles.selectedBox,
+                                    ]}
+                                    onPress={() => onSelect(interest.title)}
+                                >
+                                    <View style={styles.iconContainer}>{interest.icon}</View>
+                                    <Text style={styles.interestText}>{interest.title}</Text>
+                                </TouchableOpacity>
+                            );
+                        })}
                     </View>
                 </View>
-            </ScrollView >
-            <Box
-                px={16}
-                py={16}
-            >
+            </ScrollView>
+            <Box px={16} py={16}>
                 <Button
                     mode="contained"
-                    onPress={() => onNextButton()}
-                // disabled={selectedInterests.length < 5}
+                    onPress={onNextButton}
+                    disabled={selectedInterests.length === 0 || selectedInterests.length > 5}
                 >
                     Next
                 </Button>
             </Box>
-        </View >
+        </View>
     );
 };
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+    content: {
+        marginTop: 24,
+        paddingHorizontal: 16,
+    },
+    title: {
+        textAlign: 'center',
+    },
+    subtitle: {
+        marginTop: 12,
+        textAlign: 'center',
+    },
+    interestsContainer: {
+        marginTop: 24,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+    },
+    interestBox: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 12,
+        borderRadius: 24,
+        backgroundColor: '#f5f5f5',
+        marginBottom: 12,
+        width: '48%',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5, // For Android shad
+    },
+    selectedBox: {
+        backgroundColor: '#F5EF99',
+    },
+    iconContainer: {
+        marginRight: 8,
+    },
+    interestText: {
+        fontSize: 16,
+    },
+});
