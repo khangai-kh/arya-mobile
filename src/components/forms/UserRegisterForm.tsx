@@ -63,6 +63,7 @@ export const UserRegister = ({ navigation }: SignUpProps) => {
               }}
               validationSchema={userValidationSchema}
               onSubmit={async (values, { setSubmitting, setErrors }) => {
+                let response;
                 try {
                     const payload = JSON.stringify({
                         email: values.email,
@@ -70,17 +71,16 @@ export const UserRegister = ({ navigation }: SignUpProps) => {
                         full_name: values.fullName,
                       });
                       console.log('User ', payload);
-                      const response = await API.post(
+                       response = await API.post(
                         'api/users',
                         payload,
                       );
                       console.log('User created successfully:', response.data);
-                  console.log('User created successfully:', response.data);
-                  navigation.navigate('SignUpSuccess');
+                      navigation.navigate('SignUpSuccess', { userId: response.data });
                 } catch (error: any) {
-                  console.error('Error registering user:', error);
-                  setErrors({ general: error.message || 'Registration failed' });
-                } finally {
+                  const registrationErrorMessage = error.response.data.detail.message || 'Registration failed. Please try again.';
+                  console.log('Error registering user:', registrationErrorMessage);
+                  setErrors({ general: registrationErrorMessage });
                   setSubmitting(false);
                 }
               }}

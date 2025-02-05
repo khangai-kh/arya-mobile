@@ -55,7 +55,7 @@ export const SignIn = (): JSX.Element => {
               Sign In
             </Text>
             <Text style={styles.subtitle}>
-              Hi! Welcome back, you’ve been missed
+              Hi! Welcome back, you've been missed
             </Text>
             <Box mt={32} px={16}>
               <Text variant="titleSmall">Email</Text>
@@ -75,25 +75,15 @@ export const SignIn = (): JSX.Element => {
                 value={password}
                 onChangeText={setPassword}
                 onSubmitEditing={handleSignIn}
-                style={{
-                  marginTop: 12,
-                  marginBottom: 16
-                }}
+                style={styles.passwordInput}
               />
               {errorMessage ? (
                 <Text style={styles.errorText}>{errorMessage}</Text>
               ) : null}
-              <View
-                style={{
-                  flex: 1,
-                  alignSelf: 'flex-end'
-                }}
-              >
+              <View style={styles.forgotPasswordContainer}>
                 <Text
-                  variant='titleMedium'
-                  style={{
-                    color: '#00AEEF'
-                  }}
+                  variant="titleMedium"
+                  style={styles.forgotPasswordText}
                   onPress={() => navigate('ForgotPassword')}
                 >
                   Forgot password ?
@@ -145,8 +135,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 16,
   },
-  forgotButton: {
-    marginTop: 16,
+  passwordInput: {
+    marginTop: 12,
+    marginBottom: 16,
   },
   forgotText: {
     textAlign: 'right',
@@ -154,6 +145,11 @@ const styles = StyleSheet.create({
   signInButton: {
     marginTop: 24,
   },
+  forgotPasswordContainer: {
+    flex: 1,
+    alignSelf: 'flex-end',
+  },
+  forgotPasswordText: {
+    color: '#00AEEF',
+  },
 });
-
-export default SignIn;

@@ -11,7 +11,9 @@ export type MainStackParams = {
     CheckIn: undefined;
     ChangePassword: undefined;
     ClosedDeals: undefined;
-    CreateProfile: undefined;
+    CreateProfile: {
+         userId: string,
+    };
     DisclosureText: undefined;
     Events: undefined;
     Inspirations: undefined;
@@ -22,7 +24,7 @@ export type MainStackParams = {
     Search: undefined;
     SignIn: undefined;
     SignUp: undefined;
-    SignUpSuccess: undefined;
+    SignUpSuccess: { userId: string };
     SplashScreen: undefined;
     Startups: undefined;
     StartupsFilter: undefined;
