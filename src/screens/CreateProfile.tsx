@@ -19,10 +19,7 @@ type CreateProfileProps = StackScreenProps<MainStackParams, 'CreateProfile'>;
 
 export const CreateProfile = ({ navigation, route }: CreateProfileProps) => {
 
-
     let userId = route.params?.userId;
-
-    console.log('Processed userId:', userId);
 
     const { colors } = useTheme();
     const { token } = useSelector((state: RootState) => state.auth);
@@ -71,26 +68,17 @@ export const CreateProfile = ({ navigation, route }: CreateProfileProps) => {
     };
 
     const handleUserInfo = async () => {
-        console.log('User ID:', userId);
-        console.log('Selected Role:', selectedRole);
-        console.log('Selected Interests:', selectedInterests);
-        console.log('Selected Motivation:', selectedMotivation);
-
         if (!userId || !selectedRole) {
             console.error('Error: User ID or role selection is missing.');
             return;
         }
-
         setLoading(true);
-
         try {
-            console.log(userId)
-            console.log(selectedRole)
 
-            // await API.post('/api/user-describes', {
-            //     user_id: userId,
-            //     describe_id: selectedRole,
-            // });
+            await API.post('/api/user-describes', {
+                user_id: userId,
+                describe_id: selectedRole,
+            });
 
             await API.post('/api/user-interests', {
                 user_id: userId,
@@ -165,7 +153,12 @@ export const CreateProfile = ({ navigation, route }: CreateProfileProps) => {
                     <View style={styles.modalContainer}>
                         <Text variant="titleLarge">All set!</Text>
                         <Text style={styles.modalText}>Your profile setup is complete.</Text>
-                        <Button mode="contained" onPress={() => navigation.navigate('SignIn')}>
+                        <Button 
+                          mode="contained" 
+                          onPress={() => {
+                            setSuccessModalVisible(false);
+                            navigation.navigate('SignIn');
+                          }}>
                             Sign in
                         </Button>
                     </View>
