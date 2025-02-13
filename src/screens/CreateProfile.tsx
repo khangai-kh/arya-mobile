@@ -195,7 +195,7 @@ export const CreateProfile = ({ navigation, route }: CreateProfileProps) => {
                     <View style={styles.modalContainer}>
                     {selectedReferences.length === 0 ? (
                         <View>
-                        <Text variant="titleLarge">Thank you for registering</Text>
+                        <Text variant="titleLarge" style={styles.modalText}>Thank you for registering</Text>
                         <Text style={styles.modalText}>
                             Once one of your accounts has confirmed, we will send you a membership form.
                             Until then, you can enjoy the free version of the app.

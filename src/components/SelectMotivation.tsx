@@ -57,7 +57,6 @@ export const SelectMotivation = ({
         <Button
           mode="contained"
           onPress={onNextButton}
-          disabled={selectedMotivations.length === 0}
         >
           <Text style={styles.buttonContent}>Next</Text>
         </Button>
