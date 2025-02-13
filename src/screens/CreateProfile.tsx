@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StackScreenProps } from '@react-navigation/stack';
 import { Button, IconButton, useTheme, ActivityIndicator, Modal, Portal, Text } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Image } from 'react-native';
 import { SelectInterest } from '../components/SelectInterest';
 import { SelectMotivation } from '../components/SelectMotivation';
 import { SelectRole } from '../components/SelectRole';
@@ -14,6 +14,7 @@ import { useSelector } from 'react-redux';
 import { API } from '../plugins/axios';
 import { InteresteModel } from '../models/general/interest.model';
 import { MotivationModel } from '../models/general/motivation.model';
+import { AddReference } from '../components/AddReference';
 
 type CreateProfileProps = StackScreenProps<MainStackParams, 'CreateProfile'>;
 
@@ -23,7 +24,7 @@ export const CreateProfile = ({ navigation, route }: CreateProfileProps) => {
 
     const { colors } = useTheme();
     const { token } = useSelector((state: RootState) => state.auth);
-    const [stage, setStage] = useState<'role' | 'interest' | 'motivation'>('role');
+    const [stage, setStage] = useState<'role' | 'interest' | 'motivation' | 'refenence'>('role');
     const [interests, setInterests] = useState<InteresteModel[]>([]);
     const [describes, setDescribes] = useState<DescribeModel[]>([]);
     const [motivations, setMotivations] = useState<MotivationModel[]>([]);
@@ -32,7 +33,8 @@ export const CreateProfile = ({ navigation, route }: CreateProfileProps) => {
 
     const [selectedRole, setSelectedRole] = useState<number>();
     const [selectedInterests, setSelectedInterests] = useState<number[]>([]);
-    const [selectedMotivation, setSelectedMotivation] = useState<number>();
+    const [selectedMotivation, setSelectedMotivation] = useState<number[]>([]);
+    const [selectedReferences, setSelectedReferences] = useState<number[]>([]);
 
     useQuery(['describes', token], async () => {
         const { data } = await API.get('/api/describes');
@@ -55,6 +57,35 @@ export const CreateProfile = ({ navigation, route }: CreateProfileProps) => {
                 ? prev.filter((id) => id !== interest.interest_id)
                 : [...prev, interest.interest_id]
         );
+    };
+
+    const handleReference = async () => {
+
+        if (!userId || !selectedReferences) {
+            console.log('Error: User ID or role selection is missing.');
+            return;
+        }
+
+        if(selectedReferences.length === 0){
+            setSuccessModalVisible(true);
+            return;
+        }
+
+        setLoading(true);
+        try {
+
+            await API.post('/api/user-references', {
+                user_id: userId,
+                reference_user_ids: selectedReferences,
+            });
+
+            console.log('User reference saved successfully.');
+        } catch (error) {
+            console.error('Error saving user info:', error);
+        } finally {
+            setLoading(false);
+            setSuccessModalVisible(true);
+        }
     };
 
     const handleSkip = () => {
@@ -87,11 +118,12 @@ export const CreateProfile = ({ navigation, route }: CreateProfileProps) => {
 
             await API.post('/api/user-motivations', {
                 user_id: userId,
-                motivation_ids: selectedMotivation ? [selectedMotivation] : [],
+                motivation_ids: selectedMotivation,
             });
 
             console.log('All user data saved successfully.');
-            setSuccessModalVisible(true); // Show success popup
+          //  setSuccessModalVisible(true);
+            setStage('refenence');
         } catch (error) {
             console.error('Error saving user info:', error);
         } finally {
@@ -138,9 +170,16 @@ export const CreateProfile = ({ navigation, route }: CreateProfileProps) => {
                         {stage === 'motivation' && (
                             <SelectMotivation
                                 motivations={motivations}
-                                selectedMotivation={selectedMotivation}
+                                selectedMotivations={selectedMotivation}
                                 onSelect={setSelectedMotivation}
                                 onNextButton={handleUserInfo}
+                            />
+                        )}
+                         {stage === 'refenence' && (
+                            <AddReference
+                                selectedReferences={selectedReferences}
+                                onSelect={setSelectedReferences}
+                                onNextButton={handleReference}
                             />
                         )}
                     </>
@@ -149,18 +188,38 @@ export const CreateProfile = ({ navigation, route }: CreateProfileProps) => {
 
             {/* Success Modal */}
             <Portal>
-                <Modal visible={successModalVisible} onDismiss={() => setSuccessModalVisible(false)}>
+                <Modal
+                    visible={successModalVisible} onDismiss={() => setSuccessModalVisible(false)}
+                    dismissable={false}
+                    >
                     <View style={styles.modalContainer}>
-                        <Text variant="titleLarge">All set!</Text>
-                        <Text style={styles.modalText}>Your profile setup is complete.</Text>
-                        <Button 
-                          mode="contained" 
-                          onPress={() => {
-                            setSuccessModalVisible(false);
-                            navigation.navigate('SignIn');
-                          }}>
-                            Sign in
-                        </Button>
+                    {selectedReferences.length === 0 ? (
+                        <View>
+                        <Text variant="titleLarge">Thank you for registering</Text>
+                        <Text style={styles.modalText}>
+                            Once one of your accounts has confirmed, we will send you a membership form.
+                            Until then, you can enjoy the free version of the app.
+                        </Text>
+                        </View>
+                    ) : (
+                        <View>
+                        <Text variant="titleLarge">Sent for Confirmation</Text>
+                        <Text style={styles.modalText}>
+                            Once one of your references has confirmed, we will send you a membership form.
+                            Until then, you can enjoy the free version of the app.
+                        </Text>
+                        </View>
+                    )}
+
+                    <Image source={require('../assets/confirmation-sent.png')} style={styles.image} />
+                    <Button
+                        mode="contained"
+                        onPress={() => {
+                        setSuccessModalVisible(false);
+                        navigation.navigate('SignIn');
+                        }}>
+                        Sign in
+                    </Button>
                     </View>
                 </Modal>
             </Portal>
@@ -199,6 +258,11 @@ const styles = StyleSheet.create({
         width: '80%',
         marginHorizontal: '10%',
         alignItems: 'center',
+    },
+    image: {
+        width: 250,
+        height:250,
+        marginVertical: 20,
     },
     modalText: {
         marginVertical: 10,

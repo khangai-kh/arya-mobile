@@ -8,51 +8,63 @@ import { MotivationModel } from '../models/general/motivation.model';
 
 type SelectMotivationProps = {
   motivations: MotivationModel[];
-  selectedMotivation: number | undefined;
-  onSelect: (value: number) => void;
+  selectedMotivations: number[];
+  onSelect: (value: number[]) => void;
   onNextButton: () => void;
 };
 
 export const SelectMotivation = ({
   motivations,
-  selectedMotivation,
+  selectedMotivations,
   onSelect,
   onNextButton,
-}: SelectMotivationProps) => (
-  <View style={styles.container}>
-    <ScrollView showsVerticalScrollIndicator={false}>
-      <View style={styles.contentContainer}>
-        <Text variant="titleLarge" style={styles.title}>
-          What’s your motivation for joining Arya?
-        </Text>
-        <Text variant="bodyMedium" style={styles.subtitle}>
-          Let us know what you aim to achieve by being part of our community
-        </Text>
-        <View style={styles.motivationsContainer}>
-          {motivations.map((motivation) => (
-            <TouchableOpacity
-              key={motivation.interest_id}
-              style={[
-                styles.motivationButton,
-                selectedMotivation === motivation.interest_id && styles.selectedMotivationButton,
-              ]}
-              onPress={() => onSelect(motivation.interest_id)}
-            >
-              <Text variant="titleMedium">{motivation.interest_name}</Text>
-            </TouchableOpacity>
-          ))}
+}: SelectMotivationProps) => {
+  const handleSelect = (id: number) => {
+    if (selectedMotivations.includes(id)) {
+      onSelect(selectedMotivations.filter((motivation) => motivation !== id));
+    } else {
+      onSelect([...selectedMotivations, id]);
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.contentContainer}>
+          <Text variant="titleLarge" style={styles.title}>
+            What’s your motivation for joining Arya?
+          </Text>
+          <Text variant="bodyMedium" style={styles.subtitle}>
+            Let us know what you aim to achieve by being part of our community
+          </Text>
+          <View style={styles.motivationsContainer}>
+            {motivations.map((motivation) => (
+              <TouchableOpacity
+                key={motivation.interest_id}
+                style={[
+                  styles.motivationButton,
+                  selectedMotivations.includes(motivation.interest_id) && styles.selectedMotivationButton,
+                ]}
+                onPress={() => handleSelect(motivation.interest_id)}
+              >
+                <Text variant="titleMedium">{motivation.interest_name}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
-      </View>
-    </ScrollView>
-    <Box px={16} py={16}>
-      <Button
-        mode="contained" 
-        onPress={onNextButton}>
+      </ScrollView>
+      <Box px={16} py={16}>
+        <Button
+          mode="contained"
+          onPress={onNextButton}
+          disabled={selectedMotivations.length === 0}
+        >
           <Text style={styles.buttonContent}>Next</Text>
         </Button>
-    </Box>
-  </View>
-);
+      </Box>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -79,9 +91,12 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 24,
     marginBottom: 8,
+    borderWidth: 1,
+    borderColor: '#ccc',
   },
   selectedMotivationButton: {
     backgroundColor: '#F5EF99',
+    borderColor: '#E0A800',
   },
   buttonContent: {
     color: '#fff',
