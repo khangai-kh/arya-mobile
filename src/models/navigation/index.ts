@@ -8,6 +8,7 @@ export type MainStackParams = {
     BottomTab: undefined;
     BKYLicense: undefined;
     BKYSuccess: undefined;
+    CalendarlyScreen: undefined;
     CheckIn: undefined;
     ChangePassword: undefined;
     ClosedDeals: undefined;

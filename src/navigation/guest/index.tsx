@@ -7,6 +7,7 @@ import { SignIn } from '../../screens/SignIn';
 import { SignUp } from '../../screens/SignUp';
 import { SignUpSuccess } from '../../screens/SignUpSuccess';
 import { SplashScreen } from '../../screens/SplashScreen';
+import { CalendarlyScreen } from '../../screens/CalendarlyScreen';
 
 const Stack = createNativeStackNavigator<MainStackParams>();
 
@@ -58,6 +59,13 @@ export const Guest = () => {
                     <Stack.Screen
                         name="CreateProfile"
                         component={CreateProfile}
+                        options={{
+                            headerShown: false,
+                        }}
+                    />
+                    <Stack.Screen
+                        name="CalendarlyScreen"
+                        component={CalendarlyScreen}
                         options={{
                             headerShown: false,
                         }}

@@ -143,8 +143,8 @@ export const CreateProfile = ({ navigation, route }: CreateProfileProps) => {
                         disabled={loading}
                     />
                 )}
-                <Button mode="text" textColor="#414042" disabled={loading} onPress={handleSkip}>Skip</Button>
-            </View>
+                    <Button mode="text" textColor="#414042" disabled={loading} onPress={handleSkip}>Skip</Button>
+                </View>
 
             <View style={styles.contentContainer}>
                 {loading ? (
@@ -197,8 +197,8 @@ export const CreateProfile = ({ navigation, route }: CreateProfileProps) => {
                         <View>
                         <Text variant="titleLarge" style={styles.modalText}>Thank you for registering</Text>
                         <Text style={styles.modalText}>
-                            Once one of your accounts has confirmed, we will send you a membership form.
-                            Until then, you can enjoy the free version of the app.
+                            Your account has been successfully created. 
+                            To apply for premium membership, please schedule an appointment through the calendar.
                         </Text>
                         </View>
                     ) : (
@@ -211,14 +211,30 @@ export const CreateProfile = ({ navigation, route }: CreateProfileProps) => {
                         </View>
                     )}
 
-                    <Image source={require('../assets/confirmation-sent.png')} style={styles.image} />
+                    <Image 
+                        source={require('../assets/confirmation-sent.png')} 
+                        style={styles.image} />
+                     {selectedReferences.length === 0 && (
+                        <Button
+                            mode="contained"
+                            style={styles.scheduleButton}
+                            onPress={() => {
+                            setSuccessModalVisible(false);
+                            navigation.navigate('CalendarlyScreen');
+                            }}>
+                            Schedule a meeting
+                        </Button>
+                    )}
                     <Button
+                        style={styles.signInButton}
                         mode="contained"
                         onPress={() => {
                         setSuccessModalVisible(false);
                         navigation.navigate('SignIn');
                         }}>
-                        Sign in
+                        <Text style={styles.singButtonText}>
+                            Sign in
+                        </Text>
                     </Button>
                     </View>
                 </Modal>
@@ -267,6 +283,18 @@ const styles = StyleSheet.create({
     modalText: {
         marginVertical: 10,
         textAlign: 'center',
+    },
+    scheduleButton: {
+        width: '100%',
+    },
+    signInButton: {
+        marginTop: 10,
+        backgroundColor: '#e7c4e1',
+        textAlign: 'center',
+        width: '100%',
+    },
+    singButtonText: {
+        color: '#b2469d',
     },
 });
 

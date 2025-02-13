@@ -76,7 +76,11 @@ export const  AddReference = ({
       </Box>
 
       <TouchableOpacity>
-        <Text style={styles.link}>Continue without reference</Text>
+        <Text
+          style={styles.link} 
+          onPress={onNextButton}>
+            Continue without reference
+        </Text>
       </TouchableOpacity>
     </View>
   );
