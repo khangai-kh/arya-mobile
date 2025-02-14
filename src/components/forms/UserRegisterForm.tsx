@@ -59,7 +59,7 @@ export const UserRegister = ({ navigation }: SignUpProps) => {
                 email: generateRandomEmail(),
                 password: generateRandomPassword(),
                 termsAccepted: false,
-                general: ''
+                general: '',
               }}
               validationSchema={userValidationSchema}
               onSubmit={async (values, { setSubmitting, setErrors }) => {
