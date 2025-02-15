@@ -7,7 +7,7 @@ import { IconButton, useTheme } from 'react-native-paper';
 
 type CalendarlyScreen = StackScreenProps<MainStackParams, 'CalendarlyScreen'>;
 
-export const CalendarlyScreen = ({ navigation, route }: CalendarlyScreen) => {
+export const CalendarlyScreen = ({ navigation, route: _route }: CalendarlyScreen) => {
     const { colors } = useTheme();
     return (
         <SafeAreaView style={styles.container}>

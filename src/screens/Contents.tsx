@@ -34,7 +34,6 @@ export const Contents = () => {
         },
         {
             onSuccess: ({ data }) => {
-                console.log(data); // Log full API response to inspect its structure
                 setContents(data || []); // Set contents directly from data
             },
         }
