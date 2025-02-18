@@ -9,6 +9,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { MainStackParams } from '../models/navigation';
 import { setAuthToken } from '../redux/auth/reducer';
 import { View } from '../components/common/View';
+import { green200 } from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
 
 type ProfileProps = StackScreenProps<MainStackParams, 'Profile'> & {
   setAuthToken: (accessToken: string | null) => void;
@@ -97,14 +98,6 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
     <SafeAreaView style={dynamicStyles.safeAreaView} edges={['top']}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <Appbar.Header style={dynamicStyles.appbarHeader}>
-          <Appbar.Action
-            icon={require('../assets/flat-icons/angle-small-left.png')}
-            color="#414042"
-            style={dynamicStyles.appbarActionLeft}
-            onPress={() => {
-              navigation.goBack();
-            }}
-          />
           <Appbar.Content
             title={
               <View style={dynamicStyles.titleContainer}>
@@ -125,12 +118,12 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
             icon={require('../assets/flat-icons/settings.png')}
             color="#414042"
             size={20}
-            style={[dynamicStyles.appbarActionRight, { marginRight: 30 }]}
+            style={[dynamicStyles.appbarActionRight]}
             onPress={() => {}}
           />
         </Appbar.Header>
 
-        <View style={dynamicStyles.contentContainer}>
+        <View>
           <View style={dynamicStyles.profileHeader}>
             <Avatar.Image
               size={112}
@@ -138,7 +131,11 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
               style={dynamicStyles.avatar}
             />
             <View>
-              <Text variant="titleSmall">{member.name}</Text>
+              <Text variant="titleSmall" style={dynamicStyles.nameText}>{member.name}</Text>
+              <View style={dynamicStyles.champterContainer}>
+                  <Text variant="bodySmall" style={dynamicStyles.champterText}>Istanbul Chapter</Text>
+                  <Text variant="bodySmall" style={dynamicStyles.mentorshipText}>• Mentorship</Text>
+                </View>
               <View style={dynamicStyles.locationContainer}>
                 <View style={dynamicStyles.locationItem}>
                   <Image
@@ -155,9 +152,18 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
                   <Text variant="bodySmall">1 Years Member</Text>
                 </View>
               </View>
-              <Chip style={dynamicStyles.chipBackground}>
-                <Text variant="bodySmall">Family business</Text>
-              </Chip>
+              <View>
+                <Button
+                  mode="contained"
+                  buttonColor={colors.secondary}
+                  textColor={colors.primary}
+                  icon={require('../assets/flat-icons/diamond.png')}
+                  style={dynamicStyles.buttonMargin}
+                  onPress={() => {}}
+                >
+                  Investor
+                </Button>
+              </View>
             </View>
           </View>
 
@@ -165,7 +171,7 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
             Operations Specialist at Anatolia Logistics | Logistics and Transportation
           </Text>
           <View style={dynamicStyles.buttonRow}>
-            <View style={styles.flexOne}>
+            <View>
               <Button
                 mode="contained"
                 buttonColor={colors.secondary}
@@ -174,25 +180,25 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
                 style={dynamicStyles.buttonMargin}
                 onPress={() => {}}
               >
-                10+ connections
+                Connections (2)
               </Button>
             </View>
-            <View style={styles.flexOne}>
+            <View>
               <Button
                 mode="contained"
                 buttonColor={colors.secondary}
                 textColor={colors.primary}
-                icon={require('../assets/flat-icons/comment-alt-outlined.png')}
+                icon={require('../assets/flat-icons/heart.png')}
                 onPress={() => {}}
               >
-                Followed startups
+                Followed (10)
               </Button>
             </View>
           </View>
         </View>
 
         <View style={dynamicStyles.sectionContainer}>
-          <Text variant="titleSmall">Interests</Text>
+          <Text variant="titleSmall" style={dynamicStyles.sectionText}>Interests</Text>
           <View style={dynamicStyles.interestsContainer}>
             {member.interests.map((interest) => (
               <Chip key={interest.id} style={dynamicStyles.chipInterests}>
@@ -229,7 +235,7 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
 
 export const Profile = connect(null, mapDispatchToProps)(ProfileComponent);
 
-const createDynamicStyles = (colors: ReactNativePaper.ThemeColors) =>
+const createDynamicStyles = (colors: ThemeColors) =>
   StyleSheet.create({
     safeAreaView: {
       flex: 1,
@@ -238,6 +244,8 @@ const createDynamicStyles = (colors: ReactNativePaper.ThemeColors) =>
     },
     appbarHeader: {
       backgroundColor: 'transparent',
+      alignContent: 'center',
+      justifyContent:'space-between',
     },
     appbarActionLeft: {
       backgroundColor: colors.onPrimary,
@@ -252,16 +260,15 @@ const createDynamicStyles = (colors: ReactNativePaper.ThemeColors) =>
       justifyContent: 'center',
     },
     titleText: {
-      marginRight: 8,
-    },
-    contentContainer: {
-      padding: 16,
+      fontWeight: 'bold',
+      marginLeft: 10
     },
     profileHeader: {
       flex: 1,
       flexDirection: 'row',
       alignItems: 'center',
       marginBottom: 12,
+      marginHorizontal: 16,
     },
     avatar: {
       backgroundColor: '#f2f4f7',
@@ -286,29 +293,44 @@ const createDynamicStyles = (colors: ReactNativePaper.ThemeColors) =>
     chipBackground: {
       backgroundColor: '#fff',
       alignSelf: 'flex-start',
+      paddingTop:4,
+      marginLeft: 8,
     },
     descriptionText: {
       paddingRight: 4,
+      marginHorizontal: 16,
     },
     buttonRow: {
       flexDirection: 'row',
-      marginTop: 12,
-      paddingRight: 5,
+      marginVertical: 12,
+      width: '100%',
+      marginHorizontal: 16,
+      fontSize: 8,
     },
     buttonMargin: {
-      marginRight: 8,
+      marginRight: 1,
+      fontSize: 4,
+      width: '100%',
     },
     sectionContainer: {
       borderRadius: 16,
       backgroundColor: '#fff',
       paddingHorizontal: 16,
       paddingVertical: 12,
+      margin: 'auto',
+      width : '90%',
     },
     interestsContainer: {
       marginTop: 12,
       flexDirection: 'row',
       flexWrap: 'wrap',
       gap: 4,
+    },
+    champterContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginVertical: 4,
+      marginHorizontal: 8,
     },
     chipInterests: {
       backgroundColor: '#f2f2f2',
@@ -319,6 +341,8 @@ const createDynamicStyles = (colors: ReactNativePaper.ThemeColors) =>
       backgroundColor: '#fff',
       paddingHorizontal: 16,
       paddingVertical: 12,
+      width : '90%',
+      margin: 'auto',
     },
     startupItem: {
       marginTop: 12,
@@ -336,6 +360,30 @@ const createDynamicStyles = (colors: ReactNativePaper.ThemeColors) =>
       marginTop: 20,
       marginHorizontal: 16,
     },
+    nameText: {
+      color: '#414042',
+      marginLeft: 8,
+      fontSize: 20,
+      fontWeight: 'bold',
+    },
+    sectionText: {
+      color: '#414042',
+      fontSize: 14,
+      marginBottom: 8,
+      alignItems: 'flex-start',
+    },
+    champterText:{
+      color: colors.primary,
+      fontWeight: 'bold'
+    },
+    mentorshipText:{
+      color: '#66b54b',
+      fontWeight: 'bold',
+      marginLeft:4,
+    },
+    badgeText: {
+      paddingLeft: 4,
+    }
   });
 
 const styles = StyleSheet.create({
@@ -351,13 +399,17 @@ const styles = StyleSheet.create({
     tintColor: '#B61D8D',
     marginRight: 4,
   },
+  roleBadge: {
+    width: 12,
+    height: 12,
+    tintColor: '#B61D8D',
+    marginTop: 4,
+  },
   roleEntrepreneur: {
     width: 14,
     height: 14,
     tintColor: '#F99F1C',
     marginRight: 4,
   },
-  flexOne: {
-    flex: 1,
-  },
+  
 });
