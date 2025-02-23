@@ -1,15 +1,18 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { useState } from 'react';
-import { Image, StyleSheet } from 'react-native';
+import { ActivityIndicator, Image, StyleSheet } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
-import { Appbar, Avatar, Button, Chip, Text, useTheme, ThemeColors } from 'react-native-paper';
+import { Appbar, Avatar, Button, Chip, Text, useTheme, MD3Theme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { ScrollView } from 'react-native-gesture-handler';
 import { MainStackParams } from '../models/navigation';
 import { setAuthToken } from '../redux/auth/reducer';
 import { View } from '../components/common/View';
-import { green200 } from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
+import { UserModel } from '../models/users/User';
+import { RootState } from '../redux/configureStore';
+import { useQuery } from 'react-query';
+import { API } from '../plugins/axios';
 
 type ProfileProps = StackScreenProps<MainStackParams, 'Profile'> & {
   setAuthToken: (accessToken: string | null) => void;
@@ -21,6 +24,24 @@ const mapDispatchToProps = {
 
 const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: ProfileProps) => {
   const { colors } = useTheme();
+  const { token } = useSelector((state: RootState) => state.auth);
+  const dynamicStyles = createDynamicStyles(colors);
+  const [profile, setProfile] = useState<UserModel | null>(null);
+
+  const { isFetching, refetch } = useQuery(
+      ['profile', token],
+      () => {
+        return API.get('/api/user/my-all-infos');
+      },
+      {
+        onSuccess: ({ data }) => {
+            setProfile(data);
+        },
+        onError: (error) => {
+            console.error('Error fetching profile:', error);
+        },
+      }
+  );
 
   const handleLogout = () => {
     setAuthTokenProp(null);
@@ -30,70 +51,14 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
     });
   };
 
-  const [member, setMember] = useState({
-    name: 'Merve Kaya',
-    image: '',
-    role: 'Entrepreneur',
-    status: 'CTO at Nexa Innovations',
-    following: true,
-    interests: [
-      {
-        id: 0,
-        title: 'Financial Planning',
-      },
-      {
-        id: 1,
-        title: 'Budgeting',
-      },
-      {
-        id: 2,
-        title: 'Saving',
-      },
-      {
-        id: 3,
-        title: 'Debt',
-      },
-      {
-        id: 4,
-        title: 'Insurance',
-      },
-    ],
-  });
-
-  const checkRole = (role: string) => {
-    if (role === 'Investor') {
-      return (
-        <Image
-          resizeMode="contain"
-          source={require('../assets/flat-icons/diamond.png')}
-          style={styles.roleInvestor}
-        />
-      );
-    }
-    if (role === 'Premium') {
-      return (
-        <Image
-          resizeMode="contain"
-          source={require('../assets/flat-icons/crown.png')}
-          style={styles.rolePremium}
-        />
-      );
-    }
-    if (role === 'Entrepreneur') {
-      return (
-        <Image
-          resizeMode="contain"
-          source={require('../assets/flat-icons/rocket.png')}
-          style={styles.roleEntrepreneur}
-        />
-      );
-    }
-    return null;
-  };
-
   // Dynamically create theme-aware styles
-  const dynamicStyles = createDynamicStyles(colors);
-
+ if (isFetching) {
+        return (
+            <View style={styles.loaderContainer}>
+                <ActivityIndicator size="large" color={colors.primary} />
+            </View>
+        );
+    }
   return (
     <SafeAreaView style={dynamicStyles.safeAreaView} edges={['top']}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -126,23 +91,23 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
         <View>
           <View style={dynamicStyles.profileHeader}>
             <Avatar.Image
-              size={112}
-              source={require('../assets/Image-54.png')}
+              size={100}
+              source={profile?.photo ? { uri: profile?.photo } : require('../assets/flat-icons/user.png')}
               style={dynamicStyles.avatar}
             />
             <View>
-              <Text variant="titleSmall" style={dynamicStyles.nameText}>{member.name}</Text>
-              <View style={dynamicStyles.champterContainer}>
+              <Text variant="titleSmall" style={dynamicStyles.nameText}>{profile?.full_name}</Text>
+              {/* <View style={dynamicStyles.champterContainer}>
                   <Text variant="bodySmall" style={dynamicStyles.champterText}>Istanbul Chapter</Text>
                   <Text variant="bodySmall" style={dynamicStyles.mentorshipText}>• Mentorship</Text>
-                </View>
+              </View> */}
               <View style={dynamicStyles.locationContainer}>
                 <View style={dynamicStyles.locationItem}>
                   <Image
                     source={require('../assets/flat-icons/marker-outlined.png')}
                     style={dynamicStyles.iconLocation}
                   />
-                  <Text variant="bodySmall">Ankara</Text>
+                  <Text variant="bodySmall">{profile?.address}</Text>
                 </View>
                 <View style={dynamicStyles.locationItem}>
                   <Image
@@ -155,20 +120,21 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
               <View>
                 <Button
                   mode="contained"
-                  buttonColor={colors.secondary}
-                  textColor={colors.primary}
-                  icon={require('../assets/flat-icons/diamond.png')}
-                  style={dynamicStyles.buttonMargin}
+                  buttonColor="#F2A93B" // Match extracted color
+                  textColor="white" // White text for contrast
+                  icon={require('../assets/flat-icons/rocket.png')}
+                  contentStyle={dynamicStyles.buttonContent}
+                  labelStyle={dynamicStyles.buttonText}
+                  style={dynamicStyles.buttonBadge}
                   onPress={() => {}}
                 >
-                  Investor
+                  {profile?.roles[0].role_name}
                 </Button>
               </View>
             </View>
           </View>
-
           <Text style={dynamicStyles.descriptionText}>
-            Operations Specialist at Anatolia Logistics | Logistics and Transportation
+            {profile?.carrier?.title} | {profile?.carrier?.area_of_expertise}
           </Text>
           <View style={dynamicStyles.buttonRow}>
             <View>
@@ -198,44 +164,65 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
         </View>
 
         <View style={dynamicStyles.sectionContainer}>
-          <Text variant="titleSmall" style={dynamicStyles.sectionText}>Interests</Text>
+          <View style={dynamicStyles.interest}>
+            <Text variant="titleSmall" style={dynamicStyles.sectionText}>Interests</Text>
+            <Appbar.Action
+              icon={require('../assets/flat-icons/edit.png')}
+              color="#414042"
+              size={15}
+              style={dynamicStyles.appbarActionRight}
+              onPress={() => {}}
+            />
+          </View>
           <View style={dynamicStyles.interestsContainer}>
-            {member.interests.map((interest) => (
-              <Chip key={interest.id} style={dynamicStyles.chipInterests}>
-                <Text>{interest.title}</Text>
+            {profile?.interests.map((interest,index) => (
+              <Chip key={interest.id || `interest-${index}`} style={dynamicStyles.chipInterests}>
+                <Text>{interest.name}</Text>
               </Chip>
             ))}
           </View>
         </View>
 
         <View style={dynamicStyles.startupsContainer}>
-          <Text variant="titleSmall">Startups</Text>
-          <View style={dynamicStyles.startupItem}>
-            <Image
-              source={require('../assets/wave.png')}
-              style={dynamicStyles.startupImage}
-              resizeMode="contain"
+          <View style={dynamicStyles.interest}>
+            <Text variant="titleSmall" style={dynamicStyles.sectionText}>Startups</Text>
+            <Appbar.Action
+              icon={require('../assets/flat-icons/edit.png')}
+              color="#414042"
+              size={15}
+              style={dynamicStyles.appbarActionRight}
+              onPress={() => {}}
             />
-            <View>
-              <Text variant="titleSmall">Green Wave Technologies</Text>
-              <Text variant="bodyMedium" style={dynamicStyles.startupText}>
-                Empowering Sustainability Through Innovation
-              </Text>
-            </View>
           </View>
+          {profile?.startups?.map((startup,index) => (
+            <View key={startup.id || `startup-${index}`} style={dynamicStyles.startupItem}>
+              <Image
+                source={startup.startup_logo ? { uri: startup.startup_logo } : require('../assets/wave.png')}
+                style={dynamicStyles.startupImage}
+                resizeMode="contain"
+              />
+              <View>
+                <Text variant="titleSmall">
+                  {startup?.name}
+                </Text>
+                <Text variant="bodyMedium" style={dynamicStyles.startupText}>
+                  {startup?.description}
+                </Text>
+              </View>
+          </View>
+          ))}
         </View>
+        <Button mode="contained" onPress={handleLogout} style={dynamicStyles.logoutButton}>
+          Log Out
+        </Button>
       </ScrollView>
-
-      <Button mode="contained" onPress={handleLogout} style={dynamicStyles.logoutButton}>
-        Log Out
-      </Button>
     </SafeAreaView>
   );
 };
 
 export const Profile = connect(null, mapDispatchToProps)(ProfileComponent);
 
-const createDynamicStyles = (colors: ThemeColors) =>
+const createDynamicStyles = (colors: MD3Theme['colors']) =>
   StyleSheet.create({
     safeAreaView: {
       flex: 1,
@@ -246,6 +233,7 @@ const createDynamicStyles = (colors: ThemeColors) =>
       backgroundColor: 'transparent',
       alignContent: 'center',
       justifyContent:'space-between',
+      marginBottom: 10,
     },
     appbarActionLeft: {
       backgroundColor: colors.onPrimary,
@@ -261,7 +249,7 @@ const createDynamicStyles = (colors: ThemeColors) =>
     },
     titleText: {
       fontWeight: 'bold',
-      marginLeft: 10
+      paddingLeft : 50,
     },
     profileHeader: {
       flex: 1,
@@ -273,6 +261,12 @@ const createDynamicStyles = (colors: ThemeColors) =>
     avatar: {
       backgroundColor: '#f2f4f7',
       marginRight: 12,
+    },
+    interest: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: 5,
     },
     locationContainer: {
       flexDirection: 'row',
@@ -312,10 +306,37 @@ const createDynamicStyles = (colors: ThemeColors) =>
       fontSize: 4,
       width: '100%',
     },
+    buttonBadge: {
+      backgroundColor: '#F2A93B',
+      borderRadius: 20,
+      height: 25,
+      width: '70%',
+      elevation: 2,
+      textAlignVertical: 'center',
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexDirection: 'row',
+    },
+    iconStyle: {
+      marginRight: 5,
+    },
+    buttonText: {
+      fontSize: 12,
+      fontWeight: 'bold',
+      marginBottom: 8,
+      marginTop: 8,
+      lineHeight: 15,
+    },
+    buttonContent: {
+      height: 30, // Set internal button height
+      alignItems: 'center', // Ensure text and icon align vertically
+      justifyContent: 'center',
+      flexDirection: 'row', // Keep icon and text aligned horizontally
+    },
     sectionContainer: {
       borderRadius: 16,
       backgroundColor: '#fff',
-      paddingHorizontal: 16,
+      paddingHorizontal: 10,
       paddingVertical: 12,
       margin: 'auto',
       width : '90%',
@@ -346,7 +367,13 @@ const createDynamicStyles = (colors: ThemeColors) =>
     },
     startupItem: {
       marginTop: 12,
+      paddingHorizontal: 8,
       flexDirection: 'row',
+      width: '90%',
+    },
+    startupItemText:
+    {
+      width: '90%',
     },
     startupImage: {
       width: 40,
@@ -355,6 +382,7 @@ const createDynamicStyles = (colors: ThemeColors) =>
     },
     startupText: {
       marginTop: 2,
+      fontSize: 11,
     },
     logoutButton: {
       marginTop: 20,
@@ -369,6 +397,7 @@ const createDynamicStyles = (colors: ThemeColors) =>
     sectionText: {
       color: '#414042',
       fontSize: 14,
+      fontWeight: 'bold',
       marginBottom: 8,
       alignItems: 'flex-start',
     },
@@ -387,6 +416,11 @@ const createDynamicStyles = (colors: ThemeColors) =>
   });
 
 const styles = StyleSheet.create({
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   roleInvestor: {
     width: 14,
     height: 14,
