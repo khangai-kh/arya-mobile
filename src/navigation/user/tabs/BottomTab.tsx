@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     tabBarStyle: {
         height: 80,
         position: 'absolute',
-        bottom: 16,
+        bottom: 14,
         left: 16,
         right: 16,
         borderRadius: 40,
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 4 },
         shadowRadius: 10,
         elevation: 5,
-        paddingTop: 16,
+        paddingTop: 20,
         paddingRight: 10,
         paddingLeft: 10,
         marginRight: 10,

@@ -6,6 +6,7 @@ export type SignInPayload = {
     message: string;
     token: string;
     token_type: string;
+    user_id: number;
     roles: { role_id: number; role_name: string }[];
 };
 

@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import React, { useState } from 'react';
 import { ActivityIndicator, Image, StyleSheet } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -13,6 +12,8 @@ import { UserModel } from '../models/users/User';
 import { RootState } from '../redux/configureStore';
 import { useQuery } from 'react-query';
 import { API } from '../plugins/axios';
+import { SelectInterest } from '../components/SelectInterest';
+import { InteresteModel } from '../models/general/interest.model';
 
 type ProfileProps = StackScreenProps<MainStackParams, 'Profile'> & {
   setAuthToken: (accessToken: string | null) => void;
@@ -23,25 +24,52 @@ const mapDispatchToProps = {
 };
 
 const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: ProfileProps) => {
-  const { colors } = useTheme();
+
   const { token } = useSelector((state: RootState) => state.auth);
+  const user_id = useSelector((state: RootState) => state.auth.user_id);
+  const [loading, setLoading] = useState(false);
+  const { colors } = useTheme();
   const dynamicStyles = createDynamicStyles(colors);
+  const [stage, setStage] = useState<'interest' | 'startup' | 'profile'>('profile');
+
+  const [interests, setInterests] = useState<InteresteModel[]>([]);
+  const [selectedInterests, setSelectedInterests] = useState<number[]>([]);
+
   const [profile, setProfile] = useState<UserModel | null>(null);
 
-  const { isFetching, refetch } = useQuery(
-      ['profile', token],
-      () => {
-        return API.get('/api/user/my-all-infos');
+  const { isFetching: isFetchingProfile, refetch } = useQuery(
+    ['profile', token],
+    () => API.get('/api/user/my-all-infos'),
+    {
+      onSuccess: ({ data }) => {
+        setProfile(data);
       },
-      {
-        onSuccess: ({ data }) => {
-            setProfile(data);
-        },
-        onError: (error) => {
-            console.error('Error fetching profile:', error);
-        },
-      }
+      onError: (error) => {
+        console.error('Error fetching profile:', error);
+      },
+    }
   );
+
+  const { isFetching: isFetchingInterests } = useQuery(
+    ['interests', token],
+    async () => {
+      const { data } = await API.get('/api/interests');
+      setInterests(data || []);
+    }
+  );
+
+  const isFetching = isFetchingProfile || isFetchingInterests || loading;
+
+  const getYearsAgo = (dateString: string): number => {
+    let inputDate = new Date(dateString);
+    if (isNaN(inputDate.getTime())) {
+      return 0;
+    }
+    let now = new Date();
+    let msInYear = 1000 * 60 * 60 * 24 * 365.25;
+    let yearsAgo = Math.floor((now.getTime() - inputDate.getTime()) / msInYear);
+    return yearsAgo;
+  };
 
   const handleLogout = () => {
     setAuthTokenProp(null);
@@ -51,170 +79,243 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
     });
   };
 
-  // Dynamically create theme-aware styles
- if (isFetching) {
-        return (
-            <View style={styles.loaderContainer}>
-                <ActivityIndicator size="large" color={colors.primary} />
-            </View>
-        );
+   const handleUserInterests = async () => {
+    console.log(user_id);
+
+    if (loading) {
+      return;
     }
+
+    if (!user_id ) {
+      console.error('Error: User ID or role selection is missing.');
+      return;
+    }
+    try {
+
+        await API.post('/api/user-interests', {
+            user_id: user_id,
+            interest_ids: selectedInterests,
+        });
+        console.log('All user data saved successfully.');
+      //  setSuccessModalVisible(true);
+        setStage('profile');
+    } catch (error) {
+        console.error('Error saving user info:', error);
+    } finally {
+        setLoading(false);
+    }
+  };
+
+  const handleSelectInterest = (interest: InteresteModel) => {
+    setSelectedInterests((prev) =>
+        prev.includes(interest.interest_id)
+            ? prev.filter((id) => id !== interest.interest_id)
+            : [...prev, interest.interest_id]
+    );
+  };
+
+  if (isFetching) {
+    return (
+        <View style={styles.loaderContainer}>
+            <ActivityIndicator size="large" color={colors.primary} />
+        </View>
+    );
+  }
   return (
     <SafeAreaView style={dynamicStyles.safeAreaView} edges={['top']}>
-      <ScrollView showsVerticalScrollIndicator={false}>
         <Appbar.Header style={dynamicStyles.appbarHeader}>
-          <Appbar.Content
-            title={
-              <View style={dynamicStyles.titleContainer}>
-                <Text variant="titleMedium" style={dynamicStyles.titleText}>
-                  Profile
-                </Text>
-              </View>
-            }
-          />
+        {stage !== 'profile' && (
           <Appbar.Action
-            icon={require('../assets/flat-icons/edit.png')}
-            color="#414042"
-            size={20}
-            style={dynamicStyles.appbarActionRight}
-            onPress={() => {}}
-          />
-          <Appbar.Action
-            icon={require('../assets/flat-icons/settings.png')}
-            color="#414042"
-            size={20}
-            style={[dynamicStyles.appbarActionRight]}
-            onPress={() => {}}
-          />
-        </Appbar.Header>
-
-        <View>
-          <View style={dynamicStyles.profileHeader}>
-            <Avatar.Image
-              size={100}
-              source={profile?.photo ? { uri: profile?.photo } : require('../assets/flat-icons/user.png')}
-              style={dynamicStyles.avatar}
-            />
-            <View>
-              <Text variant="titleSmall" style={dynamicStyles.nameText}>{profile?.full_name}</Text>
-              {/* <View style={dynamicStyles.champterContainer}>
-                  <Text variant="bodySmall" style={dynamicStyles.champterText}>Istanbul Chapter</Text>
-                  <Text variant="bodySmall" style={dynamicStyles.mentorshipText}>• Mentorship</Text>
-              </View> */}
-              <View style={dynamicStyles.locationContainer}>
-                <View style={dynamicStyles.locationItem}>
-                  <Image
-                    source={require('../assets/flat-icons/marker-outlined.png')}
-                    style={dynamicStyles.iconLocation}
-                  />
-                  <Text variant="bodySmall">{profile?.address}</Text>
-                </View>
-                <View style={dynamicStyles.locationItem}>
-                  <Image
-                    source={require('../assets/flat-icons/badge-outlined.png')}
-                    style={dynamicStyles.iconLocation}
-                  />
-                  <Text variant="bodySmall">1 Years Member</Text>
-                </View>
-              </View>
-              <View>
-                <Button
-                  mode="contained"
-                  buttonColor="#F2A93B" // Match extracted color
-                  textColor="white" // White text for contrast
-                  icon={require('../assets/flat-icons/rocket.png')}
-                  contentStyle={dynamicStyles.buttonContent}
-                  labelStyle={dynamicStyles.buttonText}
-                  style={dynamicStyles.buttonBadge}
+              icon={require('../assets/flat-icons/angle-small-left.png')}
+              color="#414042"
+              size={20}
+              style={dynamicStyles.appbarActionRight}
+              onPress={() => setStage('profile')}
+            />)}
+             {stage === 'profile' && (
+              <Appbar.Content
+                title={
+                  <View style={dynamicStyles.titleContainer}>
+                    <Text variant="titleMedium" style={dynamicStyles.titleText}>
+                      Profile
+                    </Text>
+                  </View>
+                }
+              />)}
+              {stage === 'interest' && (
+                <Appbar.Content
+                  title={
+                    <View style={dynamicStyles.titleContainer}>
+                      <Text variant="titleMedium" style={dynamicStyles.interestText}>
+                        Edit interests
+                      </Text>
+                    </View>
+                  }
+              />)}
+            {stage === 'profile' && (
+              <>
+                <Appbar.Action
+                  icon={require('../assets/flat-icons/edit.png')}
+                  color="#414042"
+                  size={20}
+                  style={dynamicStyles.appbarActionRight}
                   onPress={() => {}}
-                >
-                  {profile?.roles[0].role_name}
-                </Button>
+                />
+                <Appbar.Action
+                  icon={require('../assets/flat-icons/settings.png')}
+                  color="#414042"
+                  size={20}
+                  style={[dynamicStyles.appbarActionRight]}
+                  onPress={() => handleLogout()}
+                />
+              </>
+              )}
+          </Appbar.Header>
+        <ScrollView showsVerticalScrollIndicator={true}  contentContainerStyle={dynamicStyles.scrollView}>
+        {stage === 'profile' && (
+          <>
+            <View>
+              <View style={dynamicStyles.profileHeader}>
+                <Avatar.Image
+                  size={100}
+                  source={profile?.photo ? { uri: profile?.photo } : require('../assets/flat-icons/user.png')}
+                  style={dynamicStyles.avatar}
+                />
+                <View>
+                  <Text variant="titleSmall" style={dynamicStyles.nameText}>{profile?.full_name}</Text>
+                  {/* <View style={dynamicStyles.champterContainer}>
+                      <Text variant="bodySmall" style={dynamicStyles.champterText}>Istanbul Chapter</Text>
+                      <Text variant="bodySmall" style={dynamicStyles.mentorshipText}>• Mentorship</Text>
+                  </View> */}
+                  <View style={dynamicStyles.locationContainer}>
+                    <View style={dynamicStyles.locationItem}>
+                      <Image
+                        source={require('../assets/flat-icons/marker-outlined.png')}
+                        style={dynamicStyles.iconLocation}
+                      />
+                      <Text variant="bodySmall">{profile?.address}</Text>
+                    </View>
+                    <View style={dynamicStyles.locationItem}>
+                      <Image
+                        source={require('../assets/flat-icons/badge-outlined.png')}
+                        style={dynamicStyles.iconLocation}
+                      />
+                      <Text variant="bodySmall">
+                        {getYearsAgo(profile?.created_at ?? '1') === 0 
+                          ? 'Joined this year' 
+                          : `${getYearsAgo(profile?.created_at ?? '1')} years ago`}
+                      </Text>
+                    </View>
+                  </View>
+                  <View>
+                    <Button
+                      mode="contained"
+                      buttonColor="#F2A93B" // Match extracted color
+                      textColor="white" // White text for contrast
+                      icon={require('../assets/flat-icons/rocket.png')}
+                      contentStyle={dynamicStyles.buttonContent}
+                      labelStyle={dynamicStyles.buttonText}
+                      style={dynamicStyles.buttonBadge}
+                      onPress={() => {}}
+                    >
+                      {profile?.roles[0].role_name}
+                    </Button>
+                  </View>
+                </View>
+              </View>
+              <Text style={dynamicStyles.descriptionText}>
+                {profile?.carrier?.title} | {profile?.carrier?.area_of_expertise}
+              </Text>
+              <View style={dynamicStyles.buttonRow}>
+                <View>
+                  <Button
+                    mode="contained"
+                    buttonColor={colors.secondary}
+                    textColor={colors.primary}
+                    icon={require('../assets/flat-icons/user-add.png')}
+                    style={dynamicStyles.buttonMargin}
+                    onPress={() => {}}
+                  >
+                    Connections (2)
+                  </Button>
+                </View>
+                <View>
+                  <Button
+                    mode="contained"
+                    buttonColor={colors.secondary}
+                    textColor={colors.primary}
+                    icon={require('../assets/flat-icons/heart.png')}
+                    onPress={() => {}}
+                  >
+                    Followed (10)
+                  </Button>
+                </View>
               </View>
             </View>
-          </View>
-          <Text style={dynamicStyles.descriptionText}>
-            {profile?.carrier?.title} | {profile?.carrier?.area_of_expertise}
-          </Text>
-          <View style={dynamicStyles.buttonRow}>
-            <View>
-              <Button
-                mode="contained"
-                buttonColor={colors.secondary}
-                textColor={colors.primary}
-                icon={require('../assets/flat-icons/user-add.png')}
-                style={dynamicStyles.buttonMargin}
-                onPress={() => {}}
-              >
-                Connections (2)
-              </Button>
-            </View>
-            <View>
-              <Button
-                mode="contained"
-                buttonColor={colors.secondary}
-                textColor={colors.primary}
-                icon={require('../assets/flat-icons/heart.png')}
-                onPress={() => {}}
-              >
-                Followed (10)
-              </Button>
-            </View>
-          </View>
-        </View>
 
-        <View style={dynamicStyles.sectionContainer}>
-          <View style={dynamicStyles.interest}>
-            <Text variant="titleSmall" style={dynamicStyles.sectionText}>Interests</Text>
-            <Appbar.Action
-              icon={require('../assets/flat-icons/edit.png')}
-              color="#414042"
-              size={15}
-              style={dynamicStyles.appbarActionRight}
-              onPress={() => {}}
-            />
-          </View>
-          <View style={dynamicStyles.interestsContainer}>
-            {profile?.interests.map((interest,index) => (
-              <Chip key={interest.id || `interest-${index}`} style={dynamicStyles.chipInterests}>
-                <Text>{interest.name}</Text>
-              </Chip>
-            ))}
-          </View>
-        </View>
-
-        <View style={dynamicStyles.startupsContainer}>
-          <View style={dynamicStyles.interest}>
-            <Text variant="titleSmall" style={dynamicStyles.sectionText}>Startups</Text>
-            <Appbar.Action
-              icon={require('../assets/flat-icons/edit.png')}
-              color="#414042"
-              size={15}
-              style={dynamicStyles.appbarActionRight}
-              onPress={() => {}}
-            />
-          </View>
-          {profile?.startups?.map((startup,index) => (
-            <View key={startup.id || `startup-${index}`} style={dynamicStyles.startupItem}>
-              <Image
-                source={startup.startup_logo ? { uri: startup.startup_logo } : require('../assets/wave.png')}
-                style={dynamicStyles.startupImage}
-                resizeMode="contain"
-              />
-              <View>
-                <Text variant="titleSmall">
-                  {startup?.name}
-                </Text>
-                <Text variant="bodyMedium" style={dynamicStyles.startupText}>
-                  {startup?.description}
-                </Text>
+            <View style={dynamicStyles.sectionContainer}>
+              <View style={dynamicStyles.interest}>
+                <Text variant="titleSmall" style={dynamicStyles.sectionText}>Interests</Text>
+                <Appbar.Action
+                  icon={require('../assets/flat-icons/edit.png')}
+                  color="#414042"
+                  size={15}
+                  style={dynamicStyles.appbarActionRight}
+                  onPress={() => setStage('interest')}
+                />
               </View>
-          </View>
-          ))}
-        </View>
-        <Button mode="contained" onPress={handleLogout} style={dynamicStyles.logoutButton}>
-          Log Out
-        </Button>
+              <View style={dynamicStyles.interestsContainer}>
+                {profile?.interests.map((interest, index) => (
+                  <Chip key={interest.id || `interest-${index}`} style={dynamicStyles.chipInterests}>
+                    <Text>{interest.name}</Text>
+                  </Chip>
+                ))}
+              </View>
+            </View>
+
+            <View style={dynamicStyles.startupsContainer}>
+              <View style={dynamicStyles.interest}>
+                <Text variant="titleSmall" style={dynamicStyles.sectionText}>Startups</Text>
+                <Appbar.Action
+                  icon={require('../assets/flat-icons/edit.png')}
+                  color="#414042"
+                  size={15}
+                  style={dynamicStyles.appbarActionRight}
+                  onPress={() => {}}
+                />
+              </View>
+              {profile?.startups?.map((startup, index) => (
+                <View key={startup.id || `startup-${index}`} style={dynamicStyles.startupItem}>
+                  <Image
+                    source={startup.startup_logo ? { uri: startup.startup_logo } : require('../assets/wave.png')}
+                    style={dynamicStyles.startupImage}
+                    resizeMode="contain"
+                  />
+                  <View>
+                    <Text variant="titleSmall">
+                      {startup?.name}
+                    </Text>
+                    <Text variant="bodyMedium" style={dynamicStyles.startupText}>
+                      {startup?.description}
+                    </Text>
+                  </View>
+                </View>
+              ))}
+            </View>
+
+            <Button mode="contained" onPress={() => {}} style={dynamicStyles.logoutButton}>
+              Add start up
+            </Button>
+          </>
+        )}
+        {stage === 'interest' && (
+          <SelectInterest
+            interests={interests}
+            selectedInterests={selectedInterests}
+            onSelect={handleSelectInterest}
+            onNextButton={() => handleUserInterests()}
+          />
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -229,10 +330,14 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
       justifyContent: 'center',
       alignItems: 'center',
     },
+    scrollView: {
+      paddingBottom: 150,
+    },
     appbarHeader: {
+      width: '100%',
       backgroundColor: 'transparent',
       alignContent: 'center',
-      justifyContent:'space-between',
+      justifyContent: 'space-between',
       marginBottom: 10,
     },
     appbarActionLeft: {
@@ -243,13 +348,17 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
       marginRight: 5,
     },
     titleContainer: {
-      flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'center',
+      justifyContent: 'space-between',
     },
     titleText: {
       fontWeight: 'bold',
-      paddingLeft : 50,
+      paddingLeft: 50,
+    },
+    interestText: {
+      fontWeight: 'bold',
+      paddingLeft: 0,
+      marginLeft: 0,
     },
     profileHeader: {
       flex: 1,
@@ -287,7 +396,7 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
     chipBackground: {
       backgroundColor: '#fff',
       alignSelf: 'flex-start',
-      paddingTop:4,
+      paddingTop: 4,
       marginLeft: 8,
     },
     descriptionText: {
@@ -339,7 +448,7 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
       paddingHorizontal: 10,
       paddingVertical: 12,
       margin: 'auto',
-      width : '90%',
+      width: '90%',
     },
     interestsContainer: {
       marginTop: 12,
@@ -362,7 +471,7 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
       backgroundColor: '#fff',
       paddingHorizontal: 16,
       paddingVertical: 12,
-      width : '90%',
+      width: '90%',
       margin: 'auto',
     },
     startupItem: {
@@ -371,8 +480,7 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
       flexDirection: 'row',
       width: '90%',
     },
-    startupItemText:
-    {
+    startupItemText: {
       width: '90%',
     },
     startupImage: {
@@ -401,18 +509,18 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
       marginBottom: 8,
       alignItems: 'flex-start',
     },
-    champterText:{
+    champterText: {
       color: colors.primary,
-      fontWeight: 'bold'
+      fontWeight: 'bold',
     },
-    mentorshipText:{
+    mentorshipText: {
       color: '#66b54b',
       fontWeight: 'bold',
-      marginLeft:4,
+      marginLeft: 4,
     },
     badgeText: {
       paddingLeft: 4,
-    }
+    },
   });
 
 const styles = StyleSheet.create({
@@ -445,5 +553,4 @@ const styles = StyleSheet.create({
     tintColor: '#F99F1C',
     marginRight: 4,
   },
-  
 });

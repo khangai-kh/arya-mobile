@@ -1,10 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { signIn } from './actions';
+import { signIn, SignInPayload } from './actions';
 
 export type AuthState = {
     token: string | null;
     tokenType: string | null;
     role: number | null;
+    user_id: number | null;
     message: string | null;
     errorMessage: string | null;
     status: 'idle' | 'pending';
@@ -14,6 +15,7 @@ const initialState: AuthState = {
     token: null,
     tokenType: null,
     role: null,
+    user_id: null,
     message: null,
     errorMessage: null,
     status: 'idle',
@@ -36,11 +38,12 @@ const authSlice = createSlice({
                 state.errorMessage = null;
                 state.status = 'pending';
             })
-            .addCase(signIn.fulfilled, (state, action: PayloadAction<{ token: string; token_type: string; roles: { role_id: number }[]; message: string }>) => {
+            .addCase(signIn.fulfilled, (state, action: PayloadAction<SignInPayload>) => {
                 console.log('Sign-in Payload:', action.payload);
                 state.token = action.payload.token;
                 state.tokenType = action.payload.token_type;
                 state.role = action.payload.roles.length > 0 ? action.payload.roles[0].role_id : null;
+                state.user_id = action.payload.user_id;
                 state.message = action.payload.message;
                 state.errorMessage = null;
                 state.status = 'idle';

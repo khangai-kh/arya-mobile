@@ -61,7 +61,7 @@ export const SelectInterest = ({
       </ScrollView>
       <Box px={16} py={16}>
         <Button mode="contained" onPress={onNextButton}>
-          <Text style={styles.buttonContent}>Next</Text>
+          <Text style={styles.buttonContent}>Save</Text>
         </Button>
       </Box>
     </View>
