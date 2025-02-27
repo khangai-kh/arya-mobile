@@ -15,6 +15,7 @@ export const signIn = async (dto: SignInDto): Promise<SignInPayload> => {
                 token: response.token,
                 token_type: response.token_type,
                 roles: response.roles,
+                user_id: response.user_id,
             };
         }
 

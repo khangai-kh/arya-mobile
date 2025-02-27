@@ -43,6 +43,10 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
     {
       onSuccess: ({ data }) => {
         setProfile(data);
+        if (data.interests && Array.isArray(data.interests)) {
+          const interestIds = data.interests.map((item: { id: number }) => item.id);
+          setSelectedInterests(interestIds);
+        }
       },
       onError: (error) => {
         console.error('Error fetching profile:', error);
@@ -454,6 +458,8 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
       marginTop: 12,
       flexDirection: 'row',
       flexWrap: 'wrap',
+      alignItems: 'center',
+      justifyContent: 'center',
       gap: 4,
     },
     champterContainer: {
