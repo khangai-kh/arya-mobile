@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ActivityIndicator, Image, StyleSheet } from 'react-native';
+import { ActivityIndicator, Image, Pressable, StyleSheet } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { Appbar, Avatar, Button, Chip, Text, useTheme, MD3Theme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -14,6 +14,7 @@ import { useQuery } from 'react-query';
 import { API } from '../plugins/axios';
 import { SelectInterest } from '../components/SelectInterest';
 import { InteresteModel } from '../models/general/interest.model';
+import ProfileEditForm from '../components/forms/ProfileEditForm';
 
 type ProfileProps = StackScreenProps<MainStackParams, 'Profile'> & {
   setAuthToken: (accessToken: string | null) => void;
@@ -30,7 +31,7 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
   const [loading, setLoading] = useState(false);
   const { colors } = useTheme();
   const dynamicStyles = createDynamicStyles(colors);
-  const [stage, setStage] = useState<'interest' | 'startup' | 'profile'>('profile');
+  const [stage, setStage] = useState<'interest' | 'startup' | 'profile' | 'edit_profile'>('profile');
 
   const [interests, setInterests] = useState<InteresteModel[]>([]);
   const [selectedInterests, setSelectedInterests] = useState<number[]>([]);
@@ -134,7 +135,7 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
               color="#414042"
               size={20}
               style={dynamicStyles.appbarActionRight}
-              onPress={() => setStage('profile')}
+              onPress={() => setStage('edit_profile')}
             />)}
              {stage === 'profile' && (
               <Appbar.Content
@@ -163,7 +164,7 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
                   color="#414042"
                   size={20}
                   style={dynamicStyles.appbarActionRight}
-                  onPress={() => {}}
+                  onPress={() => setStage('profile')}
                 />
                 <Appbar.Action
                   icon={require('../assets/flat-icons/settings.png')}
@@ -289,21 +290,27 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
                 />
               </View>
               {profile?.startups?.map((startup, index) => (
-                <View key={startup.id || `startup-${index}`} style={dynamicStyles.startupItem}>
-                  <Image
-                    source={startup.startup_logo ? { uri: startup.startup_logo } : require('../assets/wave.png')}
-                    style={dynamicStyles.startupImage}
-                    resizeMode="contain"
-                  />
-                  <View>
-                    <Text variant="titleSmall">
-                      {startup?.name}
-                    </Text>
-                    <Text variant="bodyMedium" style={dynamicStyles.startupText}>
-                      {startup?.description}
-                    </Text>
+                <Pressable
+                  key={startup.id || `startup-${index}`}
+                  style={dynamicStyles.startupItem}
+                  onPress={() => navigation.navigate('Startup', { startup })}
+                >
+                  <View key={startup.id || `startup-${index}`} style={dynamicStyles.startupItem}>
+                    <Image
+                      source={startup.startup_logo ? { uri: startup.startup_logo } : require('../assets/wave.png')}
+                      style={dynamicStyles.startupImage}
+                      resizeMode="contain"
+                    />
+                    <View>
+                      <Text variant="titleSmall">
+                        {startup?.name}
+                      </Text>
+                      <Text variant="bodyMedium" style={dynamicStyles.startupText}>
+                        {startup?.description}
+                      </Text>
+                    </View>
                   </View>
-                </View>
+                </Pressable>
               ))}
             </View>
 
@@ -318,6 +325,21 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
             selectedInterests={selectedInterests}
             onSelect={handleSelectInterest}
             onNextButton={() => handleUserInterests()}
+          />
+        )}
+        {stage === 'edit_profile' && (
+          <ProfileEditForm
+            initialValues={{
+              role: profile?.roles[0].role_name,
+              photo : profile?.photo,
+              full_name: profile?.full_name,
+              company: profile?.carrier,
+              sector: profile?.carrier.sector,
+              title: profile?.carrier.title,
+            }}
+            onSubmit={(values: any) => {
+              console.log('Form submitted with values:', values);
+            }}
           />
         )}
       </ScrollView>
