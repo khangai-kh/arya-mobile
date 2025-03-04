@@ -45,11 +45,11 @@ export interface UserModel extends BaseEntityModel {
         industry:{
             id: number;
             name: string;
-        }[];
+        };
         sector:{
             id: number;
             name: string;
-        }[];
+        };
         title: string;
         area_of_expertise: string;
     };

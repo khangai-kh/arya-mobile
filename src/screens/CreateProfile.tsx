@@ -7,7 +7,7 @@ import { SelectInterest } from '../components/SelectInterest';
 import { SelectMotivation } from '../components/SelectMotivation';
 import { SelectRole } from '../components/SelectRole';
 import { MainStackParams } from '../models/navigation';
-import { DescribeModel } from '../models/general/describe.model';
+import { DescribeModel } from '../models/general/models';
 import { RootState } from '../redux/configureStore';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';

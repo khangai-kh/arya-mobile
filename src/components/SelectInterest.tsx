@@ -3,7 +3,7 @@ import { TouchableOpacity, ScrollView, StyleSheet, Image } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 import { View } from './common/View';
 import { Box } from './common/Box';
-import { InteresteModel } from '../models/general/interest.model';
+import { InteresteModel } from '../models/general/models';
 
 type SelectInterestProps = {
   interests: InteresteModel[];

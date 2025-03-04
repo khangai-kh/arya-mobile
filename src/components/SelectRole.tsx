@@ -4,7 +4,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { Button, Text } from 'react-native-paper';
 import { Box } from './common/Box';
 import { View } from './common/View';
-import { DescribeModel } from '../models/general/describe.model';
+import { DescribeModel } from '../models/general/models';
 
 type SelectRoleProps = {
   roles: DescribeModel[];

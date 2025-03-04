@@ -13,8 +13,8 @@ import { RootState } from '../redux/configureStore';
 import { useQuery } from 'react-query';
 import { API } from '../plugins/axios';
 import { SelectInterest } from '../components/SelectInterest';
-import { InteresteModel } from '../models/general/interest.model';
-import ProfileEditForm from '../components/forms/ProfileEditForm';
+import { InteresteModel } from '../models/general/models';
+import { ProfileEditForm, ProfileEditFormValues } from '../components/forms/ProfileEditForm';
 
 type ProfileProps = StackScreenProps<MainStackParams, 'Profile'> & {
   setAuthToken: (accessToken: string | null) => void;
@@ -98,7 +98,7 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
     try {
 
         await API.post('/api/user-interests', {
-            user_id: user_id,
+            user_id: user_id ?? undefined,
             interest_ids: selectedInterests,
         });
         console.log('All user data saved successfully.');
@@ -135,7 +135,7 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
               color="#414042"
               size={20}
               style={dynamicStyles.appbarActionRight}
-              onPress={() => setStage('edit_profile')}
+              onPress={() => setStage('profile')}
             />)}
              {stage === 'profile' && (
               <Appbar.Content
@@ -157,6 +157,16 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
                     </View>
                   }
               />)}
+              {stage === 'edit_profile' && (
+                <Appbar.Content
+                  title={
+                    <View style={dynamicStyles.titleContainer}>
+                      <Text variant="titleMedium" style={dynamicStyles.interestText}>
+                        Edit profile
+                      </Text>
+                    </View>
+                  }
+              />)}
             {stage === 'profile' && (
               <>
                 <Appbar.Action
@@ -164,7 +174,7 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
                   color="#414042"
                   size={20}
                   style={dynamicStyles.appbarActionRight}
-                  onPress={() => setStage('profile')}
+                  onPress={() => setStage('edit_profile')}
                 />
                 <Appbar.Action
                   icon={require('../assets/flat-icons/settings.png')}
@@ -328,17 +338,73 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
           />
         )}
         {stage === 'edit_profile' && (
+          console.log('Profile data:', profile?.carrier.sector?.name),
           <ProfileEditForm
             initialValues={{
+              user_id: user_id ?? 1,
               role: profile?.roles[0].role_name,
               photo : profile?.photo,
               full_name: profile?.full_name,
-              company: profile?.carrier,
-              sector: profile?.carrier.sector,
+              company: profile?.carrier.company_name,
+              sector: profile?.carrier.sector ? { sector_id: profile.carrier.sector.id, sector_name: profile.carrier.sector.name } : undefined,
               title: profile?.carrier.title,
             }}
-            onSubmit={(values: any) => {
-              console.log('Form submitted with values:', values);
+            onSubmit={(values: ProfileEditFormValues) => {
+
+              if(values.full_name !== profile?.full_name)
+              {
+                console.log('Full Name:', values.full_name);
+                console.log('Full Name:', profile?.full_name);
+                setLoading(true);
+                try {
+                   API.put('/api/users/current-user-full_name', {
+                      full_name: values.full_name,
+                  });
+                } catch (error) {
+                    console.error('Error saving user info:', error);
+                } finally {
+                    setProfile(prevProfile =>
+                      prevProfile ? { ...prevProfile, full_name: values.full_name ?? prevProfile.full_name } : prevProfile
+                    );
+                }
+                console.log('Full Name:', values.full_name);
+              }
+              if(values.company !== profile?.carrier.company_name)
+              {
+                setProfile(prevProfile =>
+                  prevProfile ? { ...prevProfile, carrier: { ...prevProfile.carrier, company_name: values.company ?? prevProfile.carrier.company_name } } : prevProfile
+                );
+                console.log('Company:', values.company);
+              }
+              if(values.sector?.sector_id !== profile?.carrier.sector?.id)
+              {
+                setProfile(prevProfile =>
+                  prevProfile ? { ...prevProfile, carrier: { ...prevProfile.carrier, sector: { ...prevProfile.carrier.sector, id: values.sector?.sector_id ?? prevProfile.carrier.sector.id } } } : prevProfile
+                );
+                console.log('Sector:', values.sector?.sector_id);
+              }
+              if(values.title !== profile?.carrier.title)
+              {
+                setProfile(prevProfile =>
+                  prevProfile ? { ...prevProfile, carrier: { ...prevProfile.carrier, title: values.title ?? prevProfile.carrier.title } } : prevProfile 
+                );
+                console.log('Title:', values.title);
+              }
+              try {
+                console.log('User ID:', profile?.carrier.sector.id);
+                API.post('/api/user-carrier', {
+                  user_id: user_id,
+                  company_name: profile?.carrier.company_name,
+                  sector_id: profile?.carrier.sector.id,
+                  title: profile?.carrier.title,
+               });
+               console.log('All user data saved successfully.');
+              } catch (error) {
+                  console.error('Error saving user info:', error);
+              } finally {
+                  setLoading(false);
+                  setStage('profile');
+              }
             }}
           />
         )}
@@ -355,7 +421,7 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-    },
+    },  
     scrollView: {
       paddingBottom: 150,
     },
@@ -376,6 +442,7 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
     titleContainer: {
       alignItems: 'center',
       justifyContent: 'space-between',
+      marginLeft:-40,
     },
     titleText: {
       fontWeight: 'bold',

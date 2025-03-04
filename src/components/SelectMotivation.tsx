@@ -4,7 +4,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { Button, Text } from 'react-native-paper';
 import { Box } from './common/Box';
 import { View } from './common/View';
-import { MotivationModel } from '../models/general/motivation.model';
+import { MotivationModel } from '../models/general/models';
 
 type SelectMotivationProps = {
   motivations: MotivationModel[];
