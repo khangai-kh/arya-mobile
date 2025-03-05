@@ -9,7 +9,7 @@ export interface DescribeModel extends BaseEntityModel {
 
 export interface InteresteModel extends BaseEntityModel {
     [x: string]: any;
-    interest_id: number;
+    id: number;
     interest_name: string;
     title : string;
     category_id: number;
@@ -18,12 +18,26 @@ export interface InteresteModel extends BaseEntityModel {
 
 export interface MotivationModel extends BaseEntityModel {
     [x: string]: any;
-    interest_id: number;
-    interest_name: string;
+    id: number;
+    name: string;
 }
 
 export interface Sector{
     [x: string]: any;
     sector_id: number;
     sector_name: string;
+}
+
+export interface Phase{
+    [x: string]: any;
+    id: number;
+    name: string;
+}
+
+export interface InvestmentStage {
+    [x: string]: any;
+    id: number;
+    name: string;
+    is_active: boolean;
+    description: string;
 }

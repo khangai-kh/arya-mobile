@@ -15,6 +15,7 @@ import { API } from '../plugins/axios';
 import { SelectInterest } from '../components/SelectInterest';
 import { InteresteModel } from '../models/general/models';
 import { ProfileEditForm, ProfileEditFormValues } from '../components/forms/ProfileEditForm';
+import { StartUpForm } from '../components/forms/StartUpForm';
 
 type ProfileProps = StackScreenProps<MainStackParams, 'Profile'> & {
   setAuthToken: (accessToken: string | null) => void;
@@ -30,7 +31,7 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
   const [isLoading, setIsLoading] = useState(false);
   const { colors } = useTheme();
   const dynamicStyles = createDynamicStyles(colors);
-  const [stage, setStage] = useState<'interest' | 'startup' | 'profile' | 'edit_profile'>('profile');
+  const [stage, setStage] = useState<'interest' | 'startup' | 'profile' | 'edit_profile' >('profile');
   const [interests, setInterests] = useState<InteresteModel[]>([]);
   const [selectedInterests, setSelectedInterests] = useState<number[]>([]);
   const [profile, setProfile] = useState<UserModel | null>(null);
@@ -208,6 +209,17 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
             }
           />
         )}
+         {stage === 'startup' && (
+          <Appbar.Content
+            title={
+              <View style={dynamicStyles.titleContainer}>
+                <Text variant="titleMedium" style={dynamicStyles.interestText}>
+                  Add startup
+                </Text>
+              </View>
+            }
+          />
+        )}
         {stage === 'profile' && (
           <>
             <Appbar.Action
@@ -361,7 +373,7 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
               ))}
             </View>
 
-            <Button mode="contained" onPress={() => {}} style={dynamicStyles.logoutButton}>
+            <Button mode="contained" onPress={() => setStage('startup')} style={dynamicStyles.logoutButton}>
               Add start up
             </Button>
           </>
@@ -388,6 +400,25 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
               title: profile?.carrier.title,
             }}
             onSubmit={handleProfileUpdate}
+          />
+        )}
+        {stage === 'startup' && (
+          <StartUpForm
+            initialValues={{
+              user_id: user_id ?? 1,
+              id: 0,
+              logo: '',
+              name: '',
+              slogan: '',
+              description: '',
+              coFounders: [],
+              productImages: [],
+              phase: '',
+              investmentStage: '',
+              investors: [],
+              totalInvestment: '',
+            }}
+            onSubmit={() => {}}
           />
         )}
       </ScrollView>

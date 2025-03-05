@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   KeyboardAvoidingView,
@@ -13,13 +13,11 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text, Button, Avatar, IconButton } from 'react-native-paper';
 import { Asset, launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import { Dropdown } from 'react-native-element-dropdown';
-import { Formik, useFormikContext } from 'formik';
+import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { API } from '../../plugins/axios';
-import { RootState } from '../../redux/configureStore';
-import { useSelector } from 'react-redux';
 import { Sector } from '../../models/general/models';
+import { Select, SelectItem } from '../common/Select';
 
 export interface ProfileEditFormValues {
   user_id?: number;
@@ -31,7 +29,6 @@ export interface ProfileEditFormValues {
   address?: string;
   title?: string;
 }
-
 export interface ProfileEditProps {
   initialValues: ProfileEditFormValues;
   onSubmit: (values: ProfileEditFormValues) => void;
@@ -49,89 +46,6 @@ const profileValidationSchema = Yup.object().shape({
     .required('Sector is required'),
   title: Yup.string().required('Title is required'),
 });
-
-const SectorSelect = ({ styles }: { styles: any }) => {
-  const { values, setFieldValue, errors, touched } = useFormikContext<ProfileEditFormValues>();
-  const [sectors, setSectors] = useState<Sector[]>([]);
-  const { token } = useSelector((state: RootState) => state.auth);
-  const dropdownRef = useRef<any>(null);
-
-  useEffect(() => {
-    const fetchSectors = async () => {
-      try {
-        const response = await API.get('/api/sectors', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const data = response.data;
-        setSectors(data || []);
-
-        if (!values.sector?.sector_id && data?.length > 0) {
-          setFieldValue('sector', data[0]);
-        }
-      } catch (error) {
-        console.error('Error fetching sectors:', error);
-      }
-    };
-
-    fetchSectors();
-  }, [token]); // Only re-fetch if token changes
-
-  // Memoize sectorItems to prevent unnecessary re-renders
-  const sectorItems = useMemo(
-    () =>
-      sectors.map((sector) => ({
-        label: sector.sector_name,
-        value: sector.sector_id,
-      })),
-    [sectors]
-  );
-
-  const handleDropdownOpen = () => {
-    // Prevent auto-scroll by resetting scroll position to top
-    if (dropdownRef.current) {
-      // Note: This is a workaround; exact method may depend on library version
-      // You might need to adjust based on available ref methods
-      setTimeout(() => {
-        dropdownRef.current.scrollTo?.({ index: 0, animated: false });
-      }, 0);
-    }
-  };
-
-  return (
-    <>
-      <Text variant="titleSmall" style={styles.title}>
-        Sector
-      </Text>
-      <Dropdown
-        ref={dropdownRef}
-        style={styles.picker}
-        containerStyle={styles.pickerContainer}
-        selectedTextStyle={styles.placeholder}
-        placeholderStyle={styles.placeholder}
-        data={sectorItems}
-        labelField="label"
-        valueField="value"
-        placeholder="Select Sector"
-        value={values.sector?.sector_id || null}
-        onChange={(item) => {
-          const selectedSector = sectors.find((sector) => sector.sector_id === item.value);
-          if (selectedSector) {
-            setFieldValue('sector', selectedSector);
-          }
-        }}
-        maxHeight={200} // Set a fixed height for the dropdown list
-        showsVerticalScrollIndicator={true} // Ensure scroll indicator is visible
-        onFocus={handleDropdownOpen} // Trigger when dropdown opens
-        autoScroll={false} // Disable auto-scroll to input
-      />
-      {touched.sector && errors.sector && (
-        <Text style={styles.errorText}>{errors.sector as string}</Text>
-      )}
-    </>
-  );
-};
 
 export const ProfileEditForm = ({ initialValues, onSubmit }: ProfileEditProps) => {
   const [avatarUri, setAvatarUri] = useState(initialValues.photo);
@@ -295,9 +209,19 @@ export const ProfileEditForm = ({ initialValues, onSubmit }: ProfileEditProps) =
                   {touched.company && errors.company && (
                     <Text style={styles.errorText}>{errors.company}</Text>
                   )}
-
-                  <SectorSelect styles={styles} />
-
+                  <Select<Sector>
+                    apiUrl="/api/sectors"
+                    fieldName="sector"
+                    label="Sector"
+                    labelKey="sector_name"
+                    valueKey="sector_id"
+                    initialValue={{ label: values.sector?.sector_name || '', value: values.sector?.sector_id ?? '' }}
+                    onValueChange={(item: SelectItem<Sector> | null) => {
+                      if (item) {
+                        console.log('Selected:', item.value);
+                      }
+                    }}
+                  />
                   <Text variant="titleSmall" style={styles.title}>
                     Title
                   </Text>
