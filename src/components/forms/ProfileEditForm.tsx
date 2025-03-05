@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   StyleSheet,
   KeyboardAvoidingView,
@@ -50,10 +50,11 @@ const profileValidationSchema = Yup.object().shape({
   title: Yup.string().required('Title is required'),
 });
 
-const SectorSelect = ({ styles, selectedSector }: { styles: any; selectedSector: Sector }) => {
+const SectorSelect = ({ styles }: { styles: any }) => {
   const { values, setFieldValue, errors, touched } = useFormikContext<ProfileEditFormValues>();
   const [sectors, setSectors] = useState<Sector[]>([]);
   const { token } = useSelector((state: RootState) => state.auth);
+  const dropdownRef = useRef<any>(null);
 
   useEffect(() => {
     const fetchSectors = async () => {
@@ -63,21 +64,11 @@ const SectorSelect = ({ styles, selectedSector }: { styles: any; selectedSector:
             Authorization: `Bearer ${token}`,
           },
         });
-
         const data = response.data;
         setSectors(data || []);
 
-        // Set initial sector value if none exists
-        if (!values.sector && data?.length > 0) {
-          setFieldValue('sector', data[0]); // Set the full Sector object
-        }
-
-        // If selectedSector is provided, set it
-        if (selectedSector?.sector_id) {
-          const matchingSector = data.find((s: Sector) => s.sector_id === selectedSector.sector_id);
-          if (matchingSector) {
-            setFieldValue('sector', matchingSector); // Set the full Sector object
-          }
+        if (!values.sector?.sector_id && data?.length > 0) {
+          setFieldValue('sector', data[0]);
         }
       } catch (error) {
         console.error('Error fetching sectors:', error);
@@ -85,12 +76,28 @@ const SectorSelect = ({ styles, selectedSector }: { styles: any; selectedSector:
     };
 
     fetchSectors();
-  }, []); // Added setFieldValue to dependencies
+  }, [token]); // Only re-fetch if token changes
 
-  const sectorItems = sectors.map((sector) => ({
-    label: sector.sector_name,
-    value: sector.sector_id,
-  }));
+  // Memoize sectorItems to prevent unnecessary re-renders
+  const sectorItems = useMemo(
+    () =>
+      sectors.map((sector) => ({
+        label: sector.sector_name,
+        value: sector.sector_id,
+      })),
+    [sectors]
+  );
+
+  const handleDropdownOpen = () => {
+    // Prevent auto-scroll by resetting scroll position to top
+    if (dropdownRef.current) {
+      // Note: This is a workaround; exact method may depend on library version
+      // You might need to adjust based on available ref methods
+      setTimeout(() => {
+        dropdownRef.current.scrollTo?.({ index: 0, animated: false });
+      }, 0);
+    }
+  };
 
   return (
     <>
@@ -98,25 +105,29 @@ const SectorSelect = ({ styles, selectedSector }: { styles: any; selectedSector:
         Sector
       </Text>
       <Dropdown
+        ref={dropdownRef}
+        style={styles.picker}
+        containerStyle={styles.pickerContainer}
+        selectedTextStyle={styles.placeholder}
+        placeholderStyle={styles.placeholder}
+        data={sectorItems}
         labelField="label"
         valueField="value"
-        data={sectorItems}
-        value={values.sector?.sector_id} // Use sector_id for the Dropdown
+        placeholder="Select Sector"
+        value={values.sector?.sector_id || null}
         onChange={(item) => {
-          const selected = sectors.find((sector) => sector.sector_id === item.value);
-          if (selected) {
-            setFieldValue('sector', selected);
-            values.sector = selected; // Set the full Sector object
+          const selectedSector = sectors.find((sector) => sector.sector_id === item.value);
+          if (selectedSector) {
+            setFieldValue('sector', selectedSector);
           }
         }}
-        style={styles.picker}
-        containerStyle={styles.picker}
-        selectedTextStyle={styles.placeholder}
-        placeholder="Select Sector"
-        placeholderStyle={styles.placeholder}
+        maxHeight={200} // Set a fixed height for the dropdown list
+        showsVerticalScrollIndicator={true} // Ensure scroll indicator is visible
+        onFocus={handleDropdownOpen} // Trigger when dropdown opens
+        autoScroll={false} // Disable auto-scroll to input
       />
       {touched.sector && errors.sector && (
-        <Text style={styles.errorText}>{errors.sector}</Text>
+        <Text style={styles.errorText}>{errors.sector as string}</Text>
       )}
     </>
   );
@@ -255,20 +266,6 @@ export const ProfileEditForm = ({ initialValues, onSubmit }: ProfileEditProps) =
                 isSubmitting,
               }) => (
                 <View style={styles.formContainer}>
-                  {/* Role field commented out */}
-                  {/* <Text variant="titleSmall" style={styles.title}>Role</Text>
-                  <TextInput
-                    autoCapitalize="none"
-                    placeholder="Role"
-                    value={values.role}
-                    onChangeText={handleChange('role')}
-                    onBlur={handleBlur('role')}
-                    style={styles.input}
-                  />
-                  {touched.role && errors.role && (
-                    <Text style={styles.errorText}>{errors.role}</Text>
-                  )} */}
-
                   <Text variant="titleSmall" style={styles.title}>
                     Full Name
                   </Text>
@@ -299,11 +296,7 @@ export const ProfileEditForm = ({ initialValues, onSubmit }: ProfileEditProps) =
                     <Text style={styles.errorText}>{errors.company}</Text>
                   )}
 
-                  {/* Render the select box for Sector */}
-                  <SectorSelect
-                    styles={styles}
-                    selectedSector={values.sector || { sector_id: 0, sector_name: '' }}
-                  />
+                  <SectorSelect styles={styles} />
 
                   <Text variant="titleSmall" style={styles.title}>
                     Title
@@ -392,6 +385,10 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     borderColor: '#f5f5f5',
     backgroundColor: '#ffffff',
+  },
+  pickerContainer: {
+    borderRadius: 8,
+    maxHeight: 200, // Match maxHeight prop
   },
   placeholder: {
     fontSize: 15,

@@ -25,17 +25,14 @@ const mapDispatchToProps = {
 };
 
 const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: ProfileProps) => {
-
   const { token } = useSelector((state: RootState) => state.auth);
-  const user_id = useSelector((state: RootState) => state.auth.user_id);
-  const [loading, setLoading] = useState(false);
+  const { user_id } = useSelector((state: RootState) => state.auth);
+  const [isLoading, setIsLoading] = useState(false);
   const { colors } = useTheme();
   const dynamicStyles = createDynamicStyles(colors);
   const [stage, setStage] = useState<'interest' | 'startup' | 'profile' | 'edit_profile'>('profile');
-
   const [interests, setInterests] = useState<InteresteModel[]>([]);
   const [selectedInterests, setSelectedInterests] = useState<number[]>([]);
-
   const [profile, setProfile] = useState<UserModel | null>(null);
 
   const { isFetching: isFetchingProfile, refetch } = useQuery(
@@ -63,17 +60,16 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
     }
   );
 
-  const isFetching = isFetchingProfile || isFetchingInterests || loading;
+  const isDataLoading = isFetchingProfile || isFetchingInterests || isLoading;
 
   const getYearsAgo = (dateString: string): number => {
-    let inputDate = new Date(dateString);
+    const inputDate = new Date(dateString);
     if (isNaN(inputDate.getTime())) {
       return 0;
     }
-    let now = new Date();
-    let msInYear = 1000 * 60 * 60 * 24 * 365.25;
-    let yearsAgo = Math.floor((now.getTime() - inputDate.getTime()) / msInYear);
-    return yearsAgo;
+    const now = new Date();
+    const msInYear = 1000 * 60 * 60 * 24 * 365.25;
+    return Math.floor((now.getTime() - inputDate.getTime()) / msInYear);
   };
 
   const handleLogout = () => {
@@ -84,124 +80,167 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
     });
   };
 
-   const handleUserInterests = async () => {
-    console.log(user_id);
-
-    if (loading) {
+  const handleUserInterests = async () => {
+    console.log(isLoading, user_id);
+    if (isLoading || !user_id) {
+      console.error('Error: Operation in progress or User ID missing.');
       return;
     }
 
-    if (!user_id ) {
-      console.error('Error: User ID or role selection is missing.');
-      return;
-    }
     try {
-
-        await API.post('/api/user-interests', {
-            user_id: user_id ?? undefined,
-            interest_ids: selectedInterests,
-        });
-        console.log('All user data saved successfully.');
-      //  setSuccessModalVisible(true);
-        setStage('profile');
+      setIsLoading(true);
+      await API.post('/api/user-interests', {
+        user_id: user_id,
+        interest_ids: selectedInterests,
+      });
+      console.log('All user data saved successfully.');
+      setStage('profile');
     } catch (error) {
-        console.error('Error saving user info:', error);
+      console.error('Error saving user info:', error);
     } finally {
-        setLoading(false);
+      setIsLoading(false);
     }
   };
 
   const handleSelectInterest = (interest: InteresteModel) => {
     setSelectedInterests((prev) =>
-        prev.includes(interest.interest_id)
-            ? prev.filter((id) => id !== interest.interest_id)
-            : [...prev, interest.interest_id]
+      prev.includes(interest.interest_id)
+        ? prev.filter((id) => id !== interest.interest_id)
+        : [...prev, interest.interest_id]
     );
   };
 
-  if (isFetching) {
+  const handleProfileUpdate = async (values: ProfileEditFormValues) => {
+    setIsLoading(true);
+    try {
+      const updatedProfile = { ...profile } as UserModel;
+
+      if (values.full_name !== profile?.full_name) {
+        await API.put('/api/users/current-user-full_name', { full_name: values.full_name });
+        updatedProfile.full_name = values.full_name ?? updatedProfile.full_name;
+      }
+
+      if (values.company !== profile?.carrier.company_name) {
+        updatedProfile.carrier.company_name = values.company ?? updatedProfile.carrier.company_name;
+      }
+
+      if (values.sector?.sector_id !== profile?.carrier.sector?.id) {
+        updatedProfile.carrier.sector = {
+          ...updatedProfile.carrier.sector,
+          id: values.sector?.sector_id ?? updatedProfile.carrier.sector.id,
+        };
+      }
+
+      if (values.title !== profile?.carrier.title) {
+        updatedProfile.carrier.title = values.title ?? updatedProfile.carrier.title;
+      }
+
+      await API.post('/api/user-carrier', {
+        user_id: user_id,
+        is_company_owner: profile?.carrier.is_company_owner,
+        company_name: updatedProfile.carrier.company_name,
+        industry_id: profile?.carrier.industry.id,
+        sector_id: updatedProfile.carrier.sector.id,
+        title: updatedProfile.carrier.title,
+        area_of_expertise: profile?.carrier.area_of_expertise,
+      });
+
+      setProfile(updatedProfile);
+      console.log('All user data saved successfully.');
+    } catch (error) {
+      console.error('Error saving user info:', error);
+    } finally {
+      setIsLoading(false);
+      setStage('profile');
+    }
+  };
+
+  if (isDataLoading) {
     return (
-        <View style={styles.loaderContainer}>
-            <ActivityIndicator size="large" color={colors.primary} />
-        </View>
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
     );
   }
+
   return (
     <SafeAreaView style={dynamicStyles.safeAreaView} edges={['top']}>
-        <Appbar.Header style={dynamicStyles.appbarHeader}>
+      <Appbar.Header style={dynamicStyles.appbarHeader}>
         {stage !== 'profile' && (
           <Appbar.Action
-              icon={require('../assets/flat-icons/angle-small-left.png')}
+            icon={require('../assets/flat-icons/angle-small-left.png')}
+            color="#414042"
+            size={20}
+            style={dynamicStyles.appbarActionRight}
+            onPress={() => setStage('profile')}
+          />
+        )}
+        {stage === 'profile' && (
+          <Appbar.Content
+            title={
+              <View style={dynamicStyles.titleContainer}>
+                <Text variant="titleMedium" style={dynamicStyles.titleText}>
+                  Profile
+                </Text>
+              </View>
+            }
+          />
+        )}
+        {stage === 'interest' && (
+          <Appbar.Content
+            title={
+              <View style={dynamicStyles.titleContainer}>
+                <Text variant="titleMedium" style={dynamicStyles.interestText}>
+                  Edit interests
+                </Text>
+              </View>
+            }
+          />
+        )}
+        {stage === 'edit_profile' && (
+          <Appbar.Content
+            title={
+              <View style={dynamicStyles.titleContainer}>
+                <Text variant="titleMedium" style={dynamicStyles.interestText}>
+                  Edit profile
+                </Text>
+              </View>
+            }
+          />
+        )}
+        {stage === 'profile' && (
+          <>
+            <Appbar.Action
+              icon={require('../assets/flat-icons/edit.png')}
               color="#414042"
               size={20}
               style={dynamicStyles.appbarActionRight}
-              onPress={() => setStage('profile')}
-            />)}
-             {stage === 'profile' && (
-              <Appbar.Content
-                title={
-                  <View style={dynamicStyles.titleContainer}>
-                    <Text variant="titleMedium" style={dynamicStyles.titleText}>
-                      Profile
-                    </Text>
-                  </View>
-                }
-              />)}
-              {stage === 'interest' && (
-                <Appbar.Content
-                  title={
-                    <View style={dynamicStyles.titleContainer}>
-                      <Text variant="titleMedium" style={dynamicStyles.interestText}>
-                        Edit interests
-                      </Text>
-                    </View>
-                  }
-              />)}
-              {stage === 'edit_profile' && (
-                <Appbar.Content
-                  title={
-                    <View style={dynamicStyles.titleContainer}>
-                      <Text variant="titleMedium" style={dynamicStyles.interestText}>
-                        Edit profile
-                      </Text>
-                    </View>
-                  }
-              />)}
-            {stage === 'profile' && (
-              <>
-                <Appbar.Action
-                  icon={require('../assets/flat-icons/edit.png')}
-                  color="#414042"
-                  size={20}
-                  style={dynamicStyles.appbarActionRight}
-                  onPress={() => setStage('edit_profile')}
-                />
-                <Appbar.Action
-                  icon={require('../assets/flat-icons/settings.png')}
-                  color="#414042"
-                  size={20}
-                  style={[dynamicStyles.appbarActionRight]}
-                  onPress={() => handleLogout()}
-                />
-              </>
-              )}
-          </Appbar.Header>
-        <ScrollView showsVerticalScrollIndicator={true}  contentContainerStyle={dynamicStyles.scrollView}>
+              onPress={() => setStage('edit_profile')}
+            />
+            <Appbar.Action
+              icon={require('../assets/flat-icons/settings.png')}
+              color="#414042"
+              size={20}
+              style={dynamicStyles.appbarActionRight}
+              onPress={handleLogout}
+            />
+          </>
+        )}
+      </Appbar.Header>
+      <ScrollView showsVerticalScrollIndicator={true} contentContainerStyle={dynamicStyles.scrollView}>
         {stage === 'profile' && (
           <>
             <View>
               <View style={dynamicStyles.profileHeader}>
                 <Avatar.Image
                   size={100}
-                  source={profile?.photo ? { uri: profile?.photo } : require('../assets/flat-icons/user.png')}
+                  source={profile?.photo ? { uri: profile.photo } : require('../assets/flat-icons/user.png')}
                   style={dynamicStyles.avatar}
                 />
                 <View>
-                  <Text variant="titleSmall" style={dynamicStyles.nameText}>{profile?.full_name}</Text>
-                  {/* <View style={dynamicStyles.champterContainer}>
-                      <Text variant="bodySmall" style={dynamicStyles.champterText}>Istanbul Chapter</Text>
-                      <Text variant="bodySmall" style={dynamicStyles.mentorshipText}>• Mentorship</Text>
-                  </View> */}
+                  <Text variant="titleSmall" style={dynamicStyles.nameText}>
+                    {profile?.full_name}
+                  </Text>
                   <View style={dynamicStyles.locationContainer}>
                     <View style={dynamicStyles.locationItem}>
                       <Image
@@ -216,8 +255,8 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
                         style={dynamicStyles.iconLocation}
                       />
                       <Text variant="bodySmall">
-                        {getYearsAgo(profile?.created_at ?? '1') === 0 
-                          ? 'Joined this year' 
+                        {getYearsAgo(profile?.created_at ?? '1') === 0
+                          ? 'Joined this year'
                           : `${getYearsAgo(profile?.created_at ?? '1')} years ago`}
                       </Text>
                     </View>
@@ -225,8 +264,8 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
                   <View>
                     <Button
                       mode="contained"
-                      buttonColor="#F2A93B" // Match extracted color
-                      textColor="white" // White text for contrast
+                      buttonColor="#F2A93B"
+                      textColor="white"
                       icon={require('../assets/flat-icons/rocket.png')}
                       contentStyle={dynamicStyles.buttonContent}
                       labelStyle={dynamicStyles.buttonText}
@@ -242,35 +281,33 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
                 {profile?.carrier?.title} | {profile?.carrier?.area_of_expertise}
               </Text>
               <View style={dynamicStyles.buttonRow}>
-                <View>
-                  <Button
-                    mode="contained"
-                    buttonColor={colors.secondary}
-                    textColor={colors.primary}
-                    icon={require('../assets/flat-icons/user-add.png')}
-                    style={dynamicStyles.buttonMargin}
-                    onPress={() => {}}
-                  >
-                    Connections (2)
-                  </Button>
-                </View>
-                <View>
-                  <Button
-                    mode="contained"
-                    buttonColor={colors.secondary}
-                    textColor={colors.primary}
-                    icon={require('../assets/flat-icons/heart.png')}
-                    onPress={() => {}}
-                  >
-                    Followed (10)
-                  </Button>
-                </View>
+                <Button
+                  mode="contained"
+                  buttonColor={colors.secondary}
+                  textColor={colors.primary}
+                  icon={require('../assets/flat-icons/user-add.png')}
+                  style={dynamicStyles.buttonMargin}
+                  onPress={() => {}}
+                >
+                  Connections (2)
+                </Button>
+                <Button
+                  mode="contained"
+                  buttonColor={colors.secondary}
+                  textColor={colors.primary}
+                  icon={require('../assets/flat-icons/heart.png')}
+                  onPress={() => {}}
+                >
+                  Followed (10)
+                </Button>
               </View>
             </View>
 
             <View style={dynamicStyles.sectionContainer}>
               <View style={dynamicStyles.interest}>
-                <Text variant="titleSmall" style={dynamicStyles.sectionText}>Interests</Text>
+                <Text variant="titleSmall" style={dynamicStyles.sectionText}>
+                  Interests
+                </Text>
                 <Appbar.Action
                   icon={require('../assets/flat-icons/edit.png')}
                   color="#414042"
@@ -290,7 +327,9 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
 
             <View style={dynamicStyles.startupsContainer}>
               <View style={dynamicStyles.interest}>
-                <Text variant="titleSmall" style={dynamicStyles.sectionText}>Startups</Text>
+                <Text variant="titleSmall" style={dynamicStyles.sectionText}>
+                  Startups
+                </Text>
                 <Appbar.Action
                   icon={require('../assets/flat-icons/edit.png')}
                   color="#414042"
@@ -305,16 +344,14 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
                   style={dynamicStyles.startupItem}
                   onPress={() => navigation.navigate('Startup', { startup })}
                 >
-                  <View key={startup.id || `startup-${index}`} style={dynamicStyles.startupItem}>
+                  <View style={dynamicStyles.startupItem}>
                     <Image
                       source={startup.startup_logo ? { uri: startup.startup_logo } : require('../assets/wave.png')}
                       style={dynamicStyles.startupImage}
                       resizeMode="contain"
                     />
                     <View>
-                      <Text variant="titleSmall">
-                        {startup?.name}
-                      </Text>
+                      <Text variant="titleSmall">{startup?.name}</Text>
                       <Text variant="bodyMedium" style={dynamicStyles.startupText}>
                         {startup?.description}
                       </Text>
@@ -334,78 +371,23 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
             interests={interests}
             selectedInterests={selectedInterests}
             onSelect={handleSelectInterest}
-            onNextButton={() => handleUserInterests()}
+            onNextButton={handleUserInterests}
           />
         )}
         {stage === 'edit_profile' && (
-          console.log('Profile data:', profile?.carrier.sector?.name),
           <ProfileEditForm
             initialValues={{
               user_id: user_id ?? 1,
               role: profile?.roles[0].role_name,
-              photo : profile?.photo,
+              photo: profile?.photo,
               full_name: profile?.full_name,
               company: profile?.carrier.company_name,
-              sector: profile?.carrier.sector ? { sector_id: profile.carrier.sector.id, sector_name: profile.carrier.sector.name } : undefined,
+              sector: profile?.carrier.sector
+                ? { sector_id: profile.carrier.sector.id, sector_name: profile.carrier.sector.name }
+                : undefined,
               title: profile?.carrier.title,
             }}
-            onSubmit={(values: ProfileEditFormValues) => {
-
-              if(values.full_name !== profile?.full_name)
-              {
-                console.log('Full Name:', values.full_name);
-                console.log('Full Name:', profile?.full_name);
-                setLoading(true);
-                try {
-                   API.put('/api/users/current-user-full_name', {
-                      full_name: values.full_name,
-                  });
-                } catch (error) {
-                    console.error('Error saving user info:', error);
-                } finally {
-                    setProfile(prevProfile =>
-                      prevProfile ? { ...prevProfile, full_name: values.full_name ?? prevProfile.full_name } : prevProfile
-                    );
-                }
-                console.log('Full Name:', values.full_name);
-              }
-              if(values.company !== profile?.carrier.company_name)
-              {
-                setProfile(prevProfile =>
-                  prevProfile ? { ...prevProfile, carrier: { ...prevProfile.carrier, company_name: values.company ?? prevProfile.carrier.company_name } } : prevProfile
-                );
-                console.log('Company:', values.company);
-              }
-              if(values.sector?.sector_id !== profile?.carrier.sector?.id)
-              {
-                setProfile(prevProfile =>
-                  prevProfile ? { ...prevProfile, carrier: { ...prevProfile.carrier, sector: { ...prevProfile.carrier.sector, id: values.sector?.sector_id ?? prevProfile.carrier.sector.id } } } : prevProfile
-                );
-                console.log('Sector:', values.sector?.sector_id);
-              }
-              if(values.title !== profile?.carrier.title)
-              {
-                setProfile(prevProfile =>
-                  prevProfile ? { ...prevProfile, carrier: { ...prevProfile.carrier, title: values.title ?? prevProfile.carrier.title } } : prevProfile 
-                );
-                console.log('Title:', values.title);
-              }
-              try {
-                console.log('User ID:', profile?.carrier.sector.id);
-                API.post('/api/user-carrier', {
-                  user_id: user_id,
-                  company_name: profile?.carrier.company_name,
-                  sector_id: profile?.carrier.sector.id,
-                  title: profile?.carrier.title,
-               });
-               console.log('All user data saved successfully.');
-              } catch (error) {
-                  console.error('Error saving user info:', error);
-              } finally {
-                  setLoading(false);
-                  setStage('profile');
-              }
-            }}
+            onSubmit={handleProfileUpdate}
           />
         )}
       </ScrollView>
@@ -421,7 +403,7 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-    },  
+    },
     scrollView: {
       paddingBottom: 150,
     },
@@ -432,9 +414,6 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
       justifyContent: 'space-between',
       marginBottom: 10,
     },
-    appbarActionLeft: {
-      backgroundColor: colors.onPrimary,
-    },
     appbarActionRight: {
       backgroundColor: colors.onPrimary,
       marginRight: 5,
@@ -442,7 +421,7 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
     titleContainer: {
       alignItems: 'center',
       justifyContent: 'space-between',
-      marginLeft:-40,
+      marginLeft: -40,
     },
     titleText: {
       fontWeight: 'bold',
@@ -454,7 +433,6 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
       marginLeft: 0,
     },
     profileHeader: {
-      flex: 1,
       flexDirection: 'row',
       alignItems: 'center',
       marginBottom: 12,
@@ -486,12 +464,6 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
       marginRight: 8,
       tintColor: '#414042',
     },
-    chipBackground: {
-      backgroundColor: '#fff',
-      alignSelf: 'flex-start',
-      paddingTop: 4,
-      marginLeft: 8,
-    },
     descriptionText: {
       paddingRight: 4,
       marginHorizontal: 16,
@@ -499,13 +471,11 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
     buttonRow: {
       flexDirection: 'row',
       marginVertical: 12,
-      width: '100%',
+      width: '50%',
       marginHorizontal: 16,
-      fontSize: 8,
     },
     buttonMargin: {
       marginRight: 1,
-      fontSize: 4,
       width: '100%',
     },
     buttonBadge: {
@@ -514,48 +484,35 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
       height: 25,
       width: '70%',
       elevation: 2,
-      textAlignVertical: 'center',
       alignItems: 'center',
       justifyContent: 'center',
       flexDirection: 'row',
     },
-    iconStyle: {
-      marginRight: 5,
-    },
     buttonText: {
       fontSize: 12,
       fontWeight: 'bold',
-      marginBottom: 8,
-      marginTop: 8,
+      marginVertical: 8,
       lineHeight: 15,
     },
     buttonContent: {
-      height: 30, // Set internal button height
-      alignItems: 'center', // Ensure text and icon align vertically
+      height: 30,
+      alignItems: 'center',
       justifyContent: 'center',
-      flexDirection: 'row', // Keep icon and text aligned horizontally
+      flexDirection: 'row',
     },
     sectionContainer: {
       borderRadius: 16,
       backgroundColor: '#fff',
       paddingHorizontal: 10,
       paddingVertical: 12,
-      margin: 'auto',
       width: '90%',
+      margin: 'auto',
     },
     interestsContainer: {
       marginTop: 12,
       flexDirection: 'row',
       flexWrap: 'wrap',
-      alignItems: 'center',
-      justifyContent: 'center',
       gap: 4,
-    },
-    champterContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginVertical: 4,
-      marginHorizontal: 8,
     },
     chipInterests: {
       backgroundColor: '#f2f2f2',
@@ -573,9 +530,6 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
       marginTop: 12,
       paddingHorizontal: 8,
       flexDirection: 'row',
-      width: '90%',
-    },
-    startupItemText: {
       width: '90%',
     },
     startupImage: {
@@ -602,19 +556,6 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
       fontSize: 14,
       fontWeight: 'bold',
       marginBottom: 8,
-      alignItems: 'flex-start',
-    },
-    champterText: {
-      color: colors.primary,
-      fontWeight: 'bold',
-    },
-    mentorshipText: {
-      color: '#66b54b',
-      fontWeight: 'bold',
-      marginLeft: 4,
-    },
-    badgeText: {
-      paddingLeft: 4,
     },
   });
 
