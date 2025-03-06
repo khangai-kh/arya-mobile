@@ -34,6 +34,7 @@ export type MainStackParams = {
     Messenger: undefined;
     Profile: undefined;
     Workshops: undefined;
+    StartUpForm: undefined;
     Announcement: {
         id: string;
     };

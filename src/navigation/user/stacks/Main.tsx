@@ -30,6 +30,7 @@ import { Training } from '../../../screens/Training';
 import { Workshop } from '../../../screens/Workshop';
 import { Workshops } from '../../../screens/Workshops';
 import { BottomTab } from '../tabs/BottomTab';
+import { Profile } from '../../../screens/Profile';
 
 const Stack = createNativeStackNavigator<MainStackParams>();
 
@@ -259,6 +260,13 @@ export const MainStack = () => {
           component={Notifications}
           options={{
             title: 'Notifications',
+          }}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={Profile}
+          options={{
+            title: 'Profile',
           }}
         />
       </Stack.Group>

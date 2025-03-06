@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   KeyboardAvoidingView,
@@ -18,21 +18,20 @@ import * as Yup from 'yup';
 import { Asset, launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { API } from '../../plugins/axios';
 import { Select, SelectItem } from '../common/Select';
-import { InvestmentStage } from '../../models/general/models';
+import { CurrencyModel, FundingRoundType, InvestmentStage, StartupType } from '../../models/general/models';
+import { useNavigation } from '@react-navigation/native';
 
 export interface StartUpFormValues {
-  user_id: number;
-  id: number;
   logo: string;
   name: string;
   slogan: string;
   description: string;
-  coFounders: string[];
-  productImages: string[];
-  phase: string;
-  investmentStage: string;
-  investors: string[];
+  startupType: number;
+  fundingRoundType: number;
+  stage: number;
+  investmentStage: number;
   totalInvestment: string;
+  currency: number;
 }
 
 export interface StartUpFormProps {
@@ -44,18 +43,22 @@ const startupValidationSchema = Yup.object().shape({
   name: Yup.string().required('Name is required'),
   slogan: Yup.string().required('Slogan is required'),
   description: Yup.string().required('Description is required'),
-  coFounders: Yup.array().of(Yup.string()).min(1, 'At least one co-founder is required'),
   productImages: Yup.array().of(Yup.string()).optional(),
-  phase: Yup.string().required('Phase is required'),
   investmentStage: Yup.string().required('Investment stage is required'),
-  investors: Yup.array().of(Yup.string()).optional(),
   totalInvestment: Yup.string().required('Total investment is required'),
 });
 
 export const StartUpForm = ({ initialValues, onSubmit }: StartUpFormProps) => {
+  const navigation = useNavigation();
   const [avatarUri, setAvatarUri] = useState<string>(initialValues.logo);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [isImageLoading, setIsImageLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    navigation.getParent()?.setOptions({ tabBarVisible: false }); // Hide tab bar
+
+    // Cleanup: Show tab bar when leaving this screen
+  }, [navigation]);
 
   const handleEditPhoto = () => {
     Alert.alert(
@@ -265,62 +268,23 @@ export const StartUpForm = ({ initialValues, onSubmit }: StartUpFormProps) => {
                   {touched.description && errors.description && (
                     <Text style={styles.errorText}>{errors.description}</Text>
                   )}
-
-                  <Text variant="titleSmall" style={styles.title}>
-                    Co-Founders (comma-separated)
-                  </Text>
-                  <TextInput
-                    autoCapitalize="words"
-                    placeholder="John Doe, Jane Smith"
-                    value={values.coFounders.join(', ')}
-                    onChangeText={(text) =>
-                      setFieldValue('coFounders', text.split(',').map((item) => item.trim()))
-                    }
-                    onBlur={handleBlur('coFounders')}
-                    style={styles.input}
-                    editable={!isSubmitting}
-                  />
-                  {touched.coFounders && errors.coFounders && (
-                    <Text style={styles.errorText}>{errors.coFounders as string}</Text>
-                  )}
-                  {initialValues.id > 0 && (
-                    <>
-                      <Text variant="titleSmall" style={styles.title}>
-                        Product Images (comma-separated URLs)
-                      </Text>
-                      <TextInput
-                        autoCapitalize="none"
-                        placeholder="http://example.com/img1.jpg, http://example.com/img2.jpg"
-                        value={values.productImages.join(', ')}
-                        onChangeText={(text) =>
-                          setFieldValue('productImages', text.split(',').map((item) => item.trim()))
-                        }
-                        onBlur={handleBlur('productImages')}
-                        style={styles.input}
-                        editable={!isSubmitting}
-                      />
-                      {touched.productImages && errors.productImages && (
-                        <Text style={styles.errorText}>{errors.productImages as string}</Text>
-                      )}
-                    </>
-                  )}
-                  <Select<InvestmentStage>
-                      apiUrl="/api/funding_round_types"
-                      fieldName="Phase"
-                      label="Phase"
+                  <Select<StartupType>
+                      apiUrl="/api/startup_types"
+                      fieldName="startupType"
+                      label="Startup type"
                       labelKey="name"
                       valueKey="id"
                       initialValue={{ label: '', value: 0 }}
-                      onValueChange={(item: SelectItem<InvestmentStage> | null) => {
+                      onValueChange={(item: SelectItem<StartupType> | null) => {
                         if (item) {
                           console.log('Selected:', item.value);
                         }
                       }}
                     />
                     <Select<InvestmentStage>
-                      apiUrl="/api/funding_round_types"
-                      fieldName="Investment Stage"
-                      label="Investment Stage"
+                      apiUrl="/api/startup_statuses"
+                      fieldName="stage"
+                      label="Stage"
                       labelKey="name"
                       valueKey="id"
                       initialValue={{ label: '', value: 0 }}
@@ -330,24 +294,19 @@ export const StartUpForm = ({ initialValues, onSubmit }: StartUpFormProps) => {
                         }
                       }}
                     />
-                  <Text variant="titleSmall" style={styles.title}>
-                    Investors (comma-separated)
-                  </Text>
-                  <TextInput
-                    autoCapitalize="words"
-                    placeholder="Investor A, Investor B"
-                    value={values.investors.join(', ')}
-                    onChangeText={(text) =>
-                      setFieldValue('investors', text.split(',').map((item) => item.trim()))
-                    }
-                    onBlur={handleBlur('investors')}
-                    style={styles.input}
-                    editable={!isSubmitting}
-                  />
-                  {touched.investors && errors.investors && (
-                    <Text style={styles.errorText}>{errors.investors as string}</Text>
-                  )}
-
+                    <Select<FundingRoundType>
+                      apiUrl="/api/funding_round_types"
+                      fieldName="fundingRoundType"
+                      label="Funding type"
+                      labelKey="name"
+                      valueKey="id"
+                      initialValue={{ label: '', value: 0 }}
+                      onValueChange={(item: SelectItem<FundingRoundType> | null) => {
+                        if (item) {
+                          console.log('Selected:', item.value);
+                        }
+                      }}
+                    />
                   <Text variant="titleSmall" style={styles.title}>
                     Total Investment
                   </Text>
@@ -364,6 +323,19 @@ export const StartUpForm = ({ initialValues, onSubmit }: StartUpFormProps) => {
                   {touched.totalInvestment && errors.totalInvestment && (
                     <Text style={styles.errorText}>{errors.totalInvestment}</Text>
                   )}
+                  <Select<CurrencyModel>
+                    apiUrl="/local/currencies"
+                    fieldName="currency"
+                    label="Currency"
+                    labelKey="name"
+                    valueKey="id"
+                    initialValue={{ label: '', value: 0 }}
+                    onValueChange={(item: SelectItem<CurrencyModel> | null) => {
+                      if (item) {
+                        console.log('Selected:', item.value);
+                      }
+                    }}
+                  />
 
                   <Button
                     mode="contained"
@@ -393,6 +365,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '95%',
     marginHorizontal:10,
+    height: 'auto',
   },
   scrollViewContent: {
     flexGrow: 1,
@@ -456,7 +429,7 @@ const styles = StyleSheet.create({
     borderRadius: 12, // Slightly less rounded for textarea look
     borderColor: '#e0e0e0',
     backgroundColor: '#ffffff',
-    fontSize: 16,
+    fontSize: 15,
     height: 140, // Approximate height for 6 lines (adjust as needed)
     textAlignVertical: 'top', // Start text from top
   },

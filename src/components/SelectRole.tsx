@@ -13,7 +13,12 @@ type SelectRoleProps = {
   onNextButton: () => void;
 };
 
-export const SelectRole = ({ roles, selectedRole, onSelect, onNextButton }: SelectRoleProps) => (
+export const SelectRole = ({
+    roles,
+    selectedRole,
+    onSelect,
+    onNextButton,
+  }: SelectRoleProps) => (
   <View style={styles.container}>
     <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.contentContainer}>

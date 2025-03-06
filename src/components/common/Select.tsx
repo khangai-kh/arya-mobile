@@ -6,6 +6,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 import { useSelector } from 'react-redux';
 import { API } from '../../plugins/axios';
 import { RootState } from '../../redux/configureStore';
+import { CURRENCIES } from '../../constants/constants';
 
 export interface SelectItem<T> {
   label: string;
@@ -41,39 +42,52 @@ export const Select = <T extends Record<string, any>>({
   const [isFocus, setIsFocus] = useState(false);
 
   useEffect(() => {
-    const fetchOptions = async () => {
-      try {
-        const response = await API.get<T[]>(apiUrl, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const data = response.data;
-        if (Array.isArray(data)) {
-          const mappedItems = data.map((item) => ({
-            label: String(item[labelKey] || item['name'] || item['sector_name'] || ''),
-            value: item[valueKey] || item['id'] || item['sector_id'],
-          })) as SelectItem<T>[];
-          setItems(mappedItems);
+    const mapItems = (data: T[]): SelectItem<T>[] =>
+      data.map((item) => ({
+        label: String(
+          item[labelKey as keyof T] || item['symbol'] || item['name'] || item['sector_name'] || ''
+        ),
+        value: item[valueKey as keyof T] || item['id'] || item['sector_id'],
+      }));
 
-          // Handle initial value
-          if (initialValue) {
-            const matchedInitial = mappedItems.find(
-              (item) => item.value === initialValue.value
-            ) || initialValue;
-            setFieldValue(fieldName, matchedInitial);
-          } else if (!values[fieldName] && mappedItems.length > 0) {
-            setFieldValue(fieldName, mappedItems[0]); // Default to first item if no initialValue
-          }
-        }
-      } catch (error) {
-        console.error(`Error fetching options from ${apiUrl}:`, error);
+    const handleInitialValue = (mappedItems: SelectItem<T>[]) => {
+      if (initialValue) {
+        const matchedInitial =
+          mappedItems.find((item) => item.value === initialValue.value) || initialValue;
+        setFieldValue(fieldName, matchedInitial);
+      } else if (!values[fieldName] && mappedItems.length > 0) {
+        setFieldValue(fieldName, mappedItems[0]); // Default to first item if no initialValue
       }
     };
 
-    fetchOptions();
+    if (apiUrl === '/local/currencies') {
+      if (Array.isArray(CURRENCIES)) {
+        const mappedItems = mapItems(CURRENCIES as unknown as T[]);
+        setItems(mappedItems);
+        handleInitialValue(mappedItems);
+      }
+    } else {
+      const fetchOptions = async () => {
+        try {
+          const response = await API.get<T[]>(apiUrl, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          if (Array.isArray(response.data)) {
+            const mappedItems = mapItems(response.data);
+            setItems(mappedItems);
+            handleInitialValue(mappedItems);
+          }
+        } catch (error) {
+          console.error(`Error fetching options from ${apiUrl}:`, error);
+        }
+      };
+
+      fetchOptions();
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
+  }, [apiUrl]);
+
 
   const selectItems = useMemo(() => items, [items]);
 
@@ -149,7 +163,7 @@ const defaultStyles = StyleSheet.create({
   },
   placeholder: {
     fontSize: 15,
-    color: '#999',
+    color: 'grey',
   },
   errorText: {
     color: '#d32f2f',

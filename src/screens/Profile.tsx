@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Image, Pressable, StyleSheet } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { Appbar, Avatar, Button, Chip, Text, useTheme, MD3Theme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { connect, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { ScrollView } from 'react-native-gesture-handler';
 import { MainStackParams } from '../models/navigation';
-import { setAuthToken } from '../redux/auth/reducer';
 import { View } from '../components/common/View';
 import { UserModel } from '../models/users/User';
 import { RootState } from '../redux/configureStore';
@@ -15,17 +14,11 @@ import { API } from '../plugins/axios';
 import { SelectInterest } from '../components/SelectInterest';
 import { InteresteModel } from '../models/general/models';
 import { ProfileEditForm, ProfileEditFormValues } from '../components/forms/ProfileEditForm';
-import { StartUpForm } from '../components/forms/StartUpForm';
+import { StartUpForm, StartUpFormValues } from '../components/forms/StartUpForm';
+import { useNavigation } from '@react-navigation/native';
 
-type ProfileProps = StackScreenProps<MainStackParams, 'Profile'> & {
-  setAuthToken: (accessToken: string | null) => void;
-};
 
-const mapDispatchToProps = {
-  setAuthToken,
-};
-
-const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: ProfileProps) => {
+export const Profile = () => {
   const { token } = useSelector((state: RootState) => state.auth);
   const { user_id } = useSelector((state: RootState) => state.auth);
   const [isLoading, setIsLoading] = useState(false);
@@ -35,6 +28,20 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
   const [interests, setInterests] = useState<InteresteModel[]>([]);
   const [selectedInterests, setSelectedInterests] = useState<number[]>([]);
   const [profile, setProfile] = useState<UserModel | null>(null);
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    if (stage === 'startup') {
+      navigation.getParent()?.setOptions({ tabBarVisible: false });
+    } else {
+      navigation.getParent()?.setOptions({ tabBarVisible: true });
+    }
+
+    // Cleanup to ensure tab bar is restored when unmounting
+    return () => {
+      navigation.getParent()?.setOptions({ tabBarVisible: true });
+    };
+  }, [navigation, stage]);
 
   const { isFetching: isFetchingProfile, refetch } = useQuery(
     ['profile', token],
@@ -154,6 +161,12 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
       setIsLoading(false);
       setStage('profile');
     }
+  };
+
+  const handleNewStartUp = async (values: StartUpFormValues) => {
+
+    console.log(values);
+
   };
 
   if (isDataLoading) {
@@ -405,28 +418,24 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
         {stage === 'startup' && (
           <StartUpForm
             initialValues={{
-              user_id: user_id ?? 1,
-              id: 0,
               logo: '',
               name: '',
               slogan: '',
               description: '',
-              coFounders: [],
-              productImages: [],
-              phase: '',
-              investmentStage: '',
-              investors: [],
+              stage: 0,
+              investmentStage: 0,
               totalInvestment: '',
+              startupType: 0,
+              fundingRoundType: 0,
+              currency: 0,
             }}
-            onSubmit={() => {}}
+            onSubmit={handleNewStartUp}
           />
         )}
       </ScrollView>
     </SafeAreaView>
   );
 };
-
-export const Profile = connect(null, mapDispatchToProps)(ProfileComponent);
 
 const createDynamicStyles = (colors: MD3Theme['colors']) =>
   StyleSheet.create({

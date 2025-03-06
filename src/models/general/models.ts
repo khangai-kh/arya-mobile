@@ -41,3 +41,24 @@ export interface InvestmentStage {
     is_active: boolean;
     description: string;
 }
+
+export interface FundingRoundType {
+    [x: string]: any;
+    id: number;
+    name: string;
+    is_active: boolean;
+    description: string;
+}
+
+export interface StartupType{
+    [x: string]: any;
+    id: number;
+    name: string;
+}
+
+export interface CurrencyModel{
+    [x: string]: any;
+    id: number;
+    name: string;
+    symbol: string;
+}
