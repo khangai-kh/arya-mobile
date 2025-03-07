@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   StyleSheet,
   KeyboardAvoidingView,
@@ -10,28 +10,28 @@ import {
   Alert,
   ActivityIndicator,
   Image,
+  Keyboard,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text, Button, IconButton } from 'react-native-paper';
 import { Formik, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
 import { Asset, launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import { API } from '../../plugins/axios';
 import { Select, SelectItem } from '../common/Select';
 import { CurrencyModel, FundingRoundType, InvestmentStage, StartupType } from '../../models/general/models';
 import { useNavigation } from '@react-navigation/native';
 
 export interface StartUpFormValues {
-  logo: string;
+  logo?: Asset;
   name: string;
   slogan: string;
   description: string;
-  startupType: number;
-  fundingRoundType: number;
-  stage: number;
-  investmentStage: number;
-  totalInvestment: string;
-  currency: number;
+  startupType: { label: string; value: number };
+  fundingRoundType: { label: string; value: number };
+  stage: { label: string; value: number };
+  investmentStage: { label: string; value: number };
+  totalInvestment: number;
+  currency: { label: string; value: number };
 }
 
 export interface StartUpFormProps {
@@ -43,49 +43,84 @@ const startupValidationSchema = Yup.object().shape({
   name: Yup.string().required('Name is required'),
   slogan: Yup.string().required('Slogan is required'),
   description: Yup.string().required('Description is required'),
-  productImages: Yup.array().of(Yup.string()).optional(),
-  investmentStage: Yup.string().required('Investment stage is required'),
+  stage: Yup.object()
+  .shape({
+    value: Yup.number().min(1, 'Stage is required').required('Stage is required'),
+    label: Yup.string().required(),
+  })
+  .required('Stage is required'),
   totalInvestment: Yup.string().required('Total investment is required'),
+  startupType: Yup.object()
+  .shape({
+    value: Yup.number().min(1, 'Type is required').required('Type is required'),
+    label: Yup.string().required(),
+  })
+  .required('Type is required'),
+  fundingRoundType: Yup.object()
+  .shape({
+    value: Yup.number().min(1, 'Funding round is required').required('Funding round is required'),
+    label: Yup.string().required(),
+  })
+  .required('Funding round is required'),
+  logo: Yup.string().optional(),
+  currency:Yup.object()
+  .shape({
+    value: Yup.number().min(1, 'Currency is required').required('Currency is required'),
+    label: Yup.string().required(),
+  })
+  .required('Currency is required'),
 });
 
 export const StartUpForm = ({ initialValues, onSubmit }: StartUpFormProps) => {
   const navigation = useNavigation();
-  const [avatarUri, setAvatarUri] = useState<string>(initialValues.logo);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [isImageLoading, setIsImageLoading] = useState<boolean>(false);
 
-  useEffect(() => {
-    navigation.getParent()?.setOptions({ tabBarVisible: false }); // Hide tab bar
+  const sloganRef = useRef<TextInput>(null);
+  const descriptionRef = useRef<TextInput>(null);
+  const totalInvestmentRef = useRef<TextInput>(null);
 
-    // Cleanup: Show tab bar when leaving this screen
+  useEffect(() => {
+    navigation.getParent()?.setOptions({ tabBarVisible: false });
+
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      // Handle keyboard dismissal if needed
+    });
+
+    return () => {
+      keyboardDidHideListener.remove();
+    };
   }, [navigation]);
 
-  const handleEditPhoto = () => {
+  const handleEditPhoto = (setFieldValue: (field: string, value: any) => void) => {
     Alert.alert(
       'Select Photo',
       'Choose the source:',
       [
-        { text: 'Camera', onPress: openCamera },
-        { text: 'Gallery', onPress: openGallery },
+        { text: 'Camera', onPress: () => openCamera(setFieldValue) },
+        { text: 'Gallery', onPress: () => openGallery(setFieldValue) },
         { text: 'Cancel', style: 'cancel' },
       ],
       { cancelable: true }
     );
   };
 
-  const openCamera = () => {
+  const openCamera = (setFieldValue: (field: string, value: any) => void) => {
     launchCamera({ mediaType: 'photo', quality: 0.7 }, (response) => {
-      handleImagePickerResponse(response);
+      handleImagePickerResponse(response, setFieldValue);
     });
   };
 
-  const openGallery = () => {
+  const openGallery = (setFieldValue: (field: string, value: any) => void) => {
     launchImageLibrary({ mediaType: 'photo', quality: 0.7 }, (response) => {
-      handleImagePickerResponse(response);
+      handleImagePickerResponse(response, setFieldValue);
     });
   };
 
-  const handleImagePickerResponse = (response: any) => {
+  const handleImagePickerResponse = (
+    response: any,
+    setFieldValue: (field: string, value: any) => void
+  ) => {
     if (response.didCancel) {
       console.log('User cancelled image picker');
       return;
@@ -98,49 +133,11 @@ export const StartUpForm = ({ initialValues, onSubmit }: StartUpFormProps) => {
     if (response.assets && response.assets.length > 0) {
       const photo = response.assets[0] as Asset;
       if (photo.uri) {
-        uploadPhoto(photo);
+        console.log('Selected photo URI:', photo.uri);
+        setIsUploading(true);
+        setFieldValue('logo', photo.uri);
+        setIsUploading(false);
       }
-    }
-  };
-
-  const uploadPhoto = async (photo: Asset) => {
-    if (!photo.uri) {
-      console.error('No photo URI provided');
-      return;
-    }
-
-    setIsUploading(true);
-    const formData = new FormData();
-    formData.append('user_id', initialValues.user_id.toString());
-    formData.append('photo', {
-      uri: photo.uri,
-      type: photo.type || 'image/jpeg',
-      name: photo.fileName || `photo-${Date.now()}.jpg`,
-    });
-
-    try {
-      const response = await API.put(
-        `/api/update-user-profile-photo?user_id=${initialValues.user_id}`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            Accept: 'application/json',
-          },
-          timeout: 10000,
-        }
-      );
-      const photoUrl = response?.data?.photo_url;
-      if (photoUrl) {
-        setAvatarUri(photoUrl);
-      } else {
-        console.warn('No photo URL returned from server');
-      }
-    } catch (error) {
-      console.error('Photo upload failed:', error);
-      Alert.alert('Upload Failed', 'Could not upload photo. Please try again.');
-    } finally {
-      setIsUploading(false);
     }
   };
 
@@ -149,8 +146,7 @@ export const StartUpForm = ({ initialValues, onSubmit }: StartUpFormProps) => {
     { setSubmitting }: FormikHelpers<StartUpFormValues>
   ) => {
     try {
-      values.logo = avatarUri;
-      await onSubmit(values);
+      onSubmit(values);
     } catch (error) {
       console.error('Form submission failed:', error);
       Alert.alert('Error', 'Failed to save startup details.');
@@ -163,46 +159,15 @@ export const StartUpForm = ({ initialValues, onSubmit }: StartUpFormProps) => {
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       <KeyboardAvoidingView
         style={styles.flexContainer}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
       >
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollViewContent}
+          keyboardShouldPersistTaps="handled"
         >
           <View style={styles.container}>
-            <View style={styles.avatarContainer}>
-                <Image
-                  style={styles.avatarImage}
-                  source={
-                    avatarUri
-                      ? { uri: avatarUri }
-                      : require('../../assets/flat-icons/rocket.png')
-                  }
-                  resizeMode="contain"
-                  onLoadStart={() => setIsImageLoading(true)}
-                  onLoadEnd={() => setIsImageLoading(false)}
-                />
-              {(isUploading || isImageLoading) && (
-                <View style={styles.loadingOverlay}>
-                  <ActivityIndicator animating={true} size="large" color="#fff" />
-                </View>
-              )}
-              <TouchableOpacity
-                style={styles.editIconContainer}
-                onPress={handleEditPhoto}
-                disabled={isUploading}
-              >
-                <IconButton
-                  icon={require('../../assets/flat-icons/edit.png')}
-                  size={15}
-                  mode="contained"
-                  containerColor="#9C27B0"
-                  iconColor="#fff"
-                />
-              </TouchableOpacity>
-            </View>
-
             <Formik
               initialValues={initialValues}
               validationSchema={startupValidationSchema}
@@ -218,57 +183,101 @@ export const StartUpForm = ({ initialValues, onSubmit }: StartUpFormProps) => {
                 isSubmitting,
                 setFieldValue,
               }) => (
-                <View style={styles.formContainer}>
-                  <Text variant="titleSmall" style={styles.title}>
-                    Name
-                  </Text>
-                  <TextInput
-                    autoCapitalize="words"
-                    placeholder="Startup Name"
-                    value={values.name}
-                    onChangeText={handleChange('name')}
-                    onBlur={handleBlur('name')}
-                    style={styles.input}
-                    editable={!isSubmitting}
-                  />
-                  {touched.name && errors.name && (
-                    <Text style={styles.errorText}>{errors.name}</Text>
-                  )}
+                <>
+                  <View style={styles.avatarContainer}>
+                    <Image
+                      style={styles.avatarImage}
+                      source={
+                        values.logo
+                          ? { uri: values.logo }
+                          : require('../../assets/flat-icons/startup_rocket.png')
+                      }
+                      resizeMode={values.logo ? 'cover' : 'contain'}
+                      onLoadStart={() => setIsImageLoading(true)}
+                      onLoadEnd={() => setIsImageLoading(false)}
+                      onError={(e) => console.log('Image load error:', e.nativeEvent)}
+                      tintColor={values.logo ? undefined : '#FFFFFF'}
+                    />
+                    {(isUploading || isImageLoading) && (
+                      <View style={styles.loadingOverlay}>
+                        <ActivityIndicator animating={true} size="large" color="#fff" />
+                      </View>
+                    )}
+                  </View>
+                  <TouchableOpacity
+                      style={styles.editIconContainer}
+                      onPress={() => handleEditPhoto(setFieldValue)}
+                      disabled={isUploading}
+                    >
+                      <IconButton
+                        icon={require('../../assets/flat-icons/edit.png')}
+                        size={20} // Increased size for better visibility
+                        mode="contained"
+                        containerColor="#9C27B0"
+                        iconColor="#fff"
+                      />
+                    </TouchableOpacity>
+                  <View style={styles.formContainer}>
+                    <Text variant="titleSmall" style={styles.title}>
+                      Name
+                    </Text>
+                    <TextInput
+                      ref={(ref) => ref}
+                      autoCapitalize="words"
+                      placeholder="Startup Name"
+                      value={values.name}
+                      onChangeText={handleChange('name')}
+                      onBlur={handleBlur('name')}
+                      style={styles.input}
+                      editable={!isSubmitting}
+                      returnKeyType="next"
+                      onSubmitEditing={() => sloganRef.current?.focus()}
+                    />
+                    {touched.name && errors.name && (
+                      <Text style={styles.errorText}>{errors.name}</Text>
+                    )}
 
-                  <Text variant="titleSmall" style={styles.title}>
-                    Slogan
-                  </Text>
-                  <TextInput
-                    autoCapitalize="sentences"
-                    placeholder="Your Startup Slogan"
-                    value={values.slogan}
-                    onChangeText={handleChange('slogan')}
-                    onBlur={handleBlur('slogan')}
-                    style={styles.input}
-                    editable={!isSubmitting}
-                  />
-                  {touched.slogan && errors.slogan && (
-                    <Text style={styles.errorText}>{errors.slogan}</Text>
-                  )}
+                    <Text variant="titleSmall" style={styles.title}>
+                      Slogan
+                    </Text>
+                    <TextInput
+                      ref={sloganRef}
+                      autoCapitalize="sentences"
+                      placeholder="Your Startup Slogan"
+                      value={values.slogan}
+                      onChangeText={handleChange('slogan')}
+                      onBlur={handleBlur('slogan')}
+                      style={styles.input}
+                      editable={!isSubmitting}
+                      returnKeyType="next"
+                      onSubmitEditing={() => descriptionRef.current?.focus()}
+                    />
+                    {touched.slogan && errors.slogan && (
+                      <Text style={styles.errorText}>{errors.slogan}</Text>
+                    )}
 
-                  <Text variant="titleSmall" style={styles.title}>
-                    Description
-                  </Text>
-                  <TextInput
-                    autoCapitalize="sentences"
-                    placeholder="Describe your startup"
-                    value={values.description}
-                    onChangeText={handleChange('description')}
-                    onBlur={handleBlur('description')}
-                    style={styles.textarea}
-                    multiline
-                    numberOfLines={6} // Set to 6 lines
-                    editable={!isSubmitting}
-                  />
-                  {touched.description && errors.description && (
-                    <Text style={styles.errorText}>{errors.description}</Text>
-                  )}
-                  <Select<StartupType>
+                    <Text variant="titleSmall" style={styles.title}>
+                      Description
+                    </Text>
+                    <TextInput
+                      ref={descriptionRef}
+                      autoCapitalize="sentences"
+                      placeholder="Describe your startup"
+                      value={values.description}
+                      onChangeText={handleChange('description')}
+                      onBlur={handleBlur('description')}
+                      style={styles.textarea}
+                      multiline
+                      numberOfLines={6}
+                      editable={!isSubmitting}
+                      returnKeyType="next"
+                      onSubmitEditing={() => totalInvestmentRef.current?.focus()}
+                    />
+                    {touched.description && errors.description && (
+                      <Text style={styles.errorText}>{errors.description}</Text>
+                    )}
+
+                    <Select<StartupType>
                       apiUrl="/api/startup_types"
                       fieldName="startupType"
                       label="Startup type"
@@ -307,46 +316,52 @@ export const StartUpForm = ({ initialValues, onSubmit }: StartUpFormProps) => {
                         }
                       }}
                     />
-                  <Text variant="titleSmall" style={styles.title}>
-                    Total Investment
-                  </Text>
-                  <TextInput
-                    autoCapitalize="none"
-                    placeholder="e.g., $500,000"
-                    value={values.totalInvestment}
-                    onChangeText={handleChange('totalInvestment')}
-                    onBlur={handleBlur('totalInvestment')}
-                    style={styles.input}
-                    keyboardType="numeric" // Suggests numeric input
-                    editable={!isSubmitting}
-                  />
-                  {touched.totalInvestment && errors.totalInvestment && (
-                    <Text style={styles.errorText}>{errors.totalInvestment}</Text>
-                  )}
-                  <Select<CurrencyModel>
-                    apiUrl="/local/currencies"
-                    fieldName="currency"
-                    label="Currency"
-                    labelKey="name"
-                    valueKey="id"
-                    initialValue={{ label: '', value: 0 }}
-                    onValueChange={(item: SelectItem<CurrencyModel> | null) => {
-                      if (item) {
-                        console.log('Selected:', item.value);
-                      }
-                    }}
-                  />
 
-                  <Button
-                    mode="contained"
-                    style={styles.saveButton}
-                    onPress={() => handleSubmit()}
-                    loading={isSubmitting}
-                    disabled={isSubmitting || isUploading}
-                  >
-                    Save
-                  </Button>
-                </View>
+                    <Text variant="titleSmall" style={styles.title}>
+                      Total Investment
+                    </Text>
+                    <TextInput
+                      ref={totalInvestmentRef}
+                      autoCapitalize="none"
+                      placeholder="e.g., $500,000"
+                      value={values.totalInvestment.toString()}
+                      onChangeText={handleChange('totalInvestment')}
+                      onBlur={handleBlur('totalInvestment')}
+                      style={styles.input}
+                      keyboardType="numeric"
+                      editable={!isSubmitting}
+                      returnKeyType="done"
+                      onSubmitEditing={() => handleSubmit()}
+                    />
+                    {touched.totalInvestment && errors.totalInvestment && (
+                      <Text style={styles.errorText}>{errors.totalInvestment}</Text>
+                    )}
+
+                    <Select<CurrencyModel>
+                      apiUrl="/local/currencies"
+                      fieldName="currency"
+                      label="Currency"
+                      labelKey="name"
+                      valueKey="id"
+                      initialValue={{ label: '', value: 0 }}
+                      onValueChange={(item: SelectItem<CurrencyModel> | null) => {
+                        if (item) {
+                          console.log('Selected:', item.value);
+                        }
+                      }}
+                    />
+
+                    <Button
+                      mode="contained"
+                      style={styles.saveButton}
+                      onPress={() => handleSubmit()}
+                      loading={isSubmitting}
+                      disabled={isSubmitting || isUploading}
+                    >
+                      Save
+                    </Button>
+                  </View>
+                </>
               )}
             </Formik>
           </View>
@@ -364,12 +379,12 @@ const styles = StyleSheet.create({
   flexContainer: {
     flex: 1,
     width: '95%',
-    marginHorizontal:10,
-    height: 'auto',
+    marginHorizontal: 10,
   },
   scrollViewContent: {
     flexGrow: 1,
-    paddingBottom: 20,
+    paddingBottom: 100,
+    minHeight: '100%',
   },
   container: {
     flex: 1,
@@ -384,12 +399,11 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    padding: 5,
+    overflow: 'hidden',
   },
-  avatarImage :{
-    width: 60,
-    height: 60,
-    tintColor: '#FFFFFF',
+  avatarImage: {
+    width: '100%',
+    height: '100%',
   },
   loadingOverlay: {
     position: 'absolute',
@@ -399,15 +413,16 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(128, 128, 128, 0.7)',
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: 1,
   },
   editIconContainer: {
     position: 'absolute',
-    bottom: -10,
-    right: '20%',
-    transform: [{ translateX: 10 }],
+    top: 100,
+    right: 120,
+    zIndex: 2,
   },
   formContainer: {
-    marginTop: 32,
+    marginTop: 10,
     paddingHorizontal: 16,
     width: '100%',
   },
@@ -426,12 +441,12 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     borderWidth: 1,
     padding: 12,
-    borderRadius: 12, // Slightly less rounded for textarea look
+    borderRadius: 12,
     borderColor: '#e0e0e0',
     backgroundColor: '#ffffff',
     fontSize: 15,
-    height: 140, // Approximate height for 6 lines (adjust as needed)
-    textAlignVertical: 'top', // Start text from top
+    height: 140,
+    textAlignVertical: 'top',
   },
   errorText: {
     color: '#d32f2f',
@@ -441,6 +456,7 @@ const styles = StyleSheet.create({
   saveButton: {
     width: '100%',
     marginTop: 20,
+    marginBottom: 20,
   },
   title: {
     fontWeight: 'bold',

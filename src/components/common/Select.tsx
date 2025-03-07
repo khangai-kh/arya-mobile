@@ -85,21 +85,21 @@ export const Select = <T extends Record<string, any>>({
 
       fetchOptions();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiUrl]);
-
 
   const selectItems = useMemo(() => items, [items]);
 
   const handleValueChange = (item: SelectItem<T>) => {
-    setFieldValue(fieldName, item);
+    setFieldValue(fieldName, item); // Store the full object in Formik
     if (onValueChange) {
       onValueChange(item);
     }
     setIsFocus(false);
   };
 
-  const currentValue = values[fieldName]?.value || null;
+  // Extract the primitive value for Dropdown
+  const currentValue = values[fieldName] ? values[fieldName].value : null;
 
   return (
     <View style={[defaultStyles.container, styles.container]}>
@@ -119,7 +119,7 @@ export const Select = <T extends Record<string, any>>({
         data={selectItems}
         labelField="label"
         valueField="value"
-        value={currentValue}
+        value={currentValue} // Use the primitive value here
         placeholder={`Select ${label.toLowerCase()}`}
         onChange={handleValueChange}
         onFocus={() => setIsFocus(true)}
@@ -130,7 +130,7 @@ export const Select = <T extends Record<string, any>>({
       />
       {touched[fieldName] && errors[fieldName] && (
         <Text style={[defaultStyles.errorText, styles.errorText]}>
-          {errors[fieldName] as string}
+          {typeof errors[fieldName] === 'string' ? errors[fieldName] : (errors[fieldName] as any)?.value || 'Field is required'}
         </Text>
       )}
     </View>

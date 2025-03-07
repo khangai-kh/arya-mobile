@@ -1,4 +1,3 @@
-// Profile.tsx (Assuming this is your Profile component)
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Image, Pressable, StyleSheet } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -37,11 +36,10 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
   const [interests, setInterests] = useState<InteresteModel[]>([]);
   const [selectedInterests, setSelectedInterests] = useState<number[]>([]);
   const [profile, setProfile] = useState<UserModel | null>(null);
-  const { setHideTabBar } = useNavigationContext(); // Use the context
+  const { setHideTabBar } = useNavigationContext();
 
-  // Control tab bar visibility based on stage
   useEffect(() => {
-    setHideTabBar(stage !== 'profile'); // Hide tab bar only when stage is 'startup'
+    setHideTabBar(stage !== 'profile'); 
   }, [stage, setHideTabBar]);
 
   const { isFetching: isFetchingProfile, refetch } = useQuery(
@@ -155,8 +153,43 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
   };
 
   const handleNewStartUp = async (values: StartUpFormValues) => {
-    console.log(values);
-    setStage('profile'); // Return to profile after submission
+    setIsLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append('name', values.name || '');
+      console.log(values.name);
+      formData.append('description', values.description || '');
+      formData.append('funding_round_type_id', values.fundingRoundType.value || 1);
+      formData.append('startup_type_id', values.startupType.value || 1);
+      formData.append('startup_status_id', values.stage.value || 1);
+      formData.append('total_investment', values.totalInvestment || 1);
+      formData.append('currency_id', values.currency.value || 1);
+
+    if(values.logo){
+      formData.append('logo', {
+        uri: values.logo.uri,
+        type: values.logo.type,
+        name: values.logo.fileName || 'photo.jpg',
+      });
+    }
+    const response = await API.post(
+      '/api/startups/',
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Accept: 'application/json',
+        },
+      }
+    );
+    console.log(response);
+    await refetch();
+    } catch (error) {
+      console.error('Error saving user info:', error);
+    } finally {
+      setIsLoading(false);
+      setStage('profile');
+    }
   };
 
   if (isDataLoading) {
@@ -408,16 +441,16 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
         {stage === 'startup' && (
           <StartUpForm
             initialValues={{
-              logo: '',
-              name: '',
-              slogan: '',
-              description: '',
-              stage: 0,
-              investmentStage: 0,
-              totalInvestment: '',
-              startupType: 0,
-              fundingRoundType: 0,
-              currency: 0,
+              logo: undefined,
+              name: '121',
+              slogan: '1212',
+              description: '21212',
+              stage: { label: 'Seed', value: 1 },
+              investmentStage: { label: 'Seed', value: 1 },
+              totalInvestment: 10000,
+              startupType: { label: 'Seed', value: 1 },
+              fundingRoundType: { label: 'Seed', value: 1 },
+              currency: { label: 'Seed', value: 1 },
             }}
             onSubmit={handleNewStartUp}
           />
