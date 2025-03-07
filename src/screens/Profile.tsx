@@ -1,11 +1,13 @@
+// Profile.tsx (Assuming this is your Profile component)
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Image, Pressable, StyleSheet } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { Appbar, Avatar, Button, Chip, Text, useTheme, MD3Theme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useSelector } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { ScrollView } from 'react-native-gesture-handler';
 import { MainStackParams } from '../models/navigation';
+import { setAuthToken } from '../redux/auth/reducer';
 import { View } from '../components/common/View';
 import { UserModel } from '../models/users/User';
 import { RootState } from '../redux/configureStore';
@@ -15,33 +17,32 @@ import { SelectInterest } from '../components/SelectInterest';
 import { InteresteModel } from '../models/general/models';
 import { ProfileEditForm, ProfileEditFormValues } from '../components/forms/ProfileEditForm';
 import { StartUpForm, StartUpFormValues } from '../components/forms/StartUpForm';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigationContext } from '../contexts/NavigationContext';
 
+type ProfileProps = StackScreenProps<MainStackParams, 'Profile'> & {
+  setAuthToken: (accessToken: string | null) => void;
+};
 
-export const Profile = () => {
+const mapDispatchToProps = {
+  setAuthToken,
+};
+
+const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: ProfileProps) => {
   const { token } = useSelector((state: RootState) => state.auth);
   const { user_id } = useSelector((state: RootState) => state.auth);
   const [isLoading, setIsLoading] = useState(false);
   const { colors } = useTheme();
   const dynamicStyles = createDynamicStyles(colors);
-  const [stage, setStage] = useState<'interest' | 'startup' | 'profile' | 'edit_profile' >('profile');
+  const [stage, setStage] = useState<'interest' | 'startup' | 'profile' | 'edit_profile'>('profile');
   const [interests, setInterests] = useState<InteresteModel[]>([]);
   const [selectedInterests, setSelectedInterests] = useState<number[]>([]);
   const [profile, setProfile] = useState<UserModel | null>(null);
-  const navigation = useNavigation();
+  const { setHideTabBar } = useNavigationContext(); // Use the context
 
+  // Control tab bar visibility based on stage
   useEffect(() => {
-    if (stage === 'startup') {
-      navigation.getParent()?.setOptions({ tabBarVisible: false });
-    } else {
-      navigation.getParent()?.setOptions({ tabBarVisible: true });
-    }
-
-    // Cleanup to ensure tab bar is restored when unmounting
-    return () => {
-      navigation.getParent()?.setOptions({ tabBarVisible: true });
-    };
-  }, [navigation, stage]);
+    setHideTabBar(stage !== 'profile'); // Hide tab bar only when stage is 'startup'
+  }, [stage, setHideTabBar]);
 
   const { isFetching: isFetchingProfile, refetch } = useQuery(
     ['profile', token],
@@ -89,19 +90,16 @@ export const Profile = () => {
   };
 
   const handleUserInterests = async () => {
-    console.log(isLoading, user_id);
     if (isLoading || !user_id) {
       console.error('Error: Operation in progress or User ID missing.');
       return;
     }
-
     try {
       setIsLoading(true);
       await API.post('/api/user-interests', {
         user_id: user_id,
         interest_ids: selectedInterests,
       });
-      console.log('All user data saved successfully.');
       setStage('profile');
     } catch (error) {
       console.error('Error saving user info:', error);
@@ -122,27 +120,22 @@ export const Profile = () => {
     setIsLoading(true);
     try {
       const updatedProfile = { ...profile } as UserModel;
-
       if (values.full_name !== profile?.full_name) {
         await API.put('/api/users/current-user-full_name', { full_name: values.full_name });
         updatedProfile.full_name = values.full_name ?? updatedProfile.full_name;
       }
-
       if (values.company !== profile?.carrier.company_name) {
         updatedProfile.carrier.company_name = values.company ?? updatedProfile.carrier.company_name;
       }
-
       if (values.sector?.sector_id !== profile?.carrier.sector?.id) {
         updatedProfile.carrier.sector = {
           ...updatedProfile.carrier.sector,
           id: values.sector?.sector_id ?? updatedProfile.carrier.sector.id,
         };
       }
-
       if (values.title !== profile?.carrier.title) {
         updatedProfile.carrier.title = values.title ?? updatedProfile.carrier.title;
       }
-
       await API.post('/api/user-carrier', {
         user_id: user_id,
         is_company_owner: profile?.carrier.is_company_owner,
@@ -152,9 +145,7 @@ export const Profile = () => {
         title: updatedProfile.carrier.title,
         area_of_expertise: profile?.carrier.area_of_expertise,
       });
-
       setProfile(updatedProfile);
-      console.log('All user data saved successfully.');
     } catch (error) {
       console.error('Error saving user info:', error);
     } finally {
@@ -164,9 +155,8 @@ export const Profile = () => {
   };
 
   const handleNewStartUp = async (values: StartUpFormValues) => {
-
     console.log(values);
-
+    setStage('profile'); // Return to profile after submission
   };
 
   if (isDataLoading) {
@@ -222,7 +212,7 @@ export const Profile = () => {
             }
           />
         )}
-         {stage === 'startup' && (
+        {stage === 'startup' && (
           <Appbar.Content
             title={
               <View style={dynamicStyles.titleContainer}>
@@ -436,6 +426,8 @@ export const Profile = () => {
     </SafeAreaView>
   );
 };
+
+export const Profile = connect(null, mapDispatchToProps)(ProfileComponent);
 
 const createDynamicStyles = (colors: MD3Theme['colors']) =>
   StyleSheet.create({

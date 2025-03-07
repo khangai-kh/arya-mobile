@@ -34,7 +34,7 @@ import { Profile } from '../../../screens/Profile';
 
 const Stack = createNativeStackNavigator<MainStackParams>();
 
-const SearchIconButton = ({ onPress }: { onPress: () => void; }) => (
+const SearchIconButton = ({ onPress }: { onPress: () => void }) => (
   <IconButton
     icon={require('../../../assets/flat-icons/search.png')}
     size={24}
@@ -49,13 +49,13 @@ const StartupHeaderRight = () => (
       icon={require('../../../assets/flat-icons/heart-outlined.png')}
       size={24}
       style={styles.heartIconButton}
-      onPress={() => { }}
+      onPress={() => {}}
     />
     <IconButton
       icon={require('../../../assets/flat-icons/menu.png')}
       size={24}
       style={styles.menuIconButton}
-      onPress={() => { }}
+      onPress={() => {}}
     />
   </View>
 );
@@ -72,89 +72,40 @@ export const MainStack = () => {
         <Stack.Screen
           name="BottomTab"
           component={BottomTab}
-          options={{
+          options={({ route }: { route: { params?: { hideTabBar?: boolean } } }) => ({
             headerShown: false,
-          }}
+            tabBarStyle: route.params?.hideTabBar ? { display: 'none' } : undefined,
+          })}
         />
-        <Stack.Screen
-          name="AboutUs"
-          component={AboutUs}
-          options={{
-            title: 'About Us',
-          }}
-        />
-        <Stack.Screen
-          name="Announcements"
-          component={Announcements}
-          options={{
-            title: 'Announcements',
-          }}
-        />
-        <Stack.Screen
-          name="Announcement"
-          component={Announcement}
-          options={{
-            headerShown: false,
-          }}
-        />
+        <Stack.Screen name="AboutUs" component={AboutUs} options={{ title: 'About Us' }} />
+        <Stack.Screen name="Announcements" component={Announcements} options={{ title: 'Announcements' }} />
+        <Stack.Screen name="Announcement" component={Announcement} options={{ headerShown: false }} />
         <Stack.Screen
           name="AcademyStartups"
           component={AcademyStartups}
           options={{
             title: 'Venture academy startups',
-            headerRight: () => <SearchIconButton onPress={() => { }} />,
+            headerRight: () => <SearchIconButton onPress={() => {}} />,
           }}
         />
         <Stack.Screen
           name="BetterFutureCirclesDays"
           component={BetterFutureCirclesDays}
-          options={{
-            title: 'Better.Future.Circles.Days',
-          }}
+          options={{ title: 'Better.Future.Circles.Days' }}
         />
-        <Stack.Screen
-          name="BKYLicense"
-          component={BKYLicense}
-          options={{
-            title: 'BKY License',
-          }}
-        />
-        <Stack.Screen
-          name="InvestorTrainings"
-          component={InvestorTrainings}
-          options={{
-            title: 'Investor trainings',
-          }}
-        />
-        <Stack.Screen
-          name="Content"
-          component={Content}
-          options={{
-            headerShown: false,
-          }}
-        />
+        <Stack.Screen name="BKYLicense" component={BKYLicense} options={{ title: 'BKY License' }} />
+        <Stack.Screen name="InvestorTrainings" component={InvestorTrainings} options={{ title: 'Investor trainings' }} />
+        <Stack.Screen name="Content" component={Content} options={{ headerShown: false }} />
         <Stack.Screen
           name="ClosedDeals"
           component={ClosedDeals}
           options={{
             title: 'Closed deals',
-            headerRight: () => <SearchIconButton onPress={() => { }} />,
+            headerRight: () => <SearchIconButton onPress={() => {}} />,
           }}
         />
-        <Stack.Screen
-          name="DisclosureText"
-          component={DisclosureText}
-          options={{
-            title: 'Disclosure text',
-          }}
-        />
-        <Stack.Screen
-          name="Search"
-          component={Search}
-          options={{
-            headerShown: false,
-          }}
-        />
+        <Stack.Screen name="DisclosureText" component={DisclosureText} options={{ title: 'Disclosure text' }} />
+        <Stack.Screen name="Search" component={Search} options={{ headerShown: false }} />
         <Stack.Screen
           name="Startup"
           component={Startup}
@@ -163,112 +114,28 @@ export const MainStack = () => {
             headerRight: () => <StartupHeaderRight />,
           }}
         />
-        <Stack.Screen
-          name="StartupsFilter"
-          component={StartupsFilter}
-          options={{
-            headerShown: false,
-          }}
-        />
+        <Stack.Screen name="StartupsFilter" component={StartupsFilter} options={{ headerShown: false }} />
         <Stack.Screen
           name="Startups"
           component={Startups}
           options={{
             title: 'Startups in funding round',
-            headerRight: () => <SearchIconButton onPress={() => { }} />,
+            headerRight: () => <SearchIconButton onPress={() => {}} />,
           }}
         />
-        <Stack.Screen
-          name="Workshop"
-          component={Workshop}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="Workshops"
-          component={Workshops}
-          options={{
-            title: 'Entrepreneur workshops',
-          }}
-        />
-        <Stack.Screen
-          name="Inspiration"
-          component={Inspiration}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="IPILicense"
-          component={IPILicense}
-          options={{
-            title: 'IPI License form',
-          }}
-        />
-        <Stack.Screen
-          name="OnBoarding"
-          component={OnBoarding}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="Member"
-          component={Member}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="MemberShip"
-          component={MemberShip}
-          options={{
-            title: 'Membership',
-          }}
-        />
-        <Stack.Screen
-          name="MemberFilter"
-          component={MemberFilter}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="Inspirations"
-          component={Inspirations}
-          options={{
-            title: 'Inspirations',
-          }}
-        />
-        <Stack.Screen
-          name="BKYSuccess"
-          component={BKYSuccess}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="Training"
-          component={Training}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="Notifications"
-          component={Notifications}
-          options={{
-            title: 'Notifications',
-          }}
-        />
-        <Stack.Screen
-          name="Profile"
-          component={Profile}
-          options={{
-            title: 'Profile',
-          }}
-        />
+        <Stack.Screen name="Workshop" component={Workshop} options={{ headerShown: false }} />
+        <Stack.Screen name="Workshops" component={Workshops} options={{ title: 'Entrepreneur workshops' }} />
+        <Stack.Screen name="Inspiration" component={Inspiration} options={{ headerShown: false }} />
+        <Stack.Screen name="IPILicense" component={IPILicense} options={{ title: 'IPI License form' }} />
+        <Stack.Screen name="OnBoarding" component={OnBoarding} options={{ headerShown: false }} />
+        <Stack.Screen name="Member" component={Member} options={{ headerShown: false }} />
+        <Stack.Screen name="MemberShip" component={MemberShip} options={{ title: 'Membership' }} />
+        <Stack.Screen name="MemberFilter" component={MemberFilter} options={{ headerShown: false }} />
+        <Stack.Screen name="Inspirations" component={Inspirations} options={{ title: 'Inspirations' }} />
+        <Stack.Screen name="BKYSuccess" component={BKYSuccess} options={{ headerShown: false }} />
+        <Stack.Screen name="Training" component={Training} options={{ headerShown: false }} />
+        <Stack.Screen name="Notifications" component={Notifications} options={{ title: 'Notifications' }} />
+        <Stack.Screen name="Profile" component={Profile} options={{ title: 'Profile' }} />
       </Stack.Group>
     </Stack.Navigator>
   );

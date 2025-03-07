@@ -12,6 +12,7 @@ import { persistor, store } from './redux/configureStore';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { PersistGate } from 'redux-persist/integration/react';
 import { NoInternet } from './components/NoInternet';
+import { NavigationProvider } from './contexts/NavigationContext';
 
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state',
@@ -27,10 +28,12 @@ const App = () => {
           <GestureHandlerRootView style={{ flex: 1 }}>
               <PaperProvider theme={paperTheme}>
                 <LightBoxProvider>
-                  <NavigationContainer theme={NavigationDefaultTheme}>
-                      <Navigation />
-                      <NoInternet />
-                  </NavigationContainer>
+                  <NavigationProvider> {/* Wrap with NavigationProvider */}
+                    <NavigationContainer theme={NavigationDefaultTheme}>
+                        <Navigation />
+                        <NoInternet />
+                    </NavigationContainer>
+                  </NavigationProvider>
                 </LightBoxProvider>
               </PaperProvider>
           </GestureHandlerRootView>
