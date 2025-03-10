@@ -246,15 +246,15 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
           />
         )}
         {stage === 'startup' && (
-          <Appbar.Content
-            title={
-              <View style={dynamicStyles.titleContainer}>
-                <Text variant="titleMedium" style={dynamicStyles.interestText}>
-                  Add startup
-                </Text>
-              </View>
-            }
-          />
+        <Appbar.Content
+          title={
+            <View style={dynamicStyles.titleContainer}>
+              <Text variant="titleMedium" style={dynamicStyles.interestText}>
+                Add startup
+              </Text>
+            </View>
+          }
+        />
         )}
         {stage === 'profile' && (
           <>
@@ -266,7 +266,7 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
               onPress={() => setStage('edit_profile')}
             />
             <Appbar.Action
-              icon={require('../assets/flat-icons/settings.png')}
+              icon={require('../assets/flat-icons/logout.png')}
               color="#414042"
               size={20}
               style={dynamicStyles.appbarActionRight}
