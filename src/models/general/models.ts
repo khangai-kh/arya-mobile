@@ -1,64 +1,87 @@
 import type { BaseEntityModel } from '../base-entity.model';
 
 export interface DescribeModel extends BaseEntityModel {
-    [x: string]: any;
-    describes_id: number;
-    interest_name: string;
-    icon: null | string;
+    describesId: number;
+    interestName: string;
+    icon?: string | null;
+
+    [key: string]: any; // Allows additional properties dynamically
 }
 
-export interface InteresteModel extends BaseEntityModel {
-    [x: string]: any;
+export interface InterestModel extends BaseEntityModel {
     id: number;
-    interest_name: string;
-    title : string;
-    category_id: number;
-    icon: null | string;
+    interestName: string;
+    title: string;
+    categoryId: number;
+    icon?: string | null;
+
+    [key: string]: any;
 }
 
 export interface MotivationModel extends BaseEntityModel {
-    [x: string]: any;
     id: number;
     name: string;
+
+    [key: string]: any;
 }
 
-export interface Sector{
-    [x: string]: any;
-    sector_id: number;
-    sector_name: string;
+export interface Sector {
+    sectorId: number;
+    sectorName: string;
+
+    [key: string]: any;
 }
 
-export interface Phase{
-    [x: string]: any;
+export interface Phase {
     id: number;
     name: string;
+
+    [key: string]: any;
 }
 
 export interface InvestmentStage {
-    [x: string]: any;
     id: number;
     name: string;
-    is_active: boolean;
+    isActive: boolean;
     description: string;
+
+    [key: string]: any;
 }
 
 export interface FundingRoundType {
-    [x: string]: any;
     id: number;
     name: string;
-    is_active: boolean;
+    isActive: boolean;
     description: string;
+
+    [key: string]: any;
 }
 
-export interface StartupType{
-    [x: string]: any;
+export interface StartupType {
     id: number;
     name: string;
+
+    [key: string]: any;
 }
 
-export interface CurrencyModel{
-    [x: string]: any;
+export interface CurrencyModel {
     id: number;
     name: string;
     symbol: string;
+
+    [key: string]: any;
+}
+
+export interface Image {
+    imageUrl: string;
+    altText?: string | null;
+
+    [key: string]: any;
+}
+
+export interface ContentTypeModel extends BaseEntityModel {
+    id: string;
+    name?: string | null;
+
+    [key: string]: any;
 }

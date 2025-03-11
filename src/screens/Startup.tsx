@@ -1,9 +1,9 @@
 import React from 'react';
 import { StackScreenProps } from '@react-navigation/stack';
 import { useState } from 'react';
-import { Image, dynamicStylesheet, View, StyleSheet } from 'react-native';
+import { Image, View, StyleSheet } from 'react-native';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-import { Appbar, Avatar, Button, Chip, Divider, IconButton, MD3Theme, Modal, Portal, Text, useTheme } from 'react-native-paper';
+import { Appbar, Avatar, Button, Chip, IconButton, MD3Theme, Modal, Portal, Text, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Box } from '../components/common/Box';
 import { Founder } from '../components/Founder';
@@ -73,24 +73,24 @@ export const Startup = (props: StartupProps) => {
                 title={
                     <View style={dynamicStyles.titleContainer}>
                     <Text variant="titleMedium" style={dynamicStyles.interestText}>
-                        Add startup
+                        My startup
                     </Text>
                     </View>
                 }
             />
             <Appbar.Action
-              icon={require('../assets/flat-icons/heart-outlined.png')}
-              color="#414042"
-              size={20}
-              style={dynamicStyles.appbarActionRight}
-              onPress={() => {}}
+                icon={require('../assets/flat-icons/heart-outlined.png')}
+                color="#414042"
+                size={20}
+                style={dynamicStyles.appbarActionRight}
+                onPress={() => {}}
             />
             <Appbar.Action
-              icon={require('../assets/flat-icons/menu.png')}
-              color="#414042"
-              size={20}
-              style={dynamicStyles.appbarActionRight}
-              onPress={() => {}}
+                icon={require('../assets/flat-icons/edit.png')}
+                color="#414042"
+                size={20}
+                style={dynamicStyles.appbarActionRight}
+                onPress={() => {}}
             />
       </Appbar.Header>
 
@@ -213,6 +213,24 @@ export const Startup = (props: StartupProps) => {
                             />
                         ))}
                     </ScrollView>
+                </View>
+                {/* Founders Section */}
+                <View style={dynamicStyles.section}>
+                    <Text variant="titleMedium">Investors</Text>
+                    <View style={dynamicStyles.foundersContainer}>
+                        {founders.map((founder, index) => (
+                            <Founder
+                                key={founder.id}
+                                name={founder.name}
+                                image={founder.image}
+                                founderRole={founder.role}
+                                status={founder.status}
+                                following={founder.following}
+                                style={index === founders.length - 1 ? null : dynamicStyles.founderItem}
+                                onPress={() => navigation.navigate('Member', { id: founder.name })}
+                            />
+                        ))}
+                    </View>
                 </View>
             </ScrollView>
 

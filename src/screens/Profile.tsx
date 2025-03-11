@@ -378,13 +378,6 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
                 <Text variant="titleSmall" style={dynamicStyles.sectionText}>
                   Startups
                 </Text>
-                <Appbar.Action
-                  icon={require('../assets/flat-icons/edit.png')}
-                  color="#414042"
-                  size={15}
-                  style={dynamicStyles.appbarActionRight}
-                  onPress={() => {}}
-                />
               </View>
               {profile?.startups?.map((startup, index) => (
                 <Pressable
