@@ -2,8 +2,8 @@ import { BaseEntityModel } from '../../base-entity.model';
 
 export interface PitchDeckModel extends BaseEntityModel {
     id: number;
-    fileUrl?: string | null;
-    fileName?: string | null;
+    file_url?: string | null;
+    file_name?: string | null;
 
-    [key: string]: any; // Allows additional properties dynamically
+    [key: string]: any;
 }

@@ -6,11 +6,11 @@ export interface ContentModel extends BaseEntityModel {
     id: number;
     title?: string | null;
     description?: string | null;
-    imageUrl: string;
+    image_url: string;
     location?: string | null;
-    contentTypeId?: number | null;
-    contentType?: ContentTypeModel | null;
-    createdUser?: UserModel | null;
+    content_type_id?: number | null;
+    content_type?: ContentTypeModel | null;
+    created_user?: UserModel | null;
 
-    [key: string]: any; // Allows additional properties dynamically
+    [key: string]: any;
 }

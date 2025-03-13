@@ -13,7 +13,7 @@ import { RootState } from '../redux/configureStore';
 import { useQuery } from 'react-query';
 import { API } from '../plugins/axios';
 import { SelectInterest } from '../components/SelectInterest';
-import { InteresteModel } from '../models/general/models';
+import { InterestModel } from '../models/general/models';
 import { ProfileEditForm, ProfileEditFormValues } from '../components/forms/ProfileEditForm';
 import { StartUpForm, StartUpFormValues } from '../components/forms/StartUpForm';
 import { useNavigationContext } from '../contexts/NavigationContext';
@@ -33,13 +33,15 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
   const { colors } = useTheme();
   const dynamicStyles = createDynamicStyles(colors);
   const [stage, setStage] = useState<'interest' | 'startup' | 'profile' | 'edit_profile'>('profile');
-  const [interests, setInterests] = useState<InteresteModel[]>([]);
+  const [interests, setInterests] = useState<InterestModel[]>([]);
   const [selectedInterests, setSelectedInterests] = useState<number[]>([]);
   const [profile, setProfile] = useState<UserModel | null>(null);
   const { setHideTabBar } = useNavigationContext();
 
+
+
   useEffect(() => {
-    setHideTabBar(stage !== 'profile'); 
+    setHideTabBar(stage !== 'profile');
   }, [stage, setHideTabBar]);
 
   const { isFetching: isFetchingProfile, refetch } = useQuery(
@@ -106,7 +108,7 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
     }
   };
 
-  const handleSelectInterest = (interest: InteresteModel) => {
+  const handleSelectInterest = (interest: InterestModel) => {
     setSelectedInterests((prev) =>
       prev.includes(interest.interest_id)
         ? prev.filter((id) => id !== interest.interest_id)
@@ -326,7 +328,7 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
                 </View>
               </View>
               <Text style={dynamicStyles.descriptionText}>
-                {profile?.carrier?.title} | {profile?.carrier?.area_of_expertise}
+              {profile?.carrier?.title} | {profile?.carrier?.area_of_expertise}
               </Text>
               <View style={dynamicStyles.buttonRow}>
                 <Button
@@ -381,9 +383,9 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
               </View>
               {profile?.startups?.map((startup, index) => (
                 <Pressable
-                  key={startup.id || `startup-${index}`}
+                  key={startup.startup_id || `startup-${index}`}
                   style={dynamicStyles.startupItem}
-                  onPress={() => navigation.navigate('Startup', { startup })}
+                  onPress={() => navigation.navigate('Startup', { id: startup?.startup_id.toString() })}
                 >
                   <View style={dynamicStyles.startupItem}>
                     <Image

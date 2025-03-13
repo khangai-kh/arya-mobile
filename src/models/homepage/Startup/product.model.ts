@@ -8,5 +8,5 @@ export interface ProductModel extends BaseEntityModel {
     images?: Image[] | null;
     phase?: Phase | null;
 
-    [key: string]: any; // Allows additional properties dynamically
+    [key: string]: any;
 }

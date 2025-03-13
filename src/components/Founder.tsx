@@ -5,7 +5,7 @@ import {
     StyleSheet,
     TouchableOpacity,
     TouchableOpacityProps,
-    View
+    View,
 } from 'react-native';
 import { Avatar, Chip, IconButton, Text, useTheme } from 'react-native-paper';
 import { MD3Colors } from 'react-native-paper/lib/typescript/types';
@@ -19,44 +19,44 @@ const createStyles = (colors: MD3Colors) => StyleSheet.create({
         overflow: 'hidden',
         borderWidth: StyleSheet.hairlineWidth,
         borderColor: colors.outlineVariant,
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
     },
     avatarStyle: {
         backgroundColor: '#f2f4f7',
-        marginRight: 4
+        marginRight: 4,
     },
     iconButtonStyle: {
         borderRadius: 50,
-        padding: 4
+        padding: 4,
     },
     chipStyle: {
         backgroundColor: '#f2f2f2',
-        alignSelf: 'flex-start'
+        alignSelf: 'flex-start',
     },
     chipContainer: {
         flexDirection: 'row',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     roleIcon: {
         width: 14,
         height: 14,
-        marginRight: 4
+        marginRight: 4,
     },
     row: {
         flex: 1,
-        flexDirection: 'row'
+        flexDirection: 'row',
     },
     column: {
-        flex: 1
+        flex: 1,
     },
     justifyBetween: {
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
     },
     textMargin: {
         flexShrink: 1,
-        marginBottom: 4
+        marginBottom: 4,
     }
 });
 
@@ -69,7 +69,6 @@ type FounderProps = Omit<TouchableOpacityProps, 'activeOpacity'> & {
 };
 
 export const Founder: React.FC<FounderProps> = (props) => {
-    const navigation = useNavigation();
     const { colors } = useTheme();
     const styles = createStyles(colors);
 

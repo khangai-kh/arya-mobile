@@ -23,7 +23,7 @@ export const Startup = (props: StartupProps) => {
         body: 'Foodsy is a revolutionary platform that connects you with fresh, locally-sourced meals delivered straight to your doorstep...',
         types: [
             { id: 0, value: 'Funding round' },
-            { id: 1, value: 'Graduate' }
+            { id: 1, value: 'Graduate' },
         ],
         data: [
             { label: 'Status', value: 'Prototype ready' },
@@ -32,18 +32,18 @@ export const Startup = (props: StartupProps) => {
             { label: 'Valuation', value: '$3M' },
             { label: 'Target amount', value: '$500K' },
             { label: 'Amount collected', value: '$350K' },
-        ]
+        ],
     };
 
     const [founders] = useState([
         {
             id: 0, image: '', name: 'Elif Yılmaz', status: 'CEO at Foodsy',
-            role: 'Entrepreneur', following: false
+            role: 'Entrepreneur', following: false,
         },
         {
             id: 1, image: '', name: 'Ayşe Demir', status: 'Co-Founder at Foodsy',
-            role: 'Entrepreneur', following: false
-        }
+            role: 'Entrepreneur', following: false,
+        },
     ]);
 
     const [visible, setVisible] = useState(false);
@@ -53,7 +53,7 @@ export const Startup = (props: StartupProps) => {
             'Funding round': '#00AEEF',
             'Academy': '#F99F1C',
             'Closed deals': '#A09FA0',
-            'Graduate': '#4CB748'
+            'Graduate': '#4CB748',
         };
         return colorsMap[value] || undefined;
     };
@@ -72,9 +72,9 @@ export const Startup = (props: StartupProps) => {
             <Appbar.Content
                 title={
                     <View style={dynamicStyles.titleContainer}>
-                    <Text variant="titleMedium" style={dynamicStyles.interestText}>
-                        My startup
-                    </Text>
+                        <Text variant="titleMedium" style={dynamicStyles.interestText}>
+                            My startup
+                        </Text>
                     </View>
                 }
             />
@@ -106,7 +106,7 @@ export const Startup = (props: StartupProps) => {
                             <View style={dynamicStyles.chipContainer}>
                                 {startup.types?.map((type, index) => (
                                     <Chip
-                                        key={type.id}
+                                        key={index}
                                         style={[dynamicStyles.chip, { backgroundColor: checkColor(type.value) }]}
                                     >
                                         <Text variant="labelMedium" style={dynamicStyles.chipText}>
@@ -133,7 +133,7 @@ export const Startup = (props: StartupProps) => {
                                 style={[
                                     dynamicStyles.dataItem,
                                     index % 2 === 0 && dynamicStyles.dataItemBorderRight,
-                                    index < startup.data.length - 2 && dynamicStyles.dataItemBorderBottom
+                                    index < startup.data.length - 2 && dynamicStyles.dataItemBorderBottom,
                                 ]}
                             >
                                 <Text variant="bodySmall" style={dynamicStyles.dataLabel}>
@@ -208,7 +208,7 @@ export const Startup = (props: StartupProps) => {
                             <Image
                                 key={num}
                                 resizeMode="cover"
-                                source={require(`../assets/dummy-product-1.jpeg`)}
+                                source={require('../assets/dummy-product-1.jpeg')}
                                 style={dynamicStyles.productImage}
                             />
                         ))}

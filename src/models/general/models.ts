@@ -1,8 +1,8 @@
 import type { BaseEntityModel } from '../base-entity.model';
 
 export interface DescribeModel extends BaseEntityModel {
-    describesId: number;
-    interestName: string;
+    describes_id: number;
+    interest_ame: string;
     icon?: string | null;
 
     [key: string]: any; // Allows additional properties dynamically
@@ -10,9 +10,9 @@ export interface DescribeModel extends BaseEntityModel {
 
 export interface InterestModel extends BaseEntityModel {
     id: number;
-    interestName: string;
+    interes_name: string;
     title: string;
-    categoryId: number;
+    category_id: number;
     icon?: string | null;
 
     [key: string]: any;
@@ -26,8 +26,8 @@ export interface MotivationModel extends BaseEntityModel {
 }
 
 export interface Sector {
-    sectorId: number;
-    sectorName: string;
+    sector_id: number;
+    sector_name: string;
 
     [key: string]: any;
 }
@@ -42,16 +42,15 @@ export interface Phase {
 export interface InvestmentStage {
     id: number;
     name: string;
-    isActive: boolean;
+    is_active: boolean;
     description: string;
 
     [key: string]: any;
 }
 
-export interface FundingRoundType {
+export interface FundingRoundType extends BaseEntityModel {
     id: number;
     name: string;
-    isActive: boolean;
     description: string;
 
     [key: string]: any;
@@ -73,8 +72,8 @@ export interface CurrencyModel {
 }
 
 export interface Image {
-    imageUrl: string;
-    altText?: string | null;
+    image_url?: string | null;
+    alt_text?: string | null;
 
     [key: string]: any;
 }
