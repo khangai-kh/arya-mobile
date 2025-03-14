@@ -1,5 +1,6 @@
 import type { BaseEntityModel } from '../../base-entity.model';
 import { StartupModel } from '../../homepage/Startup';
+import { StartupBriefModel } from '../../homepage/Startup/startup.model';
 
 export interface UserModel extends BaseEntityModel {
     [x: string]: any;
@@ -30,16 +31,7 @@ export interface UserModel extends BaseEntityModel {
         id: number;
         name: string
     }[];
-    startups:{
-        startup_id: number;
-        name: string;
-        description: string;
-        founder_title: string;
-        startup_is_active: boolean;
-        joined_at: string;
-        startup_logo: string;
-    }[];
-    //startups:StartupBriefModel[];
+    startups: StartupBriefModel[];
     carrier:{
         id: number;
         is_company_owner: boolean ;

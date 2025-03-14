@@ -1,56 +1,48 @@
 import React from 'react';
 import { StackScreenProps } from '@react-navigation/stack';
 import { useState } from 'react';
-import { Image, View, StyleSheet } from 'react-native';
+import { Image, View, StyleSheet, ActivityIndicator } from 'react-native';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-import { Appbar, Avatar, Button, Chip, IconButton, MD3Theme, Modal, Portal, Text, useTheme } from 'react-native-paper';
+import { Appbar, Avatar, Button, Chip, Divider, IconButton, MD3Theme, Modal, Portal, Text, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Box } from '../components/common/Box';
 import { Founder } from '../components/Founder';
 import { MainStackParams } from '../models/navigation';
+import { ProductModel, StartupModel } from '../models/homepage/Startup';
+import { useQuery } from 'react-query';
+import { RootState } from '../redux/configureStore';
+import { useSelector } from 'react-redux';
+import { API } from '../plugins/axios';
 
 type StartupProps = StackScreenProps<MainStackParams, 'Startup'>;
 
-export const Startup = (props: StartupProps) => {
-    const { navigation } = props;
-     const { colors } = useTheme();
-      const dynamicStyles = createDynamicStyles(colors);
+export const Startup = ({route, navigation}: StartupProps) => {
+    const { token } = useSelector((state: RootState) => state.auth);
+    const { colors } = useTheme();
+    const dynamicStyles = createDynamicStyles(colors);
+    const [isLoading, setIsLoading] = useState(false);
+    const startupId = route.params?.id;
+    const [startup, setStartup] = useState<StartupModel | null>(null);
+    const [isExpanded, setIsExpanded] = useState(false);
 
-    const startup = {
-        image: '',
-        title: 'Foodsy',
-        bio: 'Quick, Fresh, and Local',
-        body: 'Foodsy is a revolutionary platform that connects you with fresh, locally-sourced meals delivered straight to your doorstep...',
-        types: [
-            { id: 0, value: 'Funding round' },
-            { id: 1, value: 'Graduate' },
-        ],
-        data: [
-            { label: 'Status', value: 'Prototype ready' },
-            { label: 'Investment status', value: 'Pre-seed' },
-            { label: 'Total investment', value: '$400K' },
-            { label: 'Valuation', value: '$3M' },
-            { label: 'Target amount', value: '$500K' },
-            { label: 'Amount collected', value: '$350K' },
-        ],
-    };
-
-    const [founders] = useState([
+     const { isFetching: isFetchingProfile, refetch } = useQuery(
+        ['startup', token],
+        () => API.get('/api/startup/' + startupId),
         {
-            id: 0, image: '', name: 'Elif Yılmaz', status: 'CEO at Foodsy',
-            role: 'Entrepreneur', following: false,
-        },
-        {
-            id: 1, image: '', name: 'Ayşe Demir', status: 'Co-Founder at Foodsy',
-            role: 'Entrepreneur', following: false,
-        },
-    ]);
+          onSuccess: ({ data }) => {
+            setStartup(data);
+          },
+          onError: (error) => {
+            console.error('Error fetching startups:', error);
+          },
+        }
+      );
 
     const [visible, setVisible] = useState(false);
 
-    const checkColor = (value: string) => {
+    const checkColor = (value: string = '') => {
         const colorsMap: { [key: string]: string } = {
-            'Funding round': '#00AEEF',
+            'HealthTech': '#00AEEF',
             'Academy': '#F99F1C',
             'Closed deals': '#A09FA0',
             'Graduate': '#4CB748',
@@ -58,95 +50,142 @@ export const Startup = (props: StartupProps) => {
         return colorsMap[value] || undefined;
     };
 
+    const formatNumber = (value: number, currencySymbol: string): string => {
+        const sign = value < 0 ? '-' : '';
+        const absValue = Math.abs(value);
+        let formattedValue: string;
+
+        if (absValue >= 1000000) {
+          formattedValue = (absValue / 1_000_000).toFixed(1).replace(/\.0$/, '') + ' M';
+        } else if (absValue >= 1000) {
+          formattedValue = (absValue / 1_000).toFixed(1).replace(/\.0$/, '') + ' K';
+        } else {
+          formattedValue = absValue.toString();
+        }
+
+        return `${sign}${currencySymbol} ${formattedValue}`;
+    };
+
+    const wrapIntoTwoLines = (text: string, maxLength: number = 50): string => {
+        if (text.length <= maxLength) {
+          const midPoint = Math.ceil(text.length / 2);
+          return `${text.substring(0, midPoint)}\n${text.substring(midPoint)}`;
+        }
+        return text; // If text is too long, return as is (can be truncated with numberOfLines)
+      };
+
+    const isDataLoading = isFetchingProfile || isLoading;
+
+    if (isDataLoading) {
+        return (
+        <View style={styles.loaderContainer}>
+            <ActivityIndicator size="large" color={colors.primary} />
+        </View>
+        );
+    }
     return (
         <SafeAreaView style={dynamicStyles.safeArea} edges={['top']}>
-
-        <Appbar.Header style={dynamicStyles.appbarHeader}>
-            <Appbar.Action
-                icon={require('../assets/flat-icons/angle-small-left.png')}
-                color="#414042"
-                size={20}
-                style={dynamicStyles.appbarActionRight}
-                onPress={() => {}}
-            />
-            <Appbar.Content
-                title={
-                    <View style={dynamicStyles.titleContainer}>
-                        <Text variant="titleMedium" style={dynamicStyles.interestText}>
-                            My startup
-                        </Text>
-                    </View>
-                }
-            />
-            <Appbar.Action
-                icon={require('../assets/flat-icons/heart-outlined.png')}
-                color="#414042"
-                size={20}
-                style={dynamicStyles.appbarActionRight}
-                onPress={() => {}}
-            />
-            <Appbar.Action
-                icon={require('../assets/flat-icons/edit.png')}
-                color="#414042"
-                size={20}
-                style={dynamicStyles.appbarActionRight}
-                onPress={() => {}}
-            />
-      </Appbar.Header>
+            <Appbar.Header style={dynamicStyles.appbarHeader}>
+                <Appbar.Action
+                    icon={require('../assets/flat-icons/angle-small-left.png')}
+                    color="#414042"
+                    size={20}
+                    style={dynamicStyles.appbarActionRight}
+                    onPress={() => {}}
+                />
+                <Appbar.Content
+                    title={
+                        <View style={dynamicStyles.titleContainer}>
+                            <Text variant="titleMedium" style={dynamicStyles.interestText}>
+                                My startup
+                            </Text>
+                        </View>
+                    }
+                />
+                <Appbar.Action
+                    icon={require('../assets/flat-icons/heart-outlined.png')}
+                    color="#414042"
+                    size={20}
+                    style={dynamicStyles.appbarActionRight}
+                    onPress={() => {}}
+                />
+                <Appbar.Action
+                    icon={require('../assets/flat-icons/edit.png')}
+                    color="#414042"
+                    size={20}
+                    style={dynamicStyles.appbarActionRight}
+                    onPress={() => {}}
+                />
+            </Appbar.Header>
 
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={dynamicStyles.cardContainer}>
                     <View style={dynamicStyles.header}>
                         <Avatar.Image
                             size={80}
-                            source={require('../assets/dummy-product-4.jpeg')}
+                            source={startup?.startup_logo ? { uri: startup?.startup_logo } : require('../assets/dummy-product-4.jpeg')}
                             style={dynamicStyles.avatar}
                         />
                         <Box style={dynamicStyles.headerContent}>
                             <View style={dynamicStyles.chipContainer}>
-                                {startup.types?.map((type, index) => (
-                                    <Chip
-                                        key={index}
-                                        style={[dynamicStyles.chip, { backgroundColor: checkColor(type.value) }]}
-                                    >
-                                        <Text variant="labelMedium" style={dynamicStyles.chipText}>
-                                            {type.value}
-                                        </Text>
-                                    </Chip>
-                                ))}
+                                <Chip
+                                    style={[dynamicStyles.chip, { backgroundColor: checkColor(startup?.startup_type?.name || '') }]}
+                                >
+                                    <Text variant="labelMedium" style={dynamicStyles.chipText}>
+                                        {startup?.startup_type?.name}
+                                    </Text>
+                                </Chip>
                             </View>
                             <Text variant="titleMedium" style={dynamicStyles.title}>
-                                {startup.title}
+                                {startup?.name}
                             </Text>
                             <Text variant="bodyMedium" style={dynamicStyles.bio}>
-                                {startup.bio}
+                                {startup?.startup_type?.description}
                             </Text>
                         </Box>
                     </View>
                     <View style={dynamicStyles.body}>
-                        <Text numberOfLines={4}>{startup.body}</Text>
+                        <Text numberOfLines={4}>{startup?.description}</Text>
                     </View>
                     <View style={dynamicStyles.dataContainer}>
-                        {startup.data.map((item, index) => (
-                            <View
-                                key={index}
-                                style={[
-                                    dynamicStyles.dataItem,
-                                    index % 2 === 0 && dynamicStyles.dataItemBorderRight,
-                                    index < startup.data.length - 2 && dynamicStyles.dataItemBorderBottom,
-                                ]}
-                            >
-                                <Text variant="bodySmall" style={dynamicStyles.dataLabel}>
-                                    {item.label}:
-                                </Text>
-                                <Text style={dynamicStyles.dataValue}>{item.value}</Text>
+                        <View style={styles.badge}>
+                            <View style={[styles.badgeIcon,  { backgroundColor: '#E6F3E6'}]}>
+                                <Image
+                                    source={require('../assets/flat-icons/phase.png')}
+                                    style={styles.icon}
+                                />
                             </View>
-                        ))}
+                                <Text style={styles.badgeText}>
+                                    {wrapIntoTwoLines(startup?.startup_status?.name || '', 20)}
+                                </Text>
+                        </View>
+                        <View style={styles.badge}>
+                            <View style={[styles.badgeIcon,  { backgroundColor: '#FFF8CC'}]}>
+                                <Image
+                                    source={require('../assets/flat-icons/investment_type.png')}
+                                    style={styles.icon}
+                                />
+                            </View>
+                            <Text style={styles.badgeText}>
+                                {wrapIntoTwoLines(startup?.funding_round_type?.name || '', 100)}
+                            </Text>
+                        </View>
+                        <View style={styles.badge}>
+                            <View style={[styles.badgeIcon,  { backgroundColor: '#FCE4EC'}]}>
+                                <Image
+                                    source={require('../assets/flat-icons/total_investment.png')}
+                                    style={styles.icon}
+                                />
+                            </View>
+                            <Text style={styles.badgeText}>
+                                {startup?.total_investment !== undefined && startup?.total_investment !== null ? formatNumber(startup.total_investment, startup?.currency?.symbol || '') : ''}
+                            </Text>
+                        </View>
                     </View>
                 </View>
 
                 {/* Funding Round Section */}
-                {/* <View style={dynamicStyles.section}>
+                <View style={dynamicStyles.section}>
                     <Text variant="titleMedium">Funding round</Text>
                     <View style={dynamicStyles.card}>
                         <View>
@@ -175,21 +214,24 @@ export const Startup = (props: StartupProps) => {
                             </View>
                         </View>
                     </View>
-                </View> */}
+                </View>
 
                 {/* Founders Section */}
                 <View style={dynamicStyles.section}>
                     <Text variant="titleMedium">Founders</Text>
                     <View style={dynamicStyles.foundersContainer}>
-                        {founders.map((founder, index) => (
+                        {startup?.founders?.map((founder, index) => (
                             <Founder
-                                key={founder.id}
-                                name={founder.name}
-                                image={founder.image}
-                                founderRole={founder.role}
-                                status={founder.status}
-                                following={founder.following}
-                                style={index === founders.length - 1 ? null : dynamicStyles.founderItem}
+                                key = {founder.id}
+                                userId = {founder.id}
+                                name = {founder.full_name}
+                                image = {founder.photo}
+                                founderRole = {founder.roles[0].role_name}
+                                status = {founder.title}
+                                following = {false}
+                                style={ 
+                                    index === (startup?.founders && startup.founders.length - 1)
+                                    ? null : dynamicStyles.founderItem}
                                 onPress={() => navigation.navigate('Member', { id: founder.name })}
                             />
                         ))}
@@ -199,34 +241,60 @@ export const Startup = (props: StartupProps) => {
                 {/* Products Section */}
                 <View style={dynamicStyles.section}>
                     <Text variant="titleMedium">Products</Text>
-                    <ScrollView
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                        style={dynamicStyles.productsScroll}
-                    >
-                        {[1, 2, 3].map((num) => (
-                            <Image
-                                key={num}
-                                resizeMode="cover"
-                                source={require('../assets/dummy-product-1.jpeg')}
-                                style={dynamicStyles.productImage}
-                            />
-                        ))}
-                    </ScrollView>
+                    {startup?.products?.map((num: ProductModel) => (
+                        <View style={dynamicStyles.cardContainer}>
+                            <Text key={`${num.id}-name`} variant="titleMedium" style={dynamicStyles.interestText}>
+                                {num.name}
+                            </Text>
+                            <Text
+                                key={`${num.id}-desc`}
+                                numberOfLines={isExpanded ? 0 : 3}
+                                ellipsizeMode="tail"
+                            >
+                                {num.description}
+                            </Text>
+                            {num?.description?.length && num.description.length > 100 && ( 
+                                <TouchableOpacity onPress={() => setIsExpanded(!isExpanded)}>
+                                <Text style={{ color: 'blue', marginTop: 5 }}>
+                                    {isExpanded ? 'Show Less' : 'Show More'}
+                                </Text>
+                                </TouchableOpacity>
+                            )}
+                            <ScrollView
+                                horizontal
+                                showsHorizontalScrollIndicator={false}
+                                style={dynamicStyles.productsScroll}
+                            >
+                                {num?.images?.map((image) => (
+                                    <Image
+                                        key={num.description}
+                                        resizeMode="cover"
+                                        alt={image?.alt_text || ''}
+                                        source={
+                                            image?.image_url ? 
+                                            { uri: image?.image_url } 
+                                            : require('../assets/dummy-product-1.jpeg')}
+                                        style={dynamicStyles.productImage}
+                                    />
+                                ))}
+                            </ScrollView>
+                        </View>
+                    ))}
                 </View>
                 {/* Founders Section */}
                 <View style={dynamicStyles.section}>
                     <Text variant="titleMedium">Investors</Text>
                     <View style={dynamicStyles.foundersContainer}>
-                        {founders.map((founder, index) => (
+                        {startup?.founders?.map((founder, index) => (
                             <Founder
-                                key={founder.id}
-                                name={founder.name}
-                                image={founder.image}
-                                founderRole={founder.role}
-                                status={founder.status}
-                                following={founder.following}
-                                style={index === founders.length - 1 ? null : dynamicStyles.founderItem}
+                                key = {founder.id}
+                                userId = {founder.id}
+                                name = {founder.full_name}
+                                image = {founder.photo}
+                                founderRole = {founder.roles[0].role_name}
+                                status = {founder.title}
+                                following = {false}
+                                style={index === (startup?.founders && startup.founders.length - 1) ? null : dynamicStyles.founderItem}
                                 onPress={() => navigation.navigate('Member', { id: founder.name })}
                             />
                         ))}
@@ -325,23 +393,38 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
         paddingLeft: 0,
         marginLeft: 0,
     },
-    headerContent: { flex: 1 },
-    chipContainer: { flexDirection: 'row' },
+    headerContent: {
+        flex: 1,
+    },
+    chipContainer: {
+        flexDirection: 'row',
+    },
     chip: {
         marginRight: 4,
         alignSelf: 'flex-start',
     },
-    chipText: { color: '#fff' },
-    title: { marginVertical: 4 },
-    bio: { flex: 1 },
-    body: { marginVertical: 12 },
+    chipText: {
+        color: '#fff',
+    },
+    title: {
+        marginVertical: 4,
+    },
+    bio: {
+        flex: 1,
+    },
+    body: {
+         marginVertical: 12,
+    },
     dataContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        borderRadius: 12,
+        borderRadius: 20,
         borderWidth: 1,
         borderColor: '#e0e0e0',
         backgroundColor: '#fff',
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
+        textAlignVertical: 'center',
     },
     dataItem: {
         width: '50%',
@@ -372,8 +455,12 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
         borderRadius: 24,
         padding: 16,
     },
-    sectionTitle: { marginBottom: 2 },
-    divider: { marginVertical: 8 },
+    sectionTitle: {
+        marginBottom: 2,
+    },
+    divider: {
+         marginVertical: 8,
+        },
     pitchDeck: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -384,9 +471,15 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
         height: 20,
         marginRight: 4,
     },
-    foundersContainer: { marginTop: 8 },
-    founderItem: { marginBottom: 8 },
-    productsScroll: { marginTop: 8 },
+    foundersContainer: {
+        marginTop: 8,
+    },
+    founderItem: {
+        marginBottom: 8,
+    },
+    productsScroll: {
+        marginTop: 8,
+    },
     productImage: {
         marginRight: 8,
         borderRadius: 12,
@@ -400,7 +493,9 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
         margin: 24,
         padding: 16,
     },
-    modalClose: { alignSelf: 'flex-end' },
+    modalClose: {
+        alignSelf: 'flex-end',
+    },
     modalIcon: {
         alignSelf: 'center',
         width: 56,
@@ -408,7 +503,9 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
         tintColor: '#4CB748',
         marginBottom: 24,
     },
-    modalTitle: { textAlign: 'center' },
+    modalTitle: {
+        textAlign: 'center',
+    },
     modalText: {
         textAlign: 'center',
         marginTop: 8,
@@ -424,12 +521,58 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
         paddingVertical: 12.5,
         borderRadius: 32,
     },
-    modalButtonText: { textAlign: 'center' },
+    modalButtonText: {
+        textAlign: 'center',
+    },
     modalButtonPrimary: {
         paddingVertical: 12.5,
         paddingHorizontal: 28.5,
         backgroundColor: '#4CB748',
         borderRadius: 32,
     },
-    modalButtonPrimaryText: { color: '#FFFFFF' },
+    modalButtonPrimaryText: {
+        color: '#FFFFFF',
+    },
+});
+
+const styles = StyleSheet.create({
+    loaderContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    badge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderRadius: 16,
+        paddingVertical: 6,
+        paddingHorizontal: 6,
+        justifyContent: 'center',
+        textAlignVertical: 'center',
+      },
+      badgeIcon: {
+        flexDirection: 'row', // Ensure row layout for icon and text
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlignVertical: 'center',
+        borderRadius: 20,
+        paddingVertical: 6,
+        paddingHorizontal: 12,
+        height: 40,
+        width: 40,
+        backgroundColor: '#E6F3E6',
+      },
+      badgeText: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlignVertical: 'center',
+        fontSize:12,
+        paddingLeft:4,
+        fontWeight: '500',
+      },
+      icon: {
+        width: 20,
+        height:20,
+        padding:5,
+      },
 });

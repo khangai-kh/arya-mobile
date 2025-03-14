@@ -35,4 +35,5 @@ export type StartupBriefModel = Pick<StartupModel,
     'name' |
     'description' |
     'founder_title' |
+    'joined_at' |
     'startup_logo'>;

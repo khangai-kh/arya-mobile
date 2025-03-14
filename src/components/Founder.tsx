@@ -1,5 +1,4 @@
 import React from 'react';
-import { useNavigation } from '@react-navigation/native';
 import {
     Image,
     StyleSheet,
@@ -9,6 +8,8 @@ import {
 } from 'react-native';
 import { Avatar, Chip, IconButton, Text, useTheme } from 'react-native-paper';
 import { MD3Colors } from 'react-native-paper/lib/typescript/types';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/configureStore';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
     course: {
@@ -53,6 +54,9 @@ const createStyles = (colors: MD3Colors) => StyleSheet.create({
     justifyBetween: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        gap:2,
+        width: '75%',
+        marginLeft:10,
     },
     textMargin: {
         flexShrink: 1,
@@ -61,18 +65,22 @@ const createStyles = (colors: MD3Colors) => StyleSheet.create({
 });
 
 type FounderProps = Omit<TouchableOpacityProps, 'activeOpacity'> & {
-    image: string;
+    userId: number;
     name: string;
-    status: string;
+    image: string;
     founderRole: string;
+    status: string;
     following: boolean;
+    style?: any;
+    onPress: () => void;
 };
 
 export const Founder: React.FC<FounderProps> = (props) => {
     const { colors } = useTheme();
     const styles = createStyles(colors);
+    const { user_id } = useSelector((state: RootState) => state.auth);
 
-    const { style, name, status, image, founderRole, following, ...otherProps } = props;
+    const { userId, style, name, status, image, founderRole, following, ...otherProps } = props;
 
     const checkRole = (role: string) => {
         let iconSource;
@@ -107,9 +115,12 @@ export const Founder: React.FC<FounderProps> = (props) => {
     return (
         <TouchableOpacity {...otherProps} style={[styles.course, style]}>
             <View style={styles.row}>
-                <Avatar.Image size={54} source={require('../assets/Image-54.png')} style={styles.avatarStyle} />
+                <Avatar.Image
+                    size={54}
+                    source={image ? { uri: image} : require('../assets/Image-54.png')}
+                    style={styles.avatarStyle}  />
                 <View style={styles.justifyBetween}>
-                    <View style={styles.column}>
+                    <View>
                         <Text variant="titleMedium" numberOfLines={1}>{name}</Text>
                         <Text variant="bodySmall" numberOfLines={1} style={styles.textMargin}>{status}</Text>
                         <Chip style={styles.chipStyle}>
@@ -119,13 +130,15 @@ export const Founder: React.FC<FounderProps> = (props) => {
                             </View>
                         </Chip>
                     </View>
-                    <IconButton
-                        icon={following ? require('../assets/flat-icons/following.png') : require('../assets/flat-icons/user-add.png')}
-                        size={18}
-                        iconColor={following ? '#B61D8D' : '#ffffff'}
-                        style={[styles.iconButtonStyle, { backgroundColor: following ? colors.onPrimary : colors.primary }]}
-                        onPress={() => { }}
-                    />
+                    {user_id !== userId && (
+                        <IconButton
+                            icon={following ? require('../assets/flat-icons/following.png') : require('../assets/flat-icons/user-add.png')}
+                            size={18}
+                            iconColor={following ? '#B61D8D' : '#ffffff'}
+                            style={[styles.iconButtonStyle, { backgroundColor: following ? colors.onPrimary : colors.primary }]}
+                            onPress={() => { }}
+                        />
+                    )}
                 </View>
             </View>
         </TouchableOpacity>

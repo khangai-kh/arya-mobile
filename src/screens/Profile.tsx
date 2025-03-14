@@ -383,10 +383,11 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
               </View>
               {profile?.startups?.map((startup, index) => (
                 <Pressable
-                  key={startup.startup_id || `startup-${index}`}
+                  key={startup.id || `startup-${index}`}
                   style={dynamicStyles.startupItem}
-                  onPress={() => navigation.navigate('Startup', { id: startup?.startup_id.toString() })}
+                  onPress={() => navigation.navigate('Startup', { id: startup?.id.toString() })}
                 >
+                  <Text>{startup?.id.toString()}</Text>
                   <View style={dynamicStyles.startupItem}>
                     <Image
                       source={startup.startup_logo ? { uri: startup.startup_logo } : require('../assets/wave.png')}
