@@ -64,7 +64,7 @@ export const Home = (props: HomeProps) => {
                     }}
                 >
                     <Image
-                        source={require('../assets/aryaUP.png')}
+                        source={require('../assets/arya_up.png')}
                         style={{
                             width: 98,
                             height: 40,
