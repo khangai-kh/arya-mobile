@@ -2,12 +2,12 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { Fragment } from 'react';
 import { MainStackParams } from '../../models/navigation';
 import { CreateProfile } from '../../screens/CreateProfile';
-import { ForgotPassword } from '../../screens/ForgotPassword';
 import { SignIn } from '../../screens/SignIn';
 import { SignUp } from '../../screens/SignUp';
 import { SignUpSuccess } from '../../screens/SignUpSuccess';
 import { SplashScreen } from '../../screens/SplashScreen';
 import { CalendarlyScreen } from '../../screens/CalendarlyScreen';
+import { DisclosureText } from '../../screens/DisclosureText';
 
 const Stack = createNativeStackNavigator<MainStackParams>();
 
@@ -36,13 +36,6 @@ export const Guest = () => {
                         }}
                     />
                     <Stack.Screen
-                        name="ForgotPassword"
-                        component={ForgotPassword}
-                        options={{
-                            headerShown: false,
-                        }}
-                    />
-                    <Stack.Screen
                         name="SignUp"
                         component={SignUp}
                         options={{
@@ -66,6 +59,13 @@ export const Guest = () => {
                     <Stack.Screen
                         name="CalendarlyScreen"
                         component={CalendarlyScreen}
+                        options={{
+                            headerShown: false,
+                        }}
+                    />
+                     <Stack.Screen
+                        name="DisclosureText"
+                        component={DisclosureText}
                         options={{
                             headerShown: false,
                         }}

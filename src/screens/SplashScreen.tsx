@@ -250,8 +250,8 @@ const styles = StyleSheet.create({
   },
   // Buttons at bottom for Steps 1-3
   bottomButtonContainer: {
-    width:700,
     paddingHorizontal:10,
+    alignItems:'center',
     marginBottom: 20,
   },
   title: {

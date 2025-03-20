@@ -38,8 +38,6 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
   const [profile, setProfile] = useState<UserModel | null>(null);
   const { setHideTabBar } = useNavigationContext();
 
-
-
   useEffect(() => {
     setHideTabBar(stage !== 'profile');
   }, [stage, setHideTabBar]);

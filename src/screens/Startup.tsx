@@ -375,7 +375,7 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
         justifyContent: 'space-between',
         marginBottom: 10,
     },
-        appbarActionRight: {
+    appbarActionRight: {
         backgroundColor: colors.onPrimary,
         marginRight: 5,
     },

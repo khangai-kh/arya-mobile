@@ -1,65 +1,65 @@
-
 export type MainStackParams = {
     AboutUs: undefined;
-    Authenticate: undefined;
-    Announcements: undefined;
     AcademyStartups: undefined;
+    Announcement: {
+      id: string;
+    };
+    Announcements: undefined;
+    Authenticate: undefined;
     BetterFutureCirclesDays: undefined;
-    BottomTab: undefined;
     BKYLicense: undefined;
     BKYSuccess: undefined;
+    BottomTab: undefined;
     CalendarlyScreen: undefined;
-    CheckIn: undefined;
     ChangePassword: undefined;
+    CheckIn: undefined;
     ClosedDeals: undefined;
+    Content: {
+      id: string;
+    };
     CreateProfile: {
-         userId: string,
+      userId: string;
     };
     DisclosureText: undefined;
     Events: undefined;
+    ExternalWeb: {
+      url: string;
+    };
+    Inspiration: {
+      id: string;
+    };
     Inspirations: undefined;
     InvestorTrainings: undefined;
-    ForgotPassword: undefined;
+    IPILicense: {
+      agreed: boolean;
+    };
+    Member: {
+      id: string;
+    };
+    MemberFilter: undefined;
+    MemberShip: undefined;
+    Messenger: undefined;
     Notifications: undefined;
     OnBoarding: undefined;
+    Profile: undefined;
     Search: undefined;
     SignIn: undefined;
     SignUp: undefined;
-    SignUpSuccess: { userId: string };
+    SignUpSuccess: {
+      userId: string;
+    };
     SplashScreen: undefined;
+    Startup: {
+      id: string;
+    };
     Startups: undefined;
     StartupsFilter: undefined;
-    MemberShip: undefined;
-    MemberFilter: undefined;
-    Messenger: undefined;
-    Profile: undefined;
-    Workshops: undefined;
-    StartUpForm: undefined;
-    Announcement: {
-        id: string;
-    };
-    Content: {
-        id: string;
-    };
-    Inspiration: {
-        id: string;
-    };
-    IPILicense: {
-        agreed: boolean;
-    };
-    Member: {
-        id: string;
+    Training: {
+      id: string;
     };
     Workshop: {
-        id: string;
+      id: string;
     };
-    Startup: {
-        id: string;
-    };
-    Training: {
-        id: string;
-    };
-    ExternalWeb: {
-        url: string;
-    };
-};
+    Workshops: undefined;
+  };
+  

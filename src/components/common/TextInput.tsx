@@ -3,7 +3,8 @@ import { HelperText, TextInput as RnpTextInput, TextInputProps as RnpTextInputPr
 
 export type TextInputProps = Omit<RnpTextInputProps, 'style' | 'outlineColor'> & {
     helperText?: string;
-    style?: StyleProp<ViewStyle>;
+    style?: StyleProp<ViewStyle>;  // Container style
+    inputStyle?: StyleProp<RnpTextInputProps['style']>;  // Input-specific style
     required?: boolean;
 };
 
@@ -13,8 +14,14 @@ export const TextInput = (props: TextInputProps) => {
         helperText,
         label,
         style,
+        inputStyle,
         ...otherProps
     } = props;
+
+    // Default input styles
+    const defaultInputStyle = {
+        backgroundColor: '#fff'
+    };
 
     return (
         <View style={style}>
@@ -22,9 +29,7 @@ export const TextInput = (props: TextInputProps) => {
                 {...otherProps}
                 label={required ? `${label} *` : label}
                 outlineColor="#fff"
-                style={{
-                    backgroundColor: '#fff'
-                }}
+                style={[defaultInputStyle, inputStyle as RnpTextInputProps['style']]}  // Merge default and custom styles
             />
             {Boolean(helperText) && (
                 <HelperText type={otherProps.error ? 'error' : 'info'}>

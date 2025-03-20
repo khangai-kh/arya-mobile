@@ -15,11 +15,11 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text, Button, IconButton } from 'react-native-paper';
 import { Formik, FormikHelpers } from 'formik';
-import * as Yup from 'yup';
 import { Asset, launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { Select, SelectItem } from '../common/Select';
 import { CurrencyModel, FundingRoundType, InvestmentStage, StartupType } from '../../models/general/models';
 import { useNavigation } from '@react-navigation/native';
+import { startupValidationSchema } from '../../utils/validation-schemas';
 
 export interface StartUpFormValues {
   logo?: Asset;
@@ -38,38 +38,6 @@ export interface StartUpFormProps {
   initialValues: StartUpFormValues;
   onSubmit: (values: StartUpFormValues) => void;
 }
-
-const startupValidationSchema = Yup.object().shape({
-  name: Yup.string().required('Name is required'),
-  slogan: Yup.string().required('Slogan is required'),
-  description: Yup.string().required('Description is required'),
-  stage: Yup.object()
-  .shape({
-    value: Yup.number().min(1, 'Stage is required').required('Stage is required'),
-    label: Yup.string().required(),
-  })
-  .required('Stage is required'),
-  totalInvestment: Yup.string().required('Total investment is required'),
-  startupType: Yup.object()
-  .shape({
-    value: Yup.number().min(1, 'Type is required').required('Type is required'),
-    label: Yup.string().required(),
-  })
-  .required('Type is required'),
-  fundingRoundType: Yup.object()
-  .shape({
-    value: Yup.number().min(1, 'Funding round is required').required('Funding round is required'),
-    label: Yup.string().required(),
-  })
-  .required('Funding round is required'),
-  logo: Yup.string().optional(),
-  currency:Yup.object()
-  .shape({
-    value: Yup.number().min(1, 'Currency is required').required('Currency is required'),
-    label: Yup.string().required(),
-  })
-  .required('Currency is required'),
-});
 
 export const StartUpForm = ({ initialValues, onSubmit }: StartUpFormProps) => {
   const navigation = useNavigation();

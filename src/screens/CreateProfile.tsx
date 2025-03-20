@@ -7,13 +7,11 @@ import { SelectInterest } from '../components/SelectInterest';
 import { SelectMotivation } from '../components/SelectMotivation';
 import { SelectRole } from '../components/SelectRole';
 import { MainStackParams } from '../models/navigation';
-import { DescribeModel } from '../models/general/models';
+import { DescribeModel, InterestModel, MotivationModel } from '../models/general/models';
 import { RootState } from '../redux/configureStore';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { API } from '../plugins/axios';
-import { InteresteModel } from '../models/general/interest.model';
-import { MotivationModel } from '../models/general/motivation.model';
 import { AddReference } from '../components/AddReference';
 
 type CreateProfileProps = StackScreenProps<MainStackParams, 'CreateProfile'>;
@@ -25,7 +23,7 @@ export const CreateProfile = ({ navigation, route }: CreateProfileProps) => {
     const { colors } = useTheme();
     const { token } = useSelector((state: RootState) => state.auth);
     const [stage, setStage] = useState<'role' | 'interest' | 'motivation' | 'refenence'>('role');
-    const [interests, setInterests] = useState<InteresteModel[]>([]);
+    const [interests, setInterests] = useState<InterestModel[]>([]);
     const [describes, setDescribes] = useState<DescribeModel[]>([]);
     const [motivations, setMotivations] = useState<MotivationModel[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
@@ -51,7 +49,7 @@ export const CreateProfile = ({ navigation, route }: CreateProfileProps) => {
         setMotivations(data || []);
     });
 
-    const handleSelectInterest = (interest: InteresteModel) => {
+    const handleSelectInterest = (interest: InterestModel) => {
         setSelectedInterests((prev) =>
             prev.includes(interest.interest_id)
                 ? prev.filter((id) => id !== interest.interest_id)

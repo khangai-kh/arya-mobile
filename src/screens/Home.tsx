@@ -1,8 +1,9 @@
+// screens/Home.tsx
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
-import { useState } from 'react';
-import { Image, useWindowDimensions, View } from 'react-native';
+import React, { useState } from 'react';
+import { Image, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
@@ -13,121 +14,131 @@ import { Entrepreneurship } from './Entrepreneurship';
 import { Investments } from './Investments';
 import { Members } from './Members';
 
-type HomeProps = CompositeScreenProps<BottomTabScreenProps<BottomTabStackParams, 'Home'>, StackScreenProps<MainStackParams>>;
+type HomeProps = CompositeScreenProps<
+  BottomTabScreenProps<BottomTabStackParams, 'Home'>,
+  StackScreenProps<MainStackParams>
+>;
 
 const renderScene = SceneMap({
-    'contents': Contents,
-    'members': Members,
-    'investments': Investments,
-    'entrepreneurship': Entrepreneurship
+  contents: Contents,
+  members: Members,
+  investments: Investments,
+  entrepreneurship: Entrepreneurship,
 });
 
 export const Home = (props: HomeProps) => {
-    const { navigation } = props;
-    const { width } = useWindowDimensions();
-    const { colors } = useTheme();
-    const [
-        index,
-        setIndex
-    ] = useState(0);
-    const [
-        routes
-    ] = useState([{
-        key: 'contents',
-        title: 'Contents'
-    }, {
-        key: 'members',
-        title: 'Members'
-    }, {
-        key: 'investments',
-        title: 'Investment'
-    }, {
-        key: 'entrepreneurship',
-        title: 'Entrepreneurship'
-    }]);
+  const { navigation } = props;
+  const { width } = useWindowDimensions();
+  const { colors } = useTheme();
 
-    return (
-        <SafeAreaView
-            style={{
-                flex: 1
-            }}
-            edges={[
-                'top'
-            ]}
-        >
-            <View style={{ padding: 16 }}>
-                <View
-                    style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        alignItems: 'center'
-                    }}
-                >
-                    <Image
-                        source={require('../assets/arya_up.png')}
-                        style={{
-                            width: 98,
-                            height: 40,
-                        }}
-                        resizeMode='contain'
-                    />
-                    <View
-                        style={{
-                            flexDirection: 'row'
-                        }}
-                    >
-                        <IconButton
-                            containerColor={colors.onPrimary}
-                            icon={require('../assets/flat-icons/search.png')}
-                            size={24}
-                            onPress={() => navigation.navigate('Search')}
-                        />
-                        <IconButton
-                            containerColor={colors.onPrimary}
-                            icon={require('../assets/flat-icons/bell.png')}
-                            size={24}
-                            onPress={() => navigation.navigate('Notifications')}
-                        />
-                        <IconButton
-                            containerColor={colors.onPrimary}
-                            icon={require('../assets/flat-icons/info.png')}
-                            size={24}
-                            onPress={() => navigation.navigate('AboutUs')}
-                        />
-                    </View>
-                </View>
-            </View>
-            <View style={{
-                flex: 1,
-                backgroundColor: '#F2F2F2'
-            }}>
-                <TabView
-                    renderScene={renderScene}
-                    onIndexChange={setIndex}
-                    initialLayout={{ width }}
-                    navigationState={{
-                        index,
-                        routes
-                    }}
-                    renderTabBar={props => (
-                        <TabBar
-                            {...props}
-                            inactiveColor={colors.onSurface}
-                            activeColor={colors.primary}
-                            scrollEnabled
-                            tabStyle={{
-                                width: 'auto'
-                            }}
-                            indicatorStyle={{
-                                backgroundColor: colors.primary
-                            }}
-                            style={{
-                                backgroundColor: colors.background
-                            }}
-                        />
-                    )}
-                />
-            </View>
-        </SafeAreaView>
-    );
+  const [index, setIndex] = useState(0);
+  const [routes] = useState([
+    { key: 'contents', title: 'Contents' },
+    { key: 'members', title: 'Members' },
+    { key: 'investments', title: 'Investment' },
+    { key: 'entrepreneurship', title: 'Entrepreneurship' },
+  ]);
+
+  const navigateToMemberShip = () => navigation.navigate('MemberShip');
+  const navigateToSearch = () => navigation.navigate('Search');
+  const navigateToNotifications = () => navigation.navigate('Notifications');
+  const navigateToAboutUs = () => navigation.navigate('AboutUs');
+
+  return (
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
+      {/* Header Section */}
+      <View style={styles.headerContainer}>
+        <View style={styles.header}>
+          <Image
+            source={require('../assets/arya_up.png')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+          <View style={styles.iconRow}>
+            <IconButton
+              containerColor={colors.onPrimary}
+              icon={require('../assets/flat-icons/upgrade.png')}
+              size={24}
+              onPress={navigateToMemberShip}
+            />
+            <IconButton
+              containerColor={colors.onPrimary}
+              icon={require('../assets/flat-icons/search.png')}
+              size={24}
+              onPress={navigateToSearch}
+            />
+            <IconButton
+              containerColor={colors.onPrimary}
+              icon={require('../assets/flat-icons/bell.png')}
+              size={24}
+              onPress={navigateToNotifications}
+            />
+            <IconButton
+              containerColor={colors.onPrimary}
+              icon={require('../assets/flat-icons/info.png')}
+              size={24}
+              onPress={navigateToAboutUs}
+            />
+          </View>
+        </View>
+      </View>
+
+      {/* TabView Section */}
+      <View style={styles.tabViewContainer}>
+        <TabView
+          renderScene={renderScene}
+          onIndexChange={setIndex}
+          initialLayout={{ width }}
+          navigationState={{ index, routes }}
+          renderTabBar={tabProps => (
+            <TabBar
+              {...tabProps}
+              inactiveColor={colors.onSurface}
+              activeColor={colors.primary}
+              scrollEnabled
+              tabStyle={styles.tabStyle}
+              indicatorStyle={[styles.indicatorStyle, { backgroundColor: colors.primary }]}
+              style={[styles.tabBar, { backgroundColor: colors.background }]}
+            />
+          )}
+        />
+      </View>
+    </SafeAreaView>
+  );
 };
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
+  headerContainer: {
+    padding: 16,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  logo: {
+    width: 98,
+    height: 40,
+  },
+  iconRow: {
+    flexDirection: 'row',
+  },
+  tabViewContainer: {
+    flex: 1,
+    backgroundColor: '#F2F2F2',
+  },
+  tabStyle: {
+    width: 'auto',
+  },
+  indicatorStyle: {
+    backgroundColor: 'transparent', 
+  },
+  tabBar: {
+    backgroundColor: 'transparent',
+  },
+});
+
+export default Home;
