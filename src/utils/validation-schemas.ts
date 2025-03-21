@@ -37,16 +37,11 @@ export const memberValidationSchema = Yup.object().shape({
   carrier: Yup.object().shape({
     is_company_owner: Yup.boolean()
       .required('Please select an option'),
-    company_name: Yup.string().when('is_company_owner', {
-      is: true,
-      then: Yup.string()
-        .min(2, 'Company name must be at least 2 characters')
-        .max(100, 'Company name must not exceed 100 characters')
-        .required('Company name is required'),
-      otherwise: Yup.string()
-        .nullable()
-        .notRequired(),
-    }),
+      company_name: Yup.string().when('is_company_owner', {
+        is: true,
+        then: (schema) => schema.required('Company name is required'),
+        otherwise: (schema) => schema.notRequired(),
+      }),
     industry: Yup.object()
       .shape({
         id: Yup.number().notRequired(), // id is not collected in the form

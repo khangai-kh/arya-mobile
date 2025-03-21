@@ -1,4 +1,4 @@
-const API_URL = process.env.API_URL || 'http://104.248.250.22:8000';
+const API_URL = process.env.API_URL || 'https://dev.aryawomen.com';
 
 const config = {
   apiUrl: API_URL,

@@ -62,31 +62,31 @@ export const DisclosureComponent = ({
   );
 };
 const createDynamicStyles = (colors: MD3Theme['colors']) =>
-StyleSheet.create({
-  container: {
-    flex: 1,
+  StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    titleContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    appbarHeader:{
+      backgroundColor: 'transparent',
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexDirection: 'row',
+    },
+    contentContainer: {
+      marginTop: 24,
+      paddingHorizontal: 16,
+    },
+    appbarActionRight: {
+      backgroundColor: colors.onPrimary,
+      marginRight: 5,
+      position: 'absolute',
+      left: 5,
+      top: '50%',
+      transform: [{ translateY: -25}],
   },
-  titleContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  appbarHeader:{
-    backgroundColor: 'transparent',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-  contentContainer: {
-    marginTop: 24,
-    paddingHorizontal: 16,
-  },
-  appbarActionRight: {
-    backgroundColor: colors.onPrimary,
-    marginRight: 5,
-    position: 'absolute',
-    left: 5,
-    top: '50%',
-    transform: [{ translateY: -25}],
-},
 });

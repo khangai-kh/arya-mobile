@@ -38,6 +38,7 @@ export type MainStackParams = {
     };
     MemberFilter: undefined;
     MemberShip: undefined;
+    MembershipForm: undefined;
     Messenger: undefined;
     Notifications: undefined;
     OnBoarding: undefined;
@@ -45,6 +46,7 @@ export type MainStackParams = {
     Search: undefined;
     SignIn: undefined;
     SignUp: undefined;
+    StartUpForm:undefined;
     SignUpSuccess: {
       userId: string;
     };
@@ -62,4 +64,3 @@ export type MainStackParams = {
     };
     Workshops: undefined;
   };
-  

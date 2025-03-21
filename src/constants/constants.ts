@@ -9,3 +9,10 @@ export const CURRENCIES = [
     { id: 4, name: 'British Pound', symbol : 'GBP' },
     { id: 5, name: 'Japanese Yen', symbol : 'JPY' },
   ];
+
+export const PROFILETYPE = [
+  { id: 4, name: 'Investor' },
+  { id: 2, name: 'Arya Entrepreneur'},
+  { id: 3, name: 'Premium' },
+  { id: 6, name: 'Fremium' },
+];

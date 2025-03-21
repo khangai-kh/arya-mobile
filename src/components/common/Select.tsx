@@ -6,11 +6,17 @@ import { Dropdown } from 'react-native-element-dropdown';
 import { useSelector } from 'react-redux';
 import { API } from '../../plugins/axios';
 import { RootState } from '../../redux/configureStore';
-import { CURRENCIES } from '../../constants/constants';
+import { CURRENCIES, PROFILETYPE } from '../../constants/constants';
 
 export interface SelectItem<T> {
   label: string;
-  value: 'id' extends keyof T ? T['id'] : 'sector_id' extends keyof T ? T['sector_id'] : string | number;
+  value: 'id' extends keyof T
+    ? T['id']
+    : 'industries_id' extends keyof T
+    ? T['industries_id']
+    : 'sector_id' extends keyof T
+    ? T['sector_id']
+    : string | number;
 }
 
 interface GenericSelectProps<T> {
@@ -45,9 +51,9 @@ export const Select = <T extends Record<string, any>>({
     const mapItems = (data: T[]): SelectItem<T>[] =>
       data.map((item) => ({
         label: String(
-          item[labelKey as keyof T] || item['symbol'] || item['name'] || item['sector_name'] || ''
+          item[labelKey as keyof T] || item['symbol'] || item['name'] || item['sector_name'] || item['industries_name']  ||''
         ),
-        value: item[valueKey as keyof T] || item['id'] || item['sector_id'],
+        value: item[valueKey as keyof T] || item['id'] || item['sector_id'] || item['industries_id'],
       }));
 
     const handleInitialValue = (mappedItems: SelectItem<T>[]) => {
@@ -66,7 +72,15 @@ export const Select = <T extends Record<string, any>>({
         setItems(mappedItems);
         handleInitialValue(mappedItems);
       }
-    } else {
+    }
+    if (apiUrl === '/local/profiles') {
+      if (Array.isArray(PROFILETYPE)) {
+        const mappedItems = mapItems(PROFILETYPE as unknown as T[]);
+        setItems(mappedItems);
+        handleInitialValue(mappedItems);
+      }
+    }
+     else {
       const fetchOptions = async () => {
         try {
           const response = await API.get<T[]>(apiUrl, {
@@ -120,7 +134,7 @@ export const Select = <T extends Record<string, any>>({
         labelField="label"
         valueField="value"
         value={currentValue} // Use the primitive value here
-        placeholder={`Select ${label.toLowerCase()}`}
+        placeholder={`Select`}
         onChange={handleValueChange}
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
@@ -142,8 +156,7 @@ const defaultStyles = StyleSheet.create({
     marginVertical: 8,
   },
   label: {
-    fontWeight: 'bold',
-    fontSize: 15,
+    fontSize: 14,
     marginBottom: 8,
   },
   dropdown: {
@@ -158,11 +171,11 @@ const defaultStyles = StyleSheet.create({
     borderColor: '#e0e0e0',
   },
   text: {
-    fontSize: 15,
+    fontSize: 14,
     color: '#333',
   },
   placeholder: {
-    fontSize: 15,
+    fontSize: 14,
     color: 'grey',
   },
   errorText: {

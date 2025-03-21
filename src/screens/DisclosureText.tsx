@@ -27,8 +27,7 @@ export const DisclosureText = (props: DisclosureTextProps) => {
             agreed: true,
           });
         }}
-        isVisible={false} // Can be toggled to show/hide
-        // Optional: containerStyle={{ backgroundColor: '#f0f0f0' }}
+        isVisible={false}
       />
     );
 };

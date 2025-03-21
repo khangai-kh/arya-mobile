@@ -1,5 +1,4 @@
 import type { BaseEntityModel } from '../../base-entity.model';
-import { StartupModel } from '../../homepage/Startup';
 import { StartupBriefModel } from '../../homepage/Startup/startup.model';
 
 export interface UserModel extends BaseEntityModel {
@@ -14,6 +13,7 @@ export interface UserModel extends BaseEntityModel {
         role_id: number;
         role_name: string
     }[];
+    phone: null | string;
     photo: string;
     interests: {
         id: number;

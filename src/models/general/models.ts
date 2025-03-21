@@ -32,6 +32,13 @@ export interface Sector {
     [key: string]: any;
 }
 
+export interface Industry {
+    industries_id: number;
+    industries_name: string;
+
+    [key: string]: any;
+}
+
 export interface Phase {
     id: number;
     name: string;
@@ -67,6 +74,13 @@ export interface CurrencyModel {
     id: number;
     name: string;
     symbol: string;
+
+    [key: string]: any;
+}
+
+export interface ProfileModel {
+    id: number;
+    name: string;
 
     [key: string]: any;
 }
