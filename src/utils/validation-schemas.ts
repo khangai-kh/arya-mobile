@@ -14,24 +14,42 @@ export const memberValidationSchema = Yup.object().shape({
   full_name: Yup.string()
     .min(2, 'Full name must be at least 2 characters')
     .max(100, 'Full name must not exceed 100 characters')
-    .required('Full name is required'),
+    .required('*'),
   email: Yup.string()
     .nullable() // Allow null to match UserModel
     .email('Invalid email')
-    .required('Email is required'),
+    .required('*'),
   linkedin_url: Yup.string()
     .url('Invalid URL')
     .matches(/linkedin\.com/, 'Must be a valid LinkedIn URL')
-    .required('LinkedIn URL is required'),
+    .required('*'),
   date_of_birth: Yup.string()
     .nullable() // Allow null to match UserModel
-    .matches(/^\d{2}\.\d{2}\.\d{4}$/, 'Date of birth must be in DD.MM.YYYY format')
-    .required('Date of birth is required'),
+    .test(
+      'is-valid-date',
+      'Date of birth must be a valid date in YYYY-MM-DD format',
+      (value) => {
+        if (!value) return false;
+        // Check if it's a valid ISO date string
+        const date = new Date(value);
+        return date instanceof Date && !isNaN(date.getTime());
+      }
+    )
+    .test(
+      'is-past-date',
+      'Date of birth must be in the past',
+      (value) => {
+        if (!value) return false;
+        const date = new Date(value);
+        return date < new Date();
+      }
+    )
+    .required('*'),
   address: Yup.string()
     .nullable() // Allow null to match UserModel
     .min(5, 'Address must be at least 5 characters')
     .max(200, 'Address must not exceed 200 characters')
-    .required('Address is required'),
+    .required('*'),
 
   // Step 2: Career (nested under carrier)
   carrier: Yup.object().shape({
