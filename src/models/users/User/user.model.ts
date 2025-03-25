@@ -1,5 +1,5 @@
 import type { BaseEntityModel } from '../../base-entity.model';
-import { DescribeModel, Industry, InterestModel, MotivationModel, Sector } from '../../general/models';
+import { BatchModel, DescribeModel, Industry, InterestModel, ProfileModel, Sector } from '../../general/models';
 import { StartupBriefModel } from '../../homepage/Startup/startup.model';
 
 export interface UserModel extends BaseEntityModel {
@@ -11,10 +11,6 @@ export interface UserModel extends BaseEntityModel {
     date_of_birth: null | string;
     phone : null | string;
     address: null | string;
-    roles: {
-        id: number;
-        role_name: string
-    }[];
     photo: string;
     interests: InterestModel[];
     describes: DescribeModel[];
@@ -39,7 +35,8 @@ export interface UserModel extends BaseEntityModel {
     additional:{
         id: number;
         introduction_paragraph: string;
-        motivation: MotivationModel;
+        role: ProfileModel;
+        batch: BatchModel
         payment_method: string;
         is_agreement_accepted: boolean;
         is_confidentiality_accepted: boolean;

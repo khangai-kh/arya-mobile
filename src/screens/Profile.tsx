@@ -422,10 +422,10 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
               user_id: user_id ?? 1,
               role: profile?.roles[0].role_name,
               photo: profile?.photo,
-              full_name: profile?.full_name,
+              full_name: profile?.full_name ?? undefined,
               company: profile?.carrier.company_name,
               sector: profile?.carrier.sector
-                ? { sector_id: profile.carrier.sector.id, sector_name: profile.carrier.sector.name }
+                ? { id: profile.carrier.sector.id, name: profile.carrier.sector.name }
                 : undefined,
               title: profile?.carrier.title,
             }}

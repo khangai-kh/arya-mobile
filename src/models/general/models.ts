@@ -85,6 +85,13 @@ export interface ProfileModel {
     [key: string]: any;
 }
 
+export interface BatchModel {
+    id: number;
+    name: string;
+
+    [key: string]: any;
+}
+
 export interface Image {
     image_url?: string | null;
     alt_text?: string | null;

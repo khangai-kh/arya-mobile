@@ -1,8 +1,6 @@
 // screens/MemberShip.tsx
 import React from 'react';
-import { StackScreenProps } from '@react-navigation/stack';
 import { ActivityIndicator, SafeAreaView, StyleSheet, View } from 'react-native';
-import { MainStackParams } from '../models/navigation';
 import { MembershipForm } from '../components/forms/MembershipForm';
 import { Appbar, MD3Theme, Text, useTheme } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
@@ -13,9 +11,8 @@ import { useSelector } from 'react-redux';
 import { useQuery } from 'react-query';
 import { API } from '../plugins/axios';
 
-type MemberShipProps = StackScreenProps<MainStackParams, 'MemberShip'>;
 
-export const MemberShip = (props: MemberShipProps) => {
+export const MemberShip = () => {
   const { token } = useSelector((state: RootState) => state.auth);
   const { colors } = useTheme();
   const dynamicStyles = createDynamicStyles(colors);

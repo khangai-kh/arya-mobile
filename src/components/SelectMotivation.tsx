@@ -40,14 +40,14 @@ export const SelectMotivation = ({
           <View style={styles.motivationsContainer}>
             {motivations.map((motivation) => (
               <TouchableOpacity
-                key={motivation.interest_id}
+                key={motivation.id}
                 style={[
                   styles.motivationButton,
-                  selectedMotivations.includes(motivation.interest_id) && styles.selectedMotivationButton,
+                  selectedMotivations.includes(motivation.id) && styles.selectedMotivationButton,
                 ]}
-                onPress={() => handleSelect(motivation.interest_id)}
+                onPress={() => handleSelect(motivation.id)}
               >
-                <Text variant="titleMedium">{motivation.interest_name}</Text>
+                <Text variant="titleMedium">{motivation.name}</Text>
               </TouchableOpacity>
             ))}
           </View>

@@ -8,56 +8,67 @@ import { DescribeModel } from '../models/general/models';
 
 type SelectRoleProps = {
   roles: DescribeModel[];
-  selectedRole: number | undefined;
-  onSelect: (value: number) => void;
+  selectedRoles: number[];
+  onSelect: (value: DescribeModel) => void;
   onNextButton: () => void;
 };
 
 export const SelectRole = ({
-    roles,
-    selectedRole,
-    onSelect,
-    onNextButton,
-  }: SelectRoleProps) => (
-  <View style={styles.container}>
-    <ScrollView showsVerticalScrollIndicator={false}>
-      <View style={styles.contentContainer}>
-        <Text variant="titleLarge" style={styles.title}>
-          How would you describe yourself?
-        </Text>
-        <Text variant="bodyMedium" style={styles.subtitle}>
-          Choose the role that best describes you
-        </Text>
-        <View style={styles.rolesContainer}>
-          {roles.map((role) => {
-            const isSelected = selectedRole === role.describes_id;
-            return (
-              <TouchableOpacity
-                key={role.describes_id}
-                style={[styles.roleButton, isSelected && styles.selectedRoleButton]}
-                onPress={() => onSelect(role.describes_id)}
-              >
-                <Text variant="titleMedium">{role.interest_name}</Text>
-                <Image
-                  source={role.icon ? { uri: role.icon } : getRoleImage(role.title)}
-                  style={[styles.roleIcon, isSelected && styles.selectedRoleIcon]}
-                />
-              </TouchableOpacity>
-            );
-          })}
+  roles,
+  selectedRoles,
+  onSelect,
+  onNextButton,
+}: SelectRoleProps) => {
+
+  const handleSelect = (describe: DescribeModel) => {
+    if (selectedRoles.includes(describe.describes_id)) {
+      onSelect(describe);
+    } else if (selectedRoles.length < 5) {
+      onSelect(describe);
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.contentContainer}>
+          <Text variant="titleLarge" style={styles.title}>
+            How would you describe yourself?
+          </Text>
+          <Text variant="bodyMedium" style={styles.subtitle}>
+            Choose the roles that best describe you (select all that apply)
+          </Text>
+          <View style={styles.rolesContainer}>
+            {roles.map((role) => {
+              const isSelected = selectedRoles.includes(role.describes_id);
+              return (
+                <TouchableOpacity
+                  key={role.describes_id}
+                  style={[styles.roleButton, isSelected && styles.selectedRoleButton]}
+                  onPress={() => handleSelect(role)}
+                >
+                  <Text variant="titleMedium">{role.interest_name}</Text>
+                  <Image
+                    source={role.icon ? { uri: role.icon } : getRoleImage(role.title)}
+                    style={[styles.roleIcon, isSelected && styles.selectedRoleIcon]}
+                  />
+                </TouchableOpacity>
+              );
+            })}
+          </View>
         </View>
-      </View>
-    </ScrollView>
-    <Box px={16} py={16}>
-      <Button
-          mode="contained" 
+      </ScrollView>
+      <Box px={16} py={16}>
+        <Button
+          mode="contained"
           onPress={onNextButton}
-          >
+        >
           <Text style={styles.buttonContent}>Next</Text>
-      </Button>
-    </Box>
-  </View>
-);
+        </Button>
+      </Box>
+    </View>
+  );
+};
 
 const getRoleImage = (title: string) => {
   const images: Record<string, any> = {

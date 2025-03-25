@@ -24,7 +24,7 @@ import DatePicker from 'react-native-date-picker';
 import * as Yup from 'yup';
 import { UserModel } from '../../models/users/User';
 import { Select, SelectItem } from '../common/Select';
-import { Industry, MotivationModel, ProfileModel, Sector } from '../../models/general/models';
+import { BatchModel, Industry, ProfileModel, Sector } from '../../models/general/models';
 import CustomCheckbox from './CustomCheckbox';
 import { API } from '../../plugins/axios';
 
@@ -55,7 +55,8 @@ interface Step3FormValues {
   introduction_paragraph: string;
   motivation?: string;
   payment_method?: string;
-  profile_type: number;
+  profile_type: ProfileModel;
+  batch_type: BatchModel;
   is_agreement_accepted: boolean;
   is_confidentiality_accepted: boolean;
 }
@@ -530,8 +531,8 @@ export const MembershipForm = ({ initialValues, onSubmit }: MemberFormProps) => 
             <Formik<Step3FormValues>
               initialValues={{
                 introduction_paragraph: initialValues.additional.introduction_paragraph || '',
-                motivation: initialValues.additional.motivation || '',
-                profile_type: initialValues.roles[0]?.id ?? 0,
+                profile_type: initialValues.additional.role ?? null,
+                batch_type: initialValues.additional.batch ?? null,
                 is_agreement_accepted: initialValues.additional.is_agreement_accepted || false,
                 is_confidentiality_accepted: initialValues.additional.is_confidentiality_accepted || false,
               }}
@@ -568,26 +569,18 @@ export const MembershipForm = ({ initialValues, onSubmit }: MemberFormProps) => 
                   {touched.introduction_paragraph && errors.introduction_paragraph && (
                     <Text style={styles.errorText}>{errors.introduction_paragraph}</Text>
                   )}
-
-                  <Select<MotivationModel>
-                    apiUrl="/api/motivations"
-                    fieldName="motivation"
-                    label="Your motivation to be a member of AYS?"
-                    labelKey="name"
-                    valueKey="id"
-                    initialValue={values.motivation ? { ...values.motivation, value: Number(values.motivation.value) } : null}
-                    onValueChange={(item: SelectItem<MotivationModel> | null) =>
-                      setFieldValue('motivation', item)
-                    }
-                  />
-
+W
                   <Select<ProfileModel>
                     apiUrl="/local/profiles"
                     fieldName="profile"
                     label="Your profile type"
                     labelKey="name"
                     valueKey="id"
-                    initialValue={values.profile}
+                    initialValue={
+                      values.profile_type
+                        ? { label: values.profile_type.name, value: values.profile_type.id }
+                        : null
+                    }
                     onValueChange={(item: SelectItem<ProfileModel> | null) =>
                       setFieldValue('profile', item)
                     }
@@ -595,8 +588,8 @@ export const MembershipForm = ({ initialValues, onSubmit }: MemberFormProps) => 
 
                   <View style={styles.termsContainer}>
                     <CustomCheckbox
-                      checked={values.termsAccepted}
-                      onToggle={() => setFieldValue('termsAccepted', !values.termsAccepted)}
+                      checked={values.is_agreement_accepted}
+                      onToggle={() => setFieldValue('termsAccepted', !values.is_agreement_accepted)}
                     />
                     <Text variant="titleMedium" style={styles.termsText}>
                       I have read and accept the{' '}
@@ -611,14 +604,14 @@ export const MembershipForm = ({ initialValues, onSubmit }: MemberFormProps) => 
                       clarification text.
                     </Text>
                   </View>
-                  {touched.termsAccepted && errors.termsAccepted && (
-                    <Text style={styles.errorText}>{errors.termsAccepted}</Text>
+                  {touched.is_agreement_accepted && errors.is_agreement_accepted && (
+                    <Text style={styles.errorText}>{errors.is_agreement_accepted}</Text>
                   )}
 
                   <View style={styles.termsContainer}>
                     <CustomCheckbox
-                      checked={values.isInternational}
-                      onToggle={() => setFieldValue('isInternational', !values.isInternational)}
+                      checked={values.is_confidentiality_accepted}
+                      onToggle={() => setFieldValue('isInternational', !values.is_confidentiality_accepted)}
                     />
                     <Text variant="titleMedium" style={styles.termsText}>
                       I have read and understood the{' '}
@@ -632,8 +625,8 @@ export const MembershipForm = ({ initialValues, onSubmit }: MemberFormProps) => 
                       . I declare that I accept the terms and conditions of the Privacy Agreement.
                     </Text>
                   </View>
-                  {touched.isInternational && errors.isInternational && (
-                    <Text style={styles.errorText}>{errors.isInternational}</Text>
+                  {touched.is_confidentiality_accepted && errors.is_confidentiality_accepted && (
+                    <Text style={styles.errorText}>{errors.is_confidentiality_accepted}</Text>
                   )}
 
                   <View style={styles.buttonContainer}>

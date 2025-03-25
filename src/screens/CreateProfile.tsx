@@ -29,7 +29,7 @@ export const CreateProfile = ({ navigation, route }: CreateProfileProps) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [successModalVisible, setSuccessModalVisible] = useState<boolean>(false);
 
-    const [selectedRole, setSelectedRole] = useState<number>();
+    const [selectedDescribes, setselectedDescribes] = useState<number[]>([]);
     const [selectedInterests, setSelectedInterests] = useState<number[]>([]);
     const [selectedMotivation, setSelectedMotivation] = useState<number[]>([]);
     const [selectedReferences, setSelectedReferences] = useState<number[]>([]);
@@ -54,6 +54,14 @@ export const CreateProfile = ({ navigation, route }: CreateProfileProps) => {
             prev.includes(interest.interest_id)
                 ? prev.filter((id) => id !== interest.interest_id)
                 : [...prev, interest.interest_id]
+        );
+    };
+
+    const handleSelectDescribes = (describe: DescribeModel) => {
+        setselectedDescribes((prev) =>
+            prev.includes(describe.describes_id)
+                ? prev.filter((id) => id !== describe.describes_id)
+                : [...prev, describe.describes_id]
         );
     };
 
@@ -97,16 +105,19 @@ export const CreateProfile = ({ navigation, route }: CreateProfileProps) => {
     };
 
     const handleUserInfo = async () => {
-        if (!userId || !selectedRole) {
+        if (!userId || !selectedDescribes || !selectedInterests || !selectedMotivation) {
             console.error('Error: User ID or role selection is missing.');
             return;
         }
+        console.log(selectedDescribes);
+        console.log(selectedInterests);
+        console.log(selectedMotivation);
         setLoading(true);
         try {
 
             await API.post('/api/user-describes', {
                 user_id: userId,
-                describe_id: selectedRole,
+                describe_ids: selectedDescribes,
             });
 
             await API.post('/api/user-interests', {
@@ -152,8 +163,8 @@ export const CreateProfile = ({ navigation, route }: CreateProfileProps) => {
                         {stage === 'role' && (
                             <SelectRole
                                 roles={describes}
-                                selectedRole={selectedRole}
-                                onSelect={setSelectedRole}
+                                selectedRoles={selectedDescribes}
+                                onSelect={handleSelectDescribes}
                                 onNextButton={() => setStage('interest')}
                             />
                         )}
