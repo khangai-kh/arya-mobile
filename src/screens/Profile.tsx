@@ -217,7 +217,7 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
             title={
               <View style={dynamicStyles.titleContainer}>
                 <Text variant="titleMedium" style={dynamicStyles.titleText}>
-                  Profile
+                {profile?.additional.role.name}
                 </Text>
               </View>
             }
@@ -310,18 +310,21 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
                     </View>
                   </View>
                   <View>
+                  {profile?.describes?.map((describe, index) => (
                     <Button
+                      key={index}
                       mode="contained"
                       buttonColor="#F2A93B"
                       textColor="white"
-                      icon={require('../assets/flat-icons/rocket.png')}
+                      icon={ require(describe?.icon || '../assets/flat-icons/rocket-outlined.png')}
                       contentStyle={dynamicStyles.buttonContent}
                       labelStyle={dynamicStyles.buttonText}
                       style={dynamicStyles.buttonBadge}
                       onPress={() => {}}
                     >
-                      {profile?.roles[0].role_name}
+                      {describe.name}
                     </Button>
+                     ))}
                   </View>
                 </View>
               </View>

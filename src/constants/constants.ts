@@ -16,3 +16,10 @@ export const PROFILETYPE = [
   { id: 3, name: 'Premium' },
   { id: 6, name: 'Fremium' },
 ];
+
+export const BATCHETYPE = [
+  { id: 4, name: 'Entrepreneur' },
+  { id: 2, name: 'Arya Entrepreneur'},
+  { id: 3, name: 'Investor' },
+  { id: 6, name: 'Student' },
+];

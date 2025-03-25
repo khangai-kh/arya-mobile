@@ -53,7 +53,6 @@ interface Step2FormValues {
 // Step 3 Form Values
 interface Step3FormValues {
   introduction_paragraph: string;
-  motivation?: string;
   payment_method?: string;
   profile_type: ProfileModel;
   batch_type: BatchModel;
@@ -582,7 +581,23 @@ W
                         : null
                     }
                     onValueChange={(item: SelectItem<ProfileModel> | null) =>
-                      setFieldValue('profile', item)
+                      setFieldValue('profile_type', item)
+                    }
+                  />
+
+                  <Select<ProfileModel>
+                    apiUrl="/local/batches"
+                    fieldName="profile"
+                    label="How you decribe yourself"
+                    labelKey="name"
+                    valueKey="id"
+                    initialValue={
+                      values.profile_type
+                        ? { label: values.batch_type.name, value: values.batch_type.id }
+                        : null
+                    }
+                    onValueChange={(item: SelectItem<ProfileModel> | null) =>
+                      setFieldValue('batch_type', item)
                     }
                   />
 
