@@ -40,7 +40,7 @@ export const Home = (props: HomeProps) => {
   ]);
 
   const navigateToMemberShip = () => navigation.navigate('MemberShip');
-  const navigateToSearch = () => navigation.navigate('Search');
+  // const navigateToSearch = () => navigation.navigate('Search');
   const navigateToNotifications = () => navigation.navigate('Notifications');
   const navigateToAboutUs = () => navigation.navigate('AboutUs');
 

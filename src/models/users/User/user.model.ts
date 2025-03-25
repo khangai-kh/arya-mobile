@@ -1,28 +1,23 @@
 import type { BaseEntityModel } from '../../base-entity.model';
+import { DescribeModel, Industry, InterestModel, MotivationModel, Sector } from '../../general/models';
 import { StartupBriefModel } from '../../homepage/Startup/startup.model';
 
 export interface UserModel extends BaseEntityModel {
     [x: string]: any;
     id: number;
-    full_name: string;
+    full_name: null | string;
     email: null | string;
-    linkedin_url: string;
+    linkedin_url: null | string;
     date_of_birth: null | string;
+    phone : null | string;
     address: null | string;
     roles: {
-        role_id: number;
+        id: number;
         role_name: string
     }[];
-    phone: null | string;
     photo: string;
-    interests: {
-        id: number;
-        name: string
-    }[];
-    describes: {
-        id: number;
-        name: string
-    }[];
+    interests: InterestModel[];
+    describes: DescribeModel[];
     received_references: {
         id: number;
         name: string
@@ -36,17 +31,19 @@ export interface UserModel extends BaseEntityModel {
         id: number;
         is_company_owner: boolean ;
         company_name: string;
-        industry:{
-            id: number;
-            name: string;
-        };
-        sector:{
-            id: number;
-            name: string;
-        };
+        industry: Industry
+        sector: Sector;
         title: string;
         area_of_expertise: string;
     };
+    additional:{
+        id: number;
+        introduction_paragraph: string;
+        motivation: MotivationModel;
+        payment_method: string;
+        is_agreement_accepted: boolean;
+        is_confidentiality_accepted: boolean;
+    }
 }
 
 export type UserModelWithoutContent = Pick<UserModel, 'id' | 'full_name'>;

@@ -26,15 +26,15 @@ export interface MotivationModel extends BaseEntityModel {
 }
 
 export interface Sector {
-    sector_id: number;
-    sector_name: string;
+    id: number;
+    name: string;
 
     [key: string]: any;
 }
 
 export interface Industry {
-    industries_id: number;
-    industries_name: string;
+    id: number;
+    name: string;
 
     [key: string]: any;
 }

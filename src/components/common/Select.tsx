@@ -172,6 +172,7 @@ const defaultStyles = StyleSheet.create({
   },
   text: {
     fontSize: 14,
+    paddingLeft:4,
     color: '#333',
   },
   placeholder: {

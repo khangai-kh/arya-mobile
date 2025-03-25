@@ -46,31 +46,23 @@ interface Step2FormValues {
     title: string;
     area_of_expertise: string;
   };
-  industry?: { label: string; value: string };
-  sector?: { label: string; value: string };
+  industry?: { id: number; name: string };
+  sector?: { id: number; name: string };
 }
 
 // Step 3 Form Values
 interface Step3FormValues {
-  membership_paragraph: string;
-  motivation?: { label: string; value: string };
-  profile?: { label: string; value: number };
-  termsAccepted: boolean;
-  isInternational: boolean;
-}
-
-// Combined Form Values for final submission
-export interface MemberFormValues extends UserModel {
-  isInternational?: boolean;
+  introduction_paragraph: string;
   motivation?: string;
-  profileType?: string;
-  termsAccepted?: boolean;
-  membership_paragraph?: string;
+  payment_method?: string;
+  profile_type: number;
+  is_agreement_accepted: boolean;
+  is_confidentiality_accepted: boolean;
 }
 
 export interface MemberFormProps {
-  initialValues: MemberFormValues;
-  onSubmit: (values: MemberFormValues) => void;
+  initialValues: UserModel;
+  onSubmit: (values: UserModel) => void;
 }
 
 // Validation Schemas
@@ -110,7 +102,7 @@ export const MembershipForm = ({ initialValues, onSubmit }: MemberFormProps) => 
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
-  const [formData, setFormData] = useState<MemberFormValues>(initialValues);
+  const [formData, setFormData] = useState<UserModel>(initialValues);
   const { colors } = useTheme();
   const dynamicStyles = createDynamicStyles(colors);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -126,15 +118,15 @@ export const MembershipForm = ({ initialValues, onSubmit }: MemberFormProps) => 
       console.log(`Submitting Step ${step} values:`, values);
       if(step === 1){
            setIsLoading(true);
-              await API.put('/api/user-my-personal-information', {
-                full_name: values.full_name,
-                email: values.email,
-                phone: values.phone,
-                linkedin_url: values.linkedin_url,
-                date_of_birth: values.date_of_birth,
-                address: values.address,
-              });
-
+            await API.put('/api/user-my-personal-information', {
+              full_name: values.full_name,
+              email: values.email,
+              phone: values.phone,
+              linkedin_url: values.linkedin_url,
+              date_of_birth: values.date_of_birth,
+              address: values.address,
+            });
+            setIsLoading(false);
       }
       setFormData((prev) => ({ ...prev, ...values }));
       setCompletedSteps([...completedSteps, step]);
@@ -234,7 +226,7 @@ export const MembershipForm = ({ initialValues, onSubmit }: MemberFormProps) => 
                     onBlur={handleBlur('full_name')}
                     style={styles.input}
                     theme={{ roundness: 40 }}
-                    outlineStyle={{ borderWidth: 0 }}
+                    outlineStyle={styles.paperTextInput}
                     error={touched.full_name && !!errors.full_name}
                   />
                   <Text variant="titleSmall" style={styles.inputText}>
@@ -252,7 +244,7 @@ export const MembershipForm = ({ initialValues, onSubmit }: MemberFormProps) => 
                     onBlur={handleBlur('email')}
                     style={styles.input}
                     theme={{ roundness: 40 }}
-                    outlineStyle={{ borderWidth: 0 }}
+                    outlineStyle={styles.paperTextInput}
                     error={touched.email && !!errors.email}
                   />
                   <Text variant="titleSmall" style={styles.inputText}>
@@ -273,7 +265,6 @@ export const MembershipForm = ({ initialValues, onSubmit }: MemberFormProps) => 
                     codeTextStyle={styles.phoneCodeText}
                     flagButtonStyle={styles.phoneFlagButton}
                   />
-                  
                   <Text variant="titleSmall" style={styles.inputText}>
                     LinkedIn URL{' '}
                     {touched.linkedin_url && errors.linkedin_url && (
@@ -289,7 +280,7 @@ export const MembershipForm = ({ initialValues, onSubmit }: MemberFormProps) => 
                     onBlur={handleBlur('linkedin_url')}
                     style={styles.input}
                     theme={{ roundness: 40 }}
-                    outlineStyle={{ borderWidth: 0 }}
+                    outlineStyle={styles.paperTextInput}
                     error={touched.linkedin_url && !!errors.linkedin_url}
                   />
                   <Text variant="titleSmall" style={styles.inputText}>
@@ -318,7 +309,7 @@ export const MembershipForm = ({ initialValues, onSubmit }: MemberFormProps) => 
                       }
                       style={styles.input}
                       theme={{ roundness: 40 }}
-                      outlineStyle={{ borderWidth: 0 }}
+                      outlineStyle={styles.paperTextInput}
                       error={touched.date_of_birth && !!errors.date_of_birth}
                       editable={false}
                       right={
@@ -361,7 +352,7 @@ export const MembershipForm = ({ initialValues, onSubmit }: MemberFormProps) => 
                     onBlur={handleBlur('address')}
                     style={[styles.input, styles.textarea]}
                     theme={{ roundness: 20 }}
-                    outlineStyle={{ borderWidth: 0 }}
+                    outlineStyle={styles.paperTextInput}
                     error={touched.address && !!errors.address}
                     multiline
                     numberOfLines={4}
@@ -392,8 +383,8 @@ export const MembershipForm = ({ initialValues, onSubmit }: MemberFormProps) => 
                   title: initialValues.carrier?.title || '',
                   area_of_expertise: initialValues.carrier?.area_of_expertise || '',
                 },
-                industry: { label: initialValues.sector?.sector_name || '', value: initialValues.sector?.sector_id || '' },
-                sector: { label: initialValues.sector?.sector_name || '', value: initialValues.sector?.sector_id || '' },
+                industry: { name: initialValues.carrier?.industry?.name || '', id: Number(initialValues.carrier?.industry?.id) || 0 },
+                sector: { name: initialValues.carrier?.sector?.name || '', id: Number(initialValues.carrier?.sector?.id) || 0 },
               }}
               validationSchema={step2ValidationSchema}
               onSubmit={(values, actions) => handleStepSubmit(values, actions, 3)}
@@ -442,7 +433,7 @@ export const MembershipForm = ({ initialValues, onSubmit }: MemberFormProps) => 
                         onBlur={handleBlur('carrier.company_name')}
                         style={styles.input}
                         theme={{ roundness: 40 }}
-                        outlineStyle={{ borderWidth: 0 }}
+                        outlineStyle={styles.paperTextInput}
                         error={touched.carrier?.company_name && !!errors.carrier?.company_name}
                       />
                       {touched.carrier?.company_name && errors.carrier?.company_name && (
@@ -455,9 +446,13 @@ export const MembershipForm = ({ initialValues, onSubmit }: MemberFormProps) => 
                     apiUrl="/api/industries"
                     fieldName="industry"
                     label="Industry"
-                    labelKey="industries_name"
-                    valueKey="industries_id"
-                    initialValue={values.industry}
+                    labelKey="name"
+                    valueKey="id"
+                    initialValue={
+                      values.industry
+                        ? { label: values.industry.name, value: values.industry.id }
+                        : null
+                    }
                     onValueChange={(item: SelectItem<Industry> | null) => setFieldValue('industry', item)}
                   />
 
@@ -465,9 +460,9 @@ export const MembershipForm = ({ initialValues, onSubmit }: MemberFormProps) => 
                     apiUrl="/api/sectors"
                     fieldName="sector"
                     label="Sector"
-                    labelKey="sector_name"
-                    valueKey="sector_id"
-                    initialValue={values.sector}
+                    labelKey="name"
+                    valueKey="id"
+                    initialValue={{ label: values.sector?.name || '', value: Number(values.sector?.id) || 0 }}
                     onValueChange={(item: SelectItem<Sector> | null) => setFieldValue('sector', item)}
                   />
 
@@ -478,10 +473,12 @@ export const MembershipForm = ({ initialValues, onSubmit }: MemberFormProps) => 
                     value={values.carrier.title}
                     onChangeText={handleChange('carrier.title')}
                     onBlur={handleBlur('carrier.title')}
-                    style={styles.input}
-                    theme={{ roundness: 40 }}
-                    outlineStyle={{ borderWidth: 0 }}
+                    style={[styles.input, styles.textarea2]}
+                    theme={{ roundness: 20 }}
+                    outlineStyle={styles.paperTextInput}
                     error={touched.carrier?.title && !!errors.carrier?.title}
+                    multiline
+                    numberOfLines={2}
                   />
                   {touched.carrier?.title && errors.carrier?.title && (
                     <Text style={styles.errorText}>{errors.carrier.title}</Text>
@@ -494,10 +491,12 @@ export const MembershipForm = ({ initialValues, onSubmit }: MemberFormProps) => 
                     value={values.carrier.area_of_expertise}
                     onChangeText={handleChange('carrier.area_of_expertise')}
                     onBlur={handleBlur('carrier.area_of_expertise')}
-                    style={styles.input}
-                    theme={{ roundness: 40 }}
-                    outlineStyle={{ borderWidth: 0 }}
+                    style={[styles.input, styles.textarea2]}
+                    theme={{ roundness: 20 }}
+                    outlineStyle={styles.paperTextInput}
                     error={touched.carrier?.area_of_expertise && !!errors.carrier?.area_of_expertise}
+                    multiline
+                    numberOfLines={2}
                   />
                   {touched.carrier?.area_of_expertise && errors.carrier?.area_of_expertise && (
                     <Text style={styles.errorText}>{errors.carrier.area_of_expertise}</Text>
@@ -530,11 +529,11 @@ export const MembershipForm = ({ initialValues, onSubmit }: MemberFormProps) => 
           {step === 3 && (
             <Formik<Step3FormValues>
               initialValues={{
-                membership_paragraph: initialValues.membership_paragraph || '',
-                motivation: { label: initialValues.sector?.sector_name || '', value: initialValues.sector?.sector_id || '' },
-                profile: { label: '', value: 0 },
-                termsAccepted: initialValues.termsAccepted || false,
-                isInternational: initialValues.isInternational || false,
+                introduction_paragraph: initialValues.additional.introduction_paragraph || '',
+                motivation: initialValues.additional.motivation || '',
+                profile_type: initialValues.roles[0]?.id ?? 0,
+                is_agreement_accepted: initialValues.additional.is_agreement_accepted || false,
+                is_confidentiality_accepted: initialValues.additional.is_confidentiality_accepted || false,
               }}
               validationSchema={step3ValidationSchema}
               onSubmit={(values, actions) => handleStepSubmit(values, actions)}
@@ -556,18 +555,18 @@ export const MembershipForm = ({ initialValues, onSubmit }: MemberFormProps) => 
                   <PaperTextInput
                     placeholder="Introduce yourself"
                     mode="outlined"
-                    value={values.membership_paragraph}
+                    value={values.introduction_paragraph}
                     onChangeText={handleChange('membership_paragraph')}
                     onBlur={handleBlur('membership_paragraph')}
                     style={[styles.input, styles.textarea]}
                     theme={{ roundness: 20 }}
-                    outlineStyle={{ borderWidth: 0 }}
-                    error={touched.membership_paragraph && !!errors.membership_paragraph}
+                    outlineStyle={styles.paperTextInput}
+                    error={touched.introduction_paragraph && !!errors.introduction_paragraph}
                     multiline
                     numberOfLines={6}
                   />
-                  {touched.membership_paragraph && errors.membership_paragraph && (
-                    <Text style={styles.errorText}>{errors.membership_paragraph}</Text>
+                  {touched.introduction_paragraph && errors.introduction_paragraph && (
+                    <Text style={styles.errorText}>{errors.introduction_paragraph}</Text>
                   )}
 
                   <Select<MotivationModel>
@@ -576,7 +575,7 @@ export const MembershipForm = ({ initialValues, onSubmit }: MemberFormProps) => 
                     label="Your motivation to be a member of AYS?"
                     labelKey="name"
                     valueKey="id"
-                    initialValue={values.motivation}
+                    initialValue={values.motivation ? { ...values.motivation, value: Number(values.motivation.value) } : null}
                     onValueChange={(item: SelectItem<MotivationModel> | null) =>
                       setFieldValue('motivation', item)
                     }
@@ -727,7 +726,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     marginTop: 12,
     marginBottom: 8,
-    paddingHorizontal: 10,
     height: 42,
     fontSize: 14,
   },
@@ -752,6 +750,11 @@ const styles = StyleSheet.create({
   textarea: {
     height: 150,
     textAlignVertical: 'top',
+  },
+  textarea2: {
+    height: 80,
+    textAlignVertical: 'top',
+    flexWrap: 'wrap',
   },
   description: {
     marginTop: 8,
@@ -810,6 +813,9 @@ const styles = StyleSheet.create({
   validation: {
     color: 'red',
     fontSize: 12,
+  },
+  paperTextInput:{
+    borderWidth: 0,
   },
 });
 

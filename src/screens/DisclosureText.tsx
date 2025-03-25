@@ -7,6 +7,7 @@ type DisclosureTextProps = StackScreenProps<MainStackParams, 'DisclosureText'>;
 
 export const DisclosureText = (props: DisclosureTextProps) => {
     const { navigation } = props;
+    
     const disclosureText = `
         This disclosure text has been prepared by ARYA EKOSİSTEM DANIŞMANLIK A.Ş. (“Arya”) as the data controller within the scope of Article 10 of the Personal Data Protection Law No. 6698 (“Law”) and the Communiqué on the Procedures and Principles to be Followed in Fulfillment of the Disclosure Obligation.
 

@@ -1,78 +1,75 @@
 // screens/MemberShip.tsx
 import React from 'react';
 import { StackScreenProps } from '@react-navigation/stack';
-import { SafeAreaView, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, SafeAreaView, StyleSheet, View } from 'react-native';
 import { MainStackParams } from '../models/navigation';
-import  {MembershipForm, MemberFormValues } from '../components/forms/MembershipForm';
-import { Appbar,MD3Theme,Text, useTheme } from 'react-native-paper';
+import { MembershipForm } from '../components/forms/MembershipForm';
+import { Appbar, MD3Theme, Text, useTheme } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { UserModel } from '../models/users/User';
+import { RootState } from '../redux/configureStore';
+import { useSelector } from 'react-redux';
+import { useQuery } from 'react-query';
+import { API } from '../plugins/axios';
 
 type MemberShipProps = StackScreenProps<MainStackParams, 'MemberShip'>;
 
 export const MemberShip = (props: MemberShipProps) => {
-  // Define initial values with empty/default values
-  const initialValues: MemberFormValues = {
-    id: 0, // Default value for required field
-    full_name: '',
-    email: '',
-    linkedin_url: '',
-    date_of_birth: '',
-    address: '',
-    phone: '',
-    roles: [], // Empty array for required field
-    photo: '', // Empty string for required field
-    interests: [], // Empty array for required field
-    describes: [], // Empty array for required field
-    received_references: [], // Empty array for required field
-    given_references: [], // Empty array for required field
-    startups: [], // Empty array for required field
-    carrier: {
-      id: 0, // Default value for required field
-      is_company_owner: false,
-      company_name: '',
-      industry: { id: 0, name: '' }, // Default values for required nested object
-      sector: { id: 0, name: '' }, // Default values for required nested object
-      title: '',
-      area_of_expertise: '',
-    },
-    isInternational: false,
-    motivation: '',
-    profileType: '',
-    termsAccepted: false,
-  };
-
+  const { token } = useSelector((state: RootState) => state.auth);
   const { colors } = useTheme();
   const dynamicStyles = createDynamicStyles(colors);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
-  // Define an empty onSubmit handler
-  const handleSubmit = (values: MemberFormValues) => {
+
+  // Fetch user profile data using useQuery
+  const { data: profileData, isFetching: isFetchingProfile } = useQuery<UserModel>(
+    ['profile', token],
+    () => API.get('/api/user/my-all-infos'),
+    {
+      enabled: !!token,
+      select: (response) => response.data, // Directly select the data portion as UserModel
+      onError: (error) => {
+        console.error('Error fetching profile:', error);
+      },
+    }
+  );
+
+  const handleSubmit = (values: UserModel) => {
     console.log(values);
-    // Leave empty for now
+    // Add your submit logic here
   };
+
+  // Show loading state while fetching
+  if (isFetchingProfile && !profileData) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={dynamicStyles.safeArea}>
-          {/* Appbar at the top */}
-          <Appbar.Header style={dynamicStyles.appbarHeader}>
-            <Appbar.Action
-              icon={require('../assets/flat-icons/angle-small-left.png')}
-              color="#414042"
-              size={20}
-              style={dynamicStyles.appbarActionRight}
-              onPress={() => navigation.goBack()}
-            />
-            <Appbar.Content
-              title={
-                <View style={dynamicStyles.appbarTitleContainer}>
-                  <Text variant="titleMedium">Membership form</Text>
-                </View>
-              }
-            />
-          </Appbar.Header>
+      {/* Appbar at the top */}
+      <Appbar.Header style={dynamicStyles.appbarHeader}>
+        <Appbar.Action
+          icon={require('../assets/flat-icons/angle-small-left.png')}
+          color="#414042"
+          size={20}
+          style={dynamicStyles.appbarActionRight}
+          onPress={() => navigation.goBack()}
+        />
+        <Appbar.Content
+          title={
+            <View style={dynamicStyles.appbarTitleContainer}>
+              <Text variant="titleMedium">Membership form</Text>
+            </View>
+          }
+        />
+      </Appbar.Header>
       <MembershipForm
-        initialValues={initialValues}
+        initialValues={profileData as UserModel} // Type assertion since we know it matches UserModel
         onSubmit={handleSubmit}
       />
     </SafeAreaView>
@@ -82,7 +79,7 @@ export const MemberShip = (props: MemberShipProps) => {
 const createDynamicStyles = (colors: MD3Theme['colors']) =>
   StyleSheet.create({
     safeArea: {
-     flex:1,
+      flex: 1,
     },
     appbarHeader: {
       backgroundColor: 'transparent',
@@ -107,5 +104,12 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
       borderBottomWidth: 4,
       borderBottomColor: colors.primary,
     },
-  });
+});
 
+const styles = StyleSheet.create({
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

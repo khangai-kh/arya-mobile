@@ -215,7 +215,7 @@ export const ProfileEditForm = ({ initialValues, onSubmit }: ProfileEditProps) =
                     label="Sector"
                     labelKey="sector_name"
                     valueKey="sector_id"
-                    initialValue={{ label: values.sector?.sector_name || '', value: values.sector?.sector_id ?? '' }}
+                    initialValue={{ label: values.sector?.name || '', value: Number(values.sector?.id) || 0 }}
                     onValueChange={(item: SelectItem<Sector> | null) => {
                       if (item) {
                         console.log('Selected:', item.value);
