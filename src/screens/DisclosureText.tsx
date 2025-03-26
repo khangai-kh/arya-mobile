@@ -1,34 +1,101 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StackScreenProps } from '@react-navigation/stack';
 import { MainStackParams } from '../models/navigation';
 import { DisclosureComponent } from '../components/Disclosure';
+import { API } from '../plugins/axios';
+import { ActivityIndicator, useTheme } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
 
 type DisclosureTextProps = StackScreenProps<MainStackParams, 'DisclosureText'>;
 
 export const DisclosureText = (props: DisclosureTextProps) => {
-    const { navigation } = props;
-    
-    const disclosureText = `
-        This disclosure text has been prepared by ARYA EKOSİSTEM DANIŞMANLIK A.Ş. (“Arya”) as the data controller within the scope of Article 10 of the Personal Data Protection Law No. 6698 (“Law”) and the Communiqué on the Procedures and Principles to be Followed in Fulfillment of the Disclosure Obligation.
+  const { navigation, route } = props;
+  const id = route.params?.id as number; 
+  const [disclosureText, setDisclosureText] = useState<string>('');
+  const [headerText, setheaderText] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(false);
+  const { colors } = useTheme();
 
-        If you fill out the “Individual Participation Investor (IPI) License” form on the website at https://www.aryawomen.com/aryadan-melek-yatirimci-lisansi/, your name, surname and e-mail address information will be processed by Arya by fully automated means based on your explicit consent in this regard in order to carry out application / advertising / campaign / promotion processes and will be transferred to suppliers limited to what is necessary for the realization of this purpose.
 
-        You can leave Arya's commercial electronic message list at any time. As of the processing of your request to leave the list by Arya, the processing of your personal data mentioned above for this purpose will be terminated.
+  useEffect(() => {
+    const fetchDisclosureText = async () => {
+      try {
+        setIsLoading(true);
+        const { data } = await API.get(`/api/get-aggrements-by-id?id=${id}`);
+        setIsLoading(false);
+        setDisclosureText(data.content || 'No text available');
+      } catch (err) {
+        setDisclosureText('Failed to load agreement text');
+        console.error(err);
+        setIsLoading(false);
+      }
+    };
 
-        Regarding the processing of your personal data, you can submit your requests within the scope of Article 11 of the Law titled “Rights of the Relevant Person” to Arya in accordance with the Communiqué on Application Procedures and Principles to the Data Controller.
-    `;
+    if (id !== undefined) {
+      if(id === 1){
+        setheaderText('Terms and condition');
+      }
 
-    return (
-      <DisclosureComponent
-        headerTitle="Terms and condition"
-        mainText={disclosureText}
-        buttonText="Accept"
-        onButtonPress={() => {
-          navigation.navigate('IPILicense', {
+      if(id === 2){
+        setheaderText('Arya Agreement');
+      }
+
+      if(id === 3){
+        setheaderText('Confidentiality Agreement');
+      }
+
+      fetchDisclosureText();
+    } else {
+      setDisclosureText('No agreement ID provided');
+    }
+  }, [id]); // Re-run if id changes
+
+  if (isLoading) {
+      return (
+        <View style={styles.loaderContainer}>
+          <ActivityIndicator size="large" color={colors.primary} />
+        </View>
+      );
+    }
+
+  return (
+    <DisclosureComponent
+      headerTitle={headerText}
+      mainText={disclosureText}
+      buttonText="Accept"
+      onButtonPress={() => {
+        // Navigate back to the previous screen with the "agreed" parameter
+        const previousRouteName = navigation.getState().routes[navigation.getState().index - 1].name;
+        if (previousRouteName === 'SignUp') {
+          navigation.navigate('SignUp', {
             agreed: true,
           });
-        }}
-        isVisible={false}
-      />
-    );
+        } else if (previousRouteName === 'MemberShip') {
+          if(id === 2){
+            navigation.navigate('MemberShip', {
+              agreed_agreement: true,
+              agreed_confidentiality:false,
+            });
+          }
+          if(id === 3){
+            navigation.navigate('MemberShip', {
+              agreed_agreement: true,
+              agreed_confidentiality:true,
+            });
+          }
+        } else {
+          console.warn(`Unexpected route name: ${previousRouteName}`);
+        }
+      }}
+      isVisible={true}
+    />
+  );
 };
+
+const styles = StyleSheet.create({
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

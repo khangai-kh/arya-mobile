@@ -173,7 +173,9 @@ export const SignIn = ({ navigation }: SignInProps) => {
                         <Image source={require('../assets/ggl_logo.png')} style={styles.logoStyle} />
                       </TouchableOpacity>
                     </View>
-                    <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+                    <TouchableOpacity onPress={() => navigation.navigate('SignUp', {
+                        agreed: false,
+                      })}>
                       <Text style={styles.signInText}>
                         Don't have an account?{' '}
                         <Text style={styles.signInLink}>Register</Text>

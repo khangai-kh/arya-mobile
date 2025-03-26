@@ -39,7 +39,11 @@ export const Home = (props: HomeProps) => {
     { key: 'entrepreneurship', title: 'Entrepreneurship' },
   ]);
 
-  const navigateToMemberShip = () => navigation.navigate('MemberShip');
+  const navigateToMemberShip = () =>
+    navigation.navigate('MemberShip', {
+      agreed_agreement: false,
+      agreed_confidentiality: false,
+    });
   // const navigateToSearch = () => navigation.navigate('Search');
   const navigateToNotifications = () => navigation.navigate('Notifications');
   const navigateToAboutUs = () => navigation.navigate('AboutUs');

@@ -5,7 +5,8 @@ import { Appbar, Button, MD3Theme, Text, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Box } from '../components/common/Box';
 import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'; //
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import Markdown from 'react-native-markdown-display';
 
 type DisclosureComponentProps = {
   headerTitle: string;
@@ -29,35 +30,36 @@ export const DisclosureComponent = ({
     const dynamicStyles = createDynamicStyles(colors);
     return (
         <SafeAreaView style={[dynamicStyles.container, containerStyle]} edges={['bottom']}>
-            <Appbar.Header style={dynamicStyles.appbarHeader}>
-                <Appbar.Action
-                    icon={require('../assets/flat-icons/angle-small-left.png')}
-                    color="#414042"
-                    size={20}
-                    style={dynamicStyles.appbarActionRight}
-                    onPress={() => navigation.goBack()}
-                />
-                <Appbar.Content
-                    title={
-                        <View style={dynamicStyles.titleContainer}>
-                            <Text variant="titleMedium">{headerTitle}</Text>
-                        </View>
-                    }
-                />
-            </Appbar.Header>
-        <ScrollView showsVerticalScrollIndicator={false}>
-            <View style={dynamicStyles.contentContainer}>
-            <Text variant="labelMedium">{headerTitle}</Text>
-            <Text variant="bodySmall">{mainText}</Text>
-            </View>
-        </ScrollView>
-        {isVisible &&
-            <Box px={16} py={16}>
-                <Button mode="contained" onPress={onButtonPress}>
-                {buttonText}
-                </Button>
-            </Box>
-        }
+          <Appbar.Header style={dynamicStyles.appbarHeader}>
+              <Appbar.Action
+                  icon={require('../assets/flat-icons/angle-small-left.png')}
+                  color="#414042"
+                  size={20}
+                  style={dynamicStyles.appbarActionRight}
+                  onPress={() => navigation.goBack()}
+              />
+              <Appbar.Content
+                  title={
+                      <View style={dynamicStyles.titleContainer}>
+                          <Text variant="titleMedium">{headerTitle}</Text>
+                      </View>
+                  }
+              />
+          </Appbar.Header>
+          <ScrollView showsVerticalScrollIndicator={false}>
+              <View style={dynamicStyles.contentContainer}>
+                <Markdown>
+                  {mainText}
+                </Markdown>
+              </View>
+          </ScrollView>
+          {isVisible &&
+              <Box px={16} py={16}>
+                  <Button mode="contained" onPress={onButtonPress}>
+                  {buttonText}
+                  </Button>
+              </Box>
+          }
         </SafeAreaView>
   );
 };
@@ -80,6 +82,7 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
     contentContainer: {
       marginTop: 24,
       paddingHorizontal: 16,
+      width: 350,
     },
     appbarActionRight: {
       backgroundColor: colors.onPrimary,

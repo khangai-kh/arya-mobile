@@ -3,21 +3,20 @@ import React from 'react';
 import { ActivityIndicator, SafeAreaView, StyleSheet, View } from 'react-native';
 import { MembershipForm } from '../components/forms/MembershipForm';
 import { Appbar, MD3Theme, Text, useTheme } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { UserModel } from '../models/users/User';
 import { RootState } from '../redux/configureStore';
 import { useSelector } from 'react-redux';
 import { useQuery } from 'react-query';
 import { API } from '../plugins/axios';
+import { MainStackParams } from '../models/navigation';
+import { StackScreenProps } from '@react-navigation/stack';
 
+type MemberShipProps = StackScreenProps<MainStackParams, 'MemberShip'>;
 
-export const MemberShip = () => {
+export const MemberShip = ({ navigation, route }: MemberShipProps) => {
   const { token } = useSelector((state: RootState) => state.auth);
   const { colors } = useTheme();
   const dynamicStyles = createDynamicStyles(colors);
-  const navigation = useNavigation<NativeStackNavigationProp<any>>();
-
 
   // Fetch user profile data using useQuery
   const { data: profileData, isFetching: isFetchingProfile } = useQuery<UserModel>(
@@ -33,8 +32,7 @@ export const MemberShip = () => {
   );
 
   const handleSubmit = (values: UserModel) => {
-    console.log(values);
-    // Add your submit logic here
+    navigation.navigate('PremiumSuccess');
   };
 
   // Show loading state while fetching
@@ -67,8 +65,7 @@ export const MemberShip = () => {
       </Appbar.Header>
       <MembershipForm
         initialValues={profileData as UserModel} // Type assertion since we know it matches UserModel
-        onSubmit={handleSubmit}
-      />
+        onSubmit={handleSubmit} navigation={navigation} route={route} />
     </SafeAreaView>
   );
 };

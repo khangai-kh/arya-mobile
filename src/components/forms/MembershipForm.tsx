@@ -1,5 +1,5 @@
 // screens/MembershipForm.tsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -27,6 +27,8 @@ import { Select, SelectItem } from '../common/Select';
 import { BatchModel, Industry, ProfileModel, Sector } from '../../models/general/models';
 import CustomCheckbox from './CustomCheckbox';
 import { API } from '../../plugins/axios';
+import { StackScreenProps } from '@react-navigation/stack';
+import { MainStackParams } from '../../models/navigation';
 
 // Step 1 Form Values
 interface Step1FormValues {
@@ -60,6 +62,7 @@ interface Step3FormValues {
   is_confidentiality_accepted: boolean;
 }
 
+type MemberShipProps = StackScreenProps<MainStackParams, 'MemberShip'>;
 export interface MemberFormProps {
   initialValues: UserModel;
   onSubmit: (values: UserModel) => void;
@@ -93,12 +96,16 @@ const step2ValidationSchema = Yup.object().shape({
 });
 
 const step3ValidationSchema = Yup.object().shape({
-  membership_paragraph: Yup.string().required('Introduction is required'),
-  termsAccepted: Yup.boolean().oneOf([true], 'You must accept the terms'),
-  isInternational: Yup.boolean().oneOf([true], 'You must accept the confidentiality agreement'),
+  introduction_paragraph: Yup.string().required('Introduction is required'),
+  is_agreement_accepted: Yup.boolean().oneOf([true], 'You must accept the terms'),
+  is_confidentiality_accepted: Yup.boolean().oneOf([true], 'You must accept the confidentiality agreement'),
 });
 
-export const MembershipForm = ({ initialValues, onSubmit }: MemberFormProps) => {
+type MembershipFormProps = MemberShipProps & MemberFormProps;
+
+export const MembershipForm = ({ navigation, route, initialValues, onSubmit }: MembershipFormProps) => {
+  const agreed_agreement = route.params?.agreed_agreement as boolean;
+  const agreed_confidentiality = route.params?.agreed_confidentiality as boolean;
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
@@ -112,6 +119,8 @@ export const MembershipForm = ({ initialValues, onSubmit }: MemberFormProps) => 
       setStep(step - 1);
     }
   };
+
+  console.log('Initial Values:', initialValues);
 
   const handleStepSubmit = async (values: any, actions: any, nextStep?: number) => {
     try {
@@ -127,6 +136,30 @@ export const MembershipForm = ({ initialValues, onSubmit }: MemberFormProps) => 
               address: values.address,
             });
             setIsLoading(false);
+      }
+      if(step === 2){
+        setIsLoading(true);
+         await API.post('/api/my-user-carrier', {
+            is_company_owner: values.carrier.is_company_owner,
+            company_name: values.carrier.company_name,
+            industry_id: values.industry.value,
+            sector_id: values.sector.value,
+            title: values.carrier.title,
+            area_of_expertise: values.carrier.area_of_expertise,
+         });
+         setIsLoading(false);
+      }
+      if(step === 3){
+        setIsLoading(true);
+         await API.post('/api/my-user-additional', {
+            introduction_paragraph: values.introduction_paragraph,
+            role_id: values.profile_type.value,
+            payment_method_id: 0,
+            batch_id: values.batch_type.value,
+            is_agreement_accepted: values.is_agreement_accepted,
+            is_confidentiality_accepted: values.is_confidentiality_accepted,
+         });
+         setIsLoading(false);
       }
       setFormData((prev) => ({ ...prev, ...values }));
       setCompletedSteps([...completedSteps, step]);
@@ -547,8 +580,19 @@ export const MembershipForm = ({ initialValues, onSubmit }: MemberFormProps) => 
                 touched,
                 setFieldValue,
                 isSubmitting,
-              }) => (
-                <View style={styles.formContainer}>
+              }) => {
+                // Sync termsAccepted with agreed whenever it changes
+                // eslint-disable-next-line react-hooks/rules-of-hooks
+                useEffect(() => {
+                  if (agreed_agreement !== undefined && agreed_agreement) {
+                    setFieldValue('is_agreement_accepted', agreed_agreement);
+                  }
+                  if (agreed_confidentiality !== undefined && agreed_confidentiality) {
+                    setFieldValue('is_confidentiality_accepted', agreed_confidentiality);
+                  }
+                }, [setFieldValue]);
+
+                return(<View style={styles.formContainer}>
                   <Text variant="titleSmall" style={styles.inputText}>
                     Membership introduction paragraph
                   </Text>
@@ -556,8 +600,8 @@ export const MembershipForm = ({ initialValues, onSubmit }: MemberFormProps) => 
                     placeholder="Introduce yourself"
                     mode="outlined"
                     value={values.introduction_paragraph}
-                    onChangeText={handleChange('membership_paragraph')}
-                    onBlur={handleBlur('membership_paragraph')}
+                    onChangeText={handleChange('introduction_paragraph')}
+                    onBlur={handleBlur('introduction_paragraph')}
                     style={[styles.input, styles.textarea]}
                     theme={{ roundness: 20 }}
                     outlineStyle={styles.paperTextInput}
@@ -568,10 +612,9 @@ export const MembershipForm = ({ initialValues, onSubmit }: MemberFormProps) => 
                   {touched.introduction_paragraph && errors.introduction_paragraph && (
                     <Text style={styles.errorText}>{errors.introduction_paragraph}</Text>
                   )}
-W
                   <Select<ProfileModel>
-                    apiUrl="/local/profiles"
-                    fieldName="profile"
+                    apiUrl="/api/user/roles"
+                    fieldName="profile_type"
                     label="Your profile type"
                     labelKey="name"
                     valueKey="id"
@@ -586,8 +629,8 @@ W
                   />
 
                   <Select<ProfileModel>
-                    apiUrl="/local/batches"
-                    fieldName="profile"
+                    apiUrl="/api/batches"
+                    fieldName="batch_type"
                     label="How you decribe yourself"
                     labelKey="name"
                     valueKey="id"
@@ -604,15 +647,14 @@ W
                   <View style={styles.termsContainer}>
                     <CustomCheckbox
                       checked={values.is_agreement_accepted}
-                      onToggle={() => setFieldValue('termsAccepted', !values.is_agreement_accepted)}
+                      onToggle={() => setFieldValue('is_agreement_accepted', !values.is_agreement_accepted)}
                     />
                     <Text variant="titleMedium" style={styles.termsText}>
                       I have read and accept the{' '}
                       <Text
                         variant="titleMedium"
                         style={styles.termsLink}
-                        // Assuming navigation is available; adjust as needed
-                        onPress={() => console.log('Navigate to DisclosureText')}
+                        onPress={() =>  navigation.navigate('DisclosureText', { id: 2 })}
                       >
                         Membership Agreement
                       </Text>{' '}
@@ -626,14 +668,14 @@ W
                   <View style={styles.termsContainer}>
                     <CustomCheckbox
                       checked={values.is_confidentiality_accepted}
-                      onToggle={() => setFieldValue('isInternational', !values.is_confidentiality_accepted)}
+                      onToggle={() => setFieldValue('is_confidentiality_accepted', !values.is_confidentiality_accepted)}
                     />
                     <Text variant="titleMedium" style={styles.termsText}>
                       I have read and understood the{' '}
                       <Text
                         variant="titleMedium"
                         style={styles.termsLink}
-                        onPress={() => console.log('Navigate to DisclosureText')}
+                        onPress={() => navigation.navigate('DisclosureText', { id: 3 })}
                       >
                         Arya Challenge Club Confidentiality Agreement
                       </Text>
@@ -662,8 +704,8 @@ W
                       Submit
                     </Button>
                   </View>
-                </View>
-              )}
+                </View>);
+              }}
             </Formik>
           )}
         </View>

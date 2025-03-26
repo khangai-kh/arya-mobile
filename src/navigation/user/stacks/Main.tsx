@@ -31,6 +31,7 @@ import { Workshop } from '../../../screens/Workshop';
 import { Workshops } from '../../../screens/Workshops';
 import { BottomTab } from '../tabs/BottomTab';
 import { Profile } from '../../../screens/Profile';
+import {PremiumSuccess} from '../../../screens/PremiumSuccess';
 
 const Stack = createNativeStackNavigator<MainStackParams>();
 
@@ -130,6 +131,7 @@ export const MainStack = () => {
         <Stack.Screen name="OnBoarding" component={OnBoarding} options={{ headerShown: false }} />
         <Stack.Screen name="Member" component={Member} options={{ headerShown: false }} />
         <Stack.Screen name="MemberShip" component={MemberShip} options={{ title: 'Membership' }} />
+        <Stack.Screen name="PremiumSuccess" component={PremiumSuccess} options={{ title: 'Premium Success' }} />
         <Stack.Screen name="MemberFilter" component={MemberFilter} options={{ headerShown: false }} />
         <Stack.Screen name="Inspirations" component={Inspirations} options={{ title: 'Inspirations' }} />
         <Stack.Screen name="BKYSuccess" component={BKYSuccess} options={{ headerShown: false }} />

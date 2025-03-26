@@ -501,7 +501,7 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
       justifyContent: 'space-between',
       flexDirection: 'row',
       marginBottom: 12,
-      marginHorizontal: 16,
+      marginHorizontal: 30,
     },
     avatar: {
       backgroundColor: '#f2f4f7',
@@ -530,15 +530,15 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
       tintColor: '#414042',
     },
     descriptionText: {
-     paddingHorizontal: 6,
-      marginHorizontal: 16,
-      width: 330,
+     paddingHorizontal: 2,
+      marginHorizontal: 30,
+      width: 350,
     },
     buttonRow: {
       flexDirection: 'row',
       marginVertical: 12,
-      width: 330,
-      marginHorizontal: 16,
+      width: 350,
+      marginHorizontal: 30,
     },
     buttonMargin: {
       marginRight: 4,
@@ -567,8 +567,8 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
       backgroundColor: '#fff',
       paddingHorizontal: 10,
       paddingVertical: 12,
-      width: 330,
-      marginHorizontal: 16,
+      width: 350,
+      marginHorizontal: 30,
     },
     interestsContainer: {
       marginTop: 12,
@@ -585,8 +585,8 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
       backgroundColor: '#fff',
       paddingHorizontal: 16,
       paddingVertical: 12,
-      width: 330,
-      marginHorizontal: 16,
+      width: 350,
+      marginHorizontal: 30,
     },
     startupItem: {
       marginTop: 12,
@@ -605,8 +605,8 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
     },
     logoutButton: {
       marginTop: 20,
-      marginHorizontal: 16,
-      width:330,
+      marginHorizontal: 30,
+      width:350,
     },
     nameText: {
       color: '#414042',

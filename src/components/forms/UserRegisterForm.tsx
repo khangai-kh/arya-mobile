@@ -1,5 +1,5 @@
 import { StackScreenProps } from '@react-navigation/stack';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // Added useEffect
 import { Image, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { Button, Text, TextInput as PaperTextInput } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -31,7 +31,8 @@ const generateRandomFullName = () => {
   return `User ${generateRandomString(5)}`;
 };
 
-export const UserRegister = ({ navigation }: SignUpProps) => {
+export const UserRegister = ({ navigation, route }: SignUpProps) => {
+  const agreed = route.params?.agreed as boolean; // Get agreed from route params
   const { errorMessage, status: signInStatus } = useSelector(
     (state: RootState) => state.auth,
   );
@@ -43,9 +44,7 @@ export const UserRegister = ({ navigation }: SignUpProps) => {
         style={styles.flexContainer}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-        >
+        <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.container}>
             <Text variant="titleLarge" style={styles.title}>Create Account</Text>
             <Text style={styles.description}>
@@ -53,13 +52,10 @@ export const UserRegister = ({ navigation }: SignUpProps) => {
             </Text>
             <Formik
               initialValues={{
-                // fullName: '',
-                // email: '',
-                // password: '',
                 fullName: generateRandomFullName(),
                 email: generateRandomEmail(),
                 password: generateRandomPassword(),
-                termsAccepted: false,
+                termsAccepted: agreed || false, // Initialize with agreed value
                 general: '',
               }}
               validationSchema={userValidationSchema}
@@ -93,114 +89,125 @@ export const UserRegister = ({ navigation }: SignUpProps) => {
                 touched,
                 setFieldValue,
                 isSubmitting,
-              }) => (
-                <Box mt={32} px={16}>
-                  <Text variant="titleSmall">Full Name</Text>
-                  <PaperTextInput
-                    autoCapitalize="none"
-                    keyboardType="default"
-                    placeholder="Name Surname"
-                    mode="outlined"
-                    value={values.fullName}
-                    onChangeText={handleChange('fullName')}
-                    onBlur={handleBlur('fullName')}
-                    style={styles.input}
-                    theme={{ roundness: 40 }}
-                    outlineStyle={{ borderWidth: 0 }}
-                    error={touched.fullName && !!errors.fullName}
-                  />
-                  {touched.fullName && errors.fullName && (
-                    <Text style={styles.errorText}>{errors.fullName}</Text>
-                  )}
+              }) => {
 
-                  <Text variant="titleSmall">Email</Text>
-                  <PaperTextInput
-                    autoCapitalize="none"
-                    keyboardType="email-address"
-                    placeholder="example@example.com"
-                    mode="outlined"
-                    value={values.email}
-                    onChangeText={handleChange('email')}
-                    onBlur={handleBlur('email')}
-                    style={styles.input}
-                    theme={{ roundness: 40 }}
-                    outlineStyle={{ borderWidth: 0 }}
-                    error={touched.email && !!errors.email}
-                  />
-                  {touched.email && errors.email && (
-                    <Text style={styles.errorText}>{errors.email}</Text>
-                  )}
+                // Sync termsAccepted with agreed whenever it changes
+                // eslint-disable-next-line react-hooks/rules-of-hooks
+                useEffect(() => {
+                  if (agreed !== undefined) {
+                    setFieldValue('termsAccepted', agreed);
+                  }
+                }, [setFieldValue]);
 
-                  <Text variant="titleSmall">Password</Text>
-                  <PaperTextInput
-                    placeholder="********"
-                    mode="outlined"
-                    value={values.password}
-                    onChangeText={handleChange('password')}
-                    onBlur={handleBlur('password')}
-                    style={styles.input}
-                    theme={{ roundness: 40 }}
-                    outlineStyle={{ borderWidth: 0 }}
-                    secureTextEntry={!showPassword}
-                    right={
-                      <PaperTextInput.Icon
-                        icon={() => (
-                          <Image
-                            source={
-                              showPassword
-                                ? require('../../assets/flat-icons/eye_off.png')
-                                : require('../../assets/flat-icons/eye.png')
-                            }
-                            style={styles.iconStyle}
-                          />
-                        )}
-                        onPress={() => setShowPassword(!showPassword)}
-                      />
-                    }
-                    error={touched.password && !!errors.password}
-                  />
-                  {touched.password && errors.password && (
-                    <Text style={styles.errorText}>{errors.password}</Text>
-                  )}
-
-                  {errors.general && (
-                    <Text style={styles.generalError}>{errors.general}</Text>
-                  )}
-
-                  {errorMessage ? (
-                    <Text style={styles.generalError}>{errorMessage}</Text>
-                  ) : null}
-
-                  <View style={styles.termsContainer}>
-                    <CustomCheckbox
-                      checked={values.termsAccepted}
-                      onToggle={() => setFieldValue('termsAccepted', !values.termsAccepted)}
+                return (
+                  <Box mt={32} px={16}>
+                    <Text variant="titleSmall">Full Name</Text>
+                    <PaperTextInput
+                      autoCapitalize="none"
+                      keyboardType="default"
+                      placeholder="Name Surname"
+                      mode="outlined"
+                      value={values.fullName}
+                      onChangeText={handleChange('fullName')}
+                      onBlur={handleBlur('fullName')}
+                      style={styles.input}
+                      theme={{ roundness: 40 }}
+                      outlineStyle={{ borderWidth: 0 }}
+                      error={touched.fullName && !!errors.fullName}
                     />
-                    <Text variant="titleMedium" style={styles.termsText}>
-                      Agree with{' '}
-                      <Text
-                        variant="titleMedium"
-                        style={styles.termsLink}
-                        onPress={() => navigation.navigate('DisclosureText')}
-                      >
-                        Terms & Conditions
-                      </Text>
-                    </Text>
-                  </View>
-                  {touched.termsAccepted && errors.termsAccepted && (
-                    <Text style={styles.errorText}>{errors.termsAccepted}</Text>
-                  )}
+                    {touched.fullName && errors.fullName && (
+                      <Text style={styles.errorText}>{errors.fullName}</Text>
+                    )}
 
-                  <Button
-                    mode="contained"
-                    style={styles.submitButton}
-                    loading={isSubmitting || signInStatus === 'pending'}
-                    onPress={() => handleSubmit()}
-                  >
-                    Register
-                  </Button>
-                </Box>
-              )}
+                    <Text variant="titleSmall">Email</Text>
+                    <PaperTextInput
+                      autoCapitalize="none"
+                      keyboardType="email-address"
+                      placeholder="example@example.com"
+                      mode="outlined"
+                      value={values.email}
+                      onChangeText={handleChange('email')}
+                      onBlur={handleBlur('email')}
+                      style={styles.input}
+                      theme={{ roundness: 40 }}
+                      outlineStyle={{ borderWidth: 0 }}
+                      error={touched.email && !!errors.email}
+                    />
+                    {touched.email && errors.email && (
+                      <Text style={styles.errorText}>{errors.email}</Text>
+                    )}
+
+                    <Text variant="titleSmall">Password</Text>
+                    <PaperTextInput
+                      placeholder="********"
+                      mode="outlined"
+                      value={values.password}
+                      onChangeText={handleChange('password')}
+                      onBlur={handleBlur('password')}
+                      style={styles.input}
+                      theme={{ roundness: 40 }}
+                      outlineStyle={{ borderWidth: 0 }}
+                      secureTextEntry={!showPassword}
+                      right={
+                        <PaperTextInput.Icon
+                          icon={() => (
+                            <Image
+                              source={
+                                showPassword
+                                  ? require('../../assets/flat-icons/eye_off.png')
+                                  : require('../../assets/flat-icons/eye.png')
+                              }
+                              style={styles.iconStyle}
+                            />
+                          )}
+                          onPress={() => setShowPassword(!showPassword)}
+                        />
+                      }
+                      error={touched.password && !!errors.password}
+                    />
+                    {touched.password && errors.password && (
+                      <Text style={styles.errorText}>{errors.password}</Text>
+                    )}
+
+                    {errors.general && (
+                      <Text style={styles.generalError}>{errors.general}</Text>
+                    )}
+
+                    {errorMessage ? (
+                      <Text style={styles.generalError}>{errorMessage}</Text>
+                    ) : null}
+
+                    <View style={styles.termsContainer}>
+                      <CustomCheckbox
+                        checked={values.termsAccepted}
+                        onToggle={() => setFieldValue('termsAccepted', !values.termsAccepted)}
+                      />
+                      <Text variant="titleMedium" style={styles.termsText}>
+                        Agree with{' '}
+                        <Text
+                          variant="titleMedium"
+                          style={styles.termsLink}
+                          onPress={() => navigation.navigate('DisclosureText', { id: 1 })}
+                        >
+                          Terms & Conditions
+                        </Text>
+                      </Text>
+                    </View>
+                    {touched.termsAccepted && errors.termsAccepted && (
+                      <Text style={styles.errorText}>{errors.termsAccepted}</Text>
+                    )}
+
+                    <Button
+                      mode="contained"
+                      style={styles.submitButton}
+                      loading={isSubmitting || signInStatus === 'pending'}
+                      onPress={() => handleSubmit()}
+                    >
+                      Register
+                    </Button>
+                  </Box>
+                );
+              }}
             </Formik>
           </View>
           <View style={styles.socialContainer}>
@@ -211,7 +218,7 @@ export const UserRegister = ({ navigation }: SignUpProps) => {
             </View>
             <View style={styles.socialIcons}>
               <TouchableOpacity style={styles.socialButton}>
-                <Image source = {require('../../assets/fb_logo.png')} style={styles.logoStyle} />
+                <Image source={require('../../assets/fb_logo.png')} style={styles.logoStyle} />
               </TouchableOpacity>
               <TouchableOpacity style={styles.socialButton}>
                 <Image source={require('../../assets/lkdn_logo.png')} style={styles.logoStyle} />
@@ -308,7 +315,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 10,
     marginBottom: 30,
-    marginHorizontal:10,
+    marginHorizontal: 10,
   },
   dividerLine: {
     flex: 1,

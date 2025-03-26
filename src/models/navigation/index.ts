@@ -20,7 +20,9 @@ export type MainStackParams = {
     CreateProfile: {
       userId: string;
     };
-    DisclosureText: undefined;
+    DisclosureText: {
+      id: number;
+    };
     Events: undefined;
     ExternalWeb: {
       url: string;
@@ -37,7 +39,10 @@ export type MainStackParams = {
       id: string;
     };
     MemberFilter: undefined;
-    MemberShip: undefined;
+    MemberShip: {
+      agreed_agreement: boolean;
+      agreed_confidentiality: boolean;
+    };
     MembershipForm: undefined;
     Messenger: undefined;
     Notifications: undefined;
@@ -45,7 +50,9 @@ export type MainStackParams = {
     Profile: undefined;
     Search: undefined;
     SignIn: undefined;
-    SignUp: undefined;
+    SignUp: {
+      agreed: boolean;
+    };
     StartUpForm:undefined;
     SignUpSuccess: {
       userId: string;
@@ -56,6 +63,7 @@ export type MainStackParams = {
     };
     Startups: undefined;
     StartupsFilter: undefined;
+    PremiumSuccess: undefined;
     Training: {
       id: string;
     };
