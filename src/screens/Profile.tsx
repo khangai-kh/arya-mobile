@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Image, Pressable, StyleSheet } from 'react-native';
+import { ActivityIndicator, Image, Pressable, StyleSheet, TouchableOpacity } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { Appbar, Avatar, Button, Chip, Text, useTheme, MD3Theme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -217,7 +217,7 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
             title={
               <View style={dynamicStyles.titleContainer}>
                 <Text variant="titleMedium" style={dynamicStyles.titleText}>
-                {profile?.additional.role.name}
+                  {profile?.additional.role.name}
                 </Text>
               </View>
             }
@@ -310,21 +310,25 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
                     </View>
                   </View>
                   <View>
-                  {profile?.describes?.map((describe, index) => (
-                    <Button
-                      key={index}
-                      mode="contained"
-                      buttonColor="#F2A93B"
-                      textColor="white"
-                      icon={ require(describe?.icon || '../assets/flat-icons/rocket-outlined.png')}
-                      contentStyle={dynamicStyles.buttonContent}
-                      labelStyle={dynamicStyles.buttonText}
-                      style={dynamicStyles.buttonBadge}
-                      onPress={() => {}}
-                    >
-                      {describe.name}
-                    </Button>
-                     ))}
+                  <View style={styles.roleBadge}>
+                    {profile?.describes?.map((describe, index) => (
+                        <TouchableOpacity
+                          key={index}
+                          style={styles.interestBox}
+                          onPress={() => {}}
+                        >
+                          <Image
+                            source={
+                              describe.icon
+                                ? { uri: describe.icon }
+                                : require('../assets/flat-icons/rocket-outlined.png')
+                            }
+                            style={styles.interestIcon}
+                          />
+                          <Text style={styles.interestText}>{describe.name}</Text>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
                   </View>
                 </View>
               </View>
@@ -482,8 +486,6 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
     },
     titleContainer: {
       alignItems: 'center',
-      justifyContent: 'space-between',
-      marginLeft: -40,
     },
     titleText: {
       fontWeight: 'bold',
@@ -495,8 +497,9 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
       marginLeft: 0,
     },
     profileHeader: {
-      flexDirection: 'row',
       alignItems: 'center',
+      justifyContent: 'space-between',
+      flexDirection: 'row',
       marginBottom: 12,
       marginHorizontal: 16,
     },
@@ -527,28 +530,25 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
       tintColor: '#414042',
     },
     descriptionText: {
-      paddingRight: 4,
+     paddingHorizontal: 6,
       marginHorizontal: 16,
+      width: 330,
     },
     buttonRow: {
       flexDirection: 'row',
       marginVertical: 12,
-      width: '50%',
+      width: 330,
       marginHorizontal: 16,
     },
     buttonMargin: {
-      marginRight: 1,
-      width: '100%',
+      marginRight: 4,
     },
     buttonBadge: {
+      marginVertical: 4,
       backgroundColor: '#F2A93B',
       borderRadius: 20,
       height: 25,
-      width: '70%',
-      elevation: 2,
-      alignItems: 'center',
-      justifyContent: 'center',
-      flexDirection: 'row',
+      paddingTop: 0,
     },
     buttonText: {
       fontSize: 12,
@@ -567,8 +567,8 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
       backgroundColor: '#fff',
       paddingHorizontal: 10,
       paddingVertical: 12,
-      width: '90%',
-      margin: 'auto',
+      width: 330,
+      marginHorizontal: 16,
     },
     interestsContainer: {
       marginTop: 12,
@@ -585,8 +585,8 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
       backgroundColor: '#fff',
       paddingHorizontal: 16,
       paddingVertical: 12,
-      width: '90%',
-      margin: 'auto',
+      width: 330,
+      marginHorizontal: 16,
     },
     startupItem: {
       marginTop: 12,
@@ -606,6 +606,7 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
     logoutButton: {
       marginTop: 20,
       marginHorizontal: 16,
+      width:330,
     },
     nameText: {
       color: '#414042',
@@ -640,15 +641,41 @@ const styles = StyleSheet.create({
     marginRight: 4,
   },
   roleBadge: {
-    width: 12,
-    height: 12,
-    tintColor: '#B61D8D',
-    marginTop: 4,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 5, 
+    width: 300,
   },
   roleEntrepreneur: {
     width: 14,
     height: 14,
     tintColor: '#F99F1C',
     marginRight: 4,
+  },
+  interestBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 5,
+    borderRadius: 15,
+    backgroundColor: '#f5f5f5',
+    marginBottom: 4, // Space between items vertically
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  interestText: {
+    fontSize: 11,
+    lineHeight: 12,
+    paddingLeft: 5,
+  },
+  interestIcon: {
+    width: 20,
+    height: 20,
+    tintColor: '#A09FA0',
   },
 });
