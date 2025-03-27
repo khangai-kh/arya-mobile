@@ -116,5 +116,7 @@
 		<string>PlayfairDisplay-SemiBold.ttf</string>
 		<string>PlayfairDisplay-SemiBoldItalic.ttf</string>
 	</array>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Ödeme işleminizi tamamlamak için konumunuza erişmek istiyoruz</string>
 </dict>
 </plist>
