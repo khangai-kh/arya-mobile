@@ -43,4 +43,4 @@ export interface UserModel extends BaseEntityModel {
     }
 }
 
-export type UserModelWithoutContent = Pick<UserModel, 'id' | 'full_name'>;
+export type UserModelWithoutContent = Pick<UserModel, 'id' | 'full_name' | 'email'>;

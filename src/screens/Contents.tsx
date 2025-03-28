@@ -1,6 +1,6 @@
-import { CompositeNavigationProp, NavigationProp, useNavigation } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, ScrollView, ActivityIndicator, StyleSheet } from 'react-native';
+import { CompositeNavigationProp, NavigationProp, useNavigation } from '@react-navigation/native';
 import { Button, Text, useTheme } from 'react-native-paper';
 import { Announcement } from '../components/Announcement';
 import { Inspiration } from '../components/Inspiration';
@@ -21,46 +21,40 @@ export const Contents = () => {
     const { token } = useSelector((state: RootState) => state.auth);
 
     const [contents, setContents] = useState<ContentModel[]>([ ]);
+    const [inspirations, setInspirations] = useState <ContentModel[]>([ ]);
 
-    const { isFetching, refetch } = useQuery(
-        ['announcements', DEFAULT_PAGE, PAGE_SIZE, token],
-        () => {
-            return API.get('/api/contents', {
-                params: {
-                    page: DEFAULT_PAGE,
-                    page_size: PAGE_SIZE,
-                },
-            });
+    const { isFetching } = useQuery(
+        ['combinedData', DEFAULT_PAGE, PAGE_SIZE, token],
+        async () => {
+            // Make both API calls concurrently using Promise.all
+            const [announcementsResponse, inspirationsResponse] = await Promise.all([
+                API.get('/api/contents', {
+                    params: {
+                        page: DEFAULT_PAGE,
+                        page_size: PAGE_SIZE,
+                    },
+                }),
+                API.get('/api/contents',{
+                    params: {
+                        page: DEFAULT_PAGE,
+                        page_size: PAGE_SIZE - 5,
+                        content_type_id: 2,
+                    },
+                }),
+            ]);
+            return {
+                announcements: announcementsResponse.data || [],
+                inspirations: inspirationsResponse.data || [],
+            };
         },
         {
-            onSuccess: ({ data }) => {
-                setContents(data || []); // Set contents directly from data
+            onSuccess: (data) => {
+                // Set both states from the combined data
+                setContents(data.announcements);
+                setInspirations(data.inspirations);
             },
         }
     );
-    const [inspirations, setInspirations] = useState([
-        {
-            title: "Sustainability and Social Innovation: Who is Really Responsible?",
-            image: "",
-            name: "Hüsna Nur Sontürk",
-            profileImage: "",
-            date: "2024-09-24",
-        },
-        {
-            title: "The Most Important Route of Your Journey: Lifelong Learning",
-            image: "",
-            name: "Beyza Bilgi",
-            profileImage: "",
-            date: "2024-09-24",
-        },
-    ]);
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            refetch();
-        }, 60000); // Refetch every minute
-        return () => clearInterval(interval);
-    }, [refetch]);
 
     if (isFetching) {
         return (
@@ -102,13 +96,13 @@ export const Contents = () => {
             {inspirations.map((inspiration, index) => (
                 <Inspiration
                     key={index}
-                    title={inspiration.title}
-                    image={inspiration.image}
+                    title={inspiration.title || ''}
+                    image={inspiration.image_url}
                     profileImage={inspiration.profileImage}
-                    name={inspiration.name}
+                    name = {inspiration.created_user?.full_name || ''}
                     date={inspiration.date}
                     style={[styles.inspiration, index === inspirations.length - 1 && styles.lastInspiration]}
-                    onPress={() => navigate('Inspiration', { id: inspiration.title })}
+                    onPress={() => navigate('Inspiration', { id: inspiration.title || '' })}
                 />
             ))}
         </ScrollView>
@@ -141,7 +135,7 @@ const styles = StyleSheet.create({
     },
     announcement: {
         marginRight: 12,
-        height : 350,
+        height : 'auto',
     },
     lastAnnouncement: {
         marginRight: 0,

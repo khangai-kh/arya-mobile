@@ -1,6 +1,6 @@
 import { BaseEntityModel } from '../../base-entity.model';
 import { ContentTypeModel } from '../../general/models';
-import { UserModel } from '../../users/User/user.model';
+import { UserModelWithoutContent } from '../../users/User/user.model';
 
 export interface ContentModel extends BaseEntityModel {
     id: number;
@@ -10,7 +10,7 @@ export interface ContentModel extends BaseEntityModel {
     location?: string | null;
     content_type_id?: number | null;
     content_type?: ContentTypeModel | null;
-    created_user?: UserModel | null;
+    created_user?: UserModelWithoutContent | null;
 
     [key: string]: any;
 }

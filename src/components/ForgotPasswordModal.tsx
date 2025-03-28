@@ -4,6 +4,7 @@ import { Modal, StyleSheet, View } from 'react-native';
 import { Button, Text, TextInput as PaperTextInput } from 'react-native-paper';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import { API } from '../plugins/axios';
 
 // Validation schema for forgot password
 const forgotPasswordValidationSchema = Yup.object().shape({
@@ -36,7 +37,10 @@ export const ForgotPasswordModal = ({ visible, onClose }: ForgotPasswordModalPro
           <Formik
             initialValues={{ email: '' }}
             validationSchema={forgotPasswordValidationSchema}
-            onSubmit={(values, { resetForm }) => {
+            onSubmit={async (values, { resetForm }) => {
+              await API.post('/api/forgot-password', {
+                email: values.email,
+              });
               // Leave empty for later implementation
               console.log('Forgot Password Email:', values.email);
               resetForm();
