@@ -71,4 +71,6 @@ export type MainStackParams = {
       id: string;
     };
     Workshops: undefined;
+    PaymentLocation: undefined;
+    StripePayment: undefined;
   };

@@ -18,6 +18,7 @@ import { ProfileEditForm, ProfileEditFormValues } from '../components/forms/Prof
 import { StartUpForm, StartUpFormValues } from '../components/forms/StartUpForm';
 import { useNavigationContext } from '../contexts/NavigationContext';
 
+
 type ProfileProps = StackScreenProps<MainStackParams, 'Profile'> & {
   setAuthToken: (accessToken: string | null) => void;
 };
@@ -271,6 +272,13 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
               size={20}
               style={dynamicStyles.appbarActionRight}
               onPress={handleLogout}
+            />
+            <Appbar.Action
+              icon={require('../assets/flat-icons/badge.png')}
+              color="#414042"
+              size={20}
+              style={dynamicStyles.appbarActionRight}
+              onPress={() => navigation.navigate('PaymentLocation')}
             />
           </>
         )}

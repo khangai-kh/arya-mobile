@@ -32,6 +32,8 @@ import { Workshops } from '../../../screens/Workshops';
 import { BottomTab } from '../tabs/BottomTab';
 import { Profile } from '../../../screens/Profile';
 import {PremiumSuccess} from '../../../screens/PremiumSuccess';
+import PaymentForm from '../../../components/forms/PaymentForm';
+import StripePayment from '../../../screens/StripePayment';
 
 const Stack = createNativeStackNavigator<MainStackParams>();
 
@@ -138,6 +140,9 @@ export const MainStack = () => {
         <Stack.Screen name="Training" component={Training} options={{ headerShown: false }} />
         <Stack.Screen name="Notifications" component={Notifications} options={{ title: 'Notifications' }} />
         <Stack.Screen name="Profile" component={Profile} options={{ title: 'Profile' }} />
+
+        <Stack.Screen name="PaymentLocation" component={PaymentForm} />
+        <Stack.Screen name="StripePayment" component={StripePayment} />
       </Stack.Group>
     </Stack.Navigator>
   );
