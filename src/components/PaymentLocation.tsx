@@ -172,4 +172,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PaymentLocation;
+export default PaymentLocation
