@@ -100,7 +100,7 @@ export interface Image {
 }
 
 export interface ContentTypeModel extends BaseEntityModel {
-    id: string;
+    id: number;
     name?: string | null;
 
     [key: string]: any;

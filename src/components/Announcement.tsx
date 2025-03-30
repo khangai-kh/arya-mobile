@@ -82,7 +82,7 @@ export const Announcement = ({
               {location}
             </Text>
           </View>
-          {type === 'Events' && (
+          {type === 'Event' && (
             <View style={dateContainer}>
                 <Image
                 source={require('../assets/flat-icons/calendar.png')}
@@ -130,6 +130,7 @@ const styles = (colors: MD3Colors) =>
             flexShrink: 1,
             marginHorizontal: 6,
             width: '100%',
+            fontWeight: 'bold',
         },
         body: {
             marginTop: 4,
@@ -166,6 +167,7 @@ const styles = (colors: MD3Colors) =>
         },
         textLight: {
             fontWeight: '300',
+            marginBottom: 5,
             flexShrink: 1,
         },
     });

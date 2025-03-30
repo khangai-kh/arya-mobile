@@ -13,20 +13,21 @@ import { useNavigation } from '@react-navigation/native';
 
 export const Announcements = () => {
   const { colors } = useTheme();
-  const dynamicStyles = createDynamicdynamicStyles(colors);
+  const dynamicStyles = createDynamicStyles(colors);
   const navigation = useNavigation();
   const { token } = useSelector((state: RootState) => state.auth);
   const [contents, setContents] = useState<ContentModel[]>([]);
   const [contentTypes, setContentTypes] = useState<ContentTypeModel[]>([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
 
-  // Query for announcements
   const { isFetching: isFetchingAnnouncements } = useQuery(
-    ['contents', DEFAULT_PAGE, PAGE_SIZE, token],
+    ['contents', DEFAULT_PAGE, PAGE_SIZE, token, selectedCategoryId],
     async () => {
       const response = await API.get('/api/contents', {
         params: {
           page: DEFAULT_PAGE,
           page_size: PAGE_SIZE,
+          content_type_id: selectedCategoryId,
         },
       });
       return response.data || [];
@@ -38,12 +39,11 @@ export const Announcements = () => {
     }
   );
 
-  // Query for content types
   const { isFetching: isFetchingContentTypes } = useQuery(
     ['contentTypes', token],
     async () => {
       const response = await API.get('/api/content-types');
-      return response || [];
+      return response.data || [];
     },
     {
       onSuccess: (data) => {
@@ -51,6 +51,11 @@ export const Announcements = () => {
       },
     }
   );
+
+  // Handle category press
+  const handleCategoryPress = (categoryId: number) => {
+    setSelectedCategoryId(categoryId === selectedCategoryId ? null : categoryId); // Toggle selection
+  };
 
   if (isFetchingAnnouncements || isFetchingContentTypes) {
     return (
@@ -61,7 +66,7 @@ export const Announcements = () => {
   }
 
   return (
-    <SafeAreaView style={dynamicStyles.safeArea} edges={['bottom']}>
+    <SafeAreaView style={dynamicStyles.safeArea} edges={['top']}>
       <Appbar.Header style={dynamicStyles.appbarHeader}>
         <Appbar.Action
           icon={require('../assets/flat-icons/angle-small-left.png')}
@@ -86,11 +91,21 @@ export const Announcements = () => {
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {contentTypes.map((type) => (
               <TouchableOpacity
-                key={type.index}
-                style={dynamicStyles.interestBox}
-                onPress={() => {}}
+                key={type.index} // Assuming 'index' exists; replace with 'id' if needed
+                style={[
+                  dynamicStyles.interestBox,
+                  selectedCategoryId === type.id && dynamicStyles.selectedInterestBox, // Highlight selected
+                ]}
+                onPress={() => handleCategoryPress(type.id)}
               >
-                <Text style={dynamicStyles.interestText}>{type.name}</Text>
+                <Text
+                  style={[
+                    dynamicStyles.interestText,
+                    selectedCategoryId === type.id && dynamicStyles.selectedInterestText, // Highlight text
+                  ]}
+                >
+                  {type.name}
+                </Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -120,7 +135,7 @@ export const Announcements = () => {
   );
 };
 
-const createDynamicdynamicStyles = (colors: MD3Theme['colors']) =>
+const createDynamicStyles = (colors: MD3Theme['colors']) =>
   StyleSheet.create({
     safeArea: {
       flex: 1,
@@ -135,7 +150,13 @@ const createDynamicdynamicStyles = (colors: MD3Theme['colors']) =>
       backgroundColor: 'transparent',
       alignContent: 'flex-start',
       justifyContent: 'space-between',
-      marginBottom: 10,
+      borderBottomColor: colors.outline,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+      elevation: 5,
     },
     appbarActionRight: {
       backgroundColor: colors.onPrimary,
@@ -170,20 +191,24 @@ const createDynamicdynamicStyles = (colors: MD3Theme['colors']) =>
       backgroundColor: '#f5f5f5',
       marginVertical: 6,
       paddingHorizontal: 10,
-      marginHorizontal:5,
+      marginHorizontal: 5,
       shadowColor: '#000',
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
+      shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.25,
       shadowRadius: 3.84,
       elevation: 5,
     },
+    selectedInterestBox: {
+      backgroundColor: colors.primary,
+    },
     interestText: {
-        fontSize: 12,
-        color: colors.primary,
-        paddingLeft: 0,
-        marginLeft: 0,
+      fontSize: 12,
+      color: colors.primary,
+      paddingLeft: 0,
+      marginLeft: 0,
+    },
+    selectedInterestText: {
+      color: '#fff',
+      fontWeight: 'bold',
     },
   });

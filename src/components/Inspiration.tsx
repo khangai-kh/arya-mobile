@@ -4,7 +4,7 @@ import { Image, StyleSheet, TouchableOpacity, TouchableOpacityProps, View } from
 import { Avatar, Text, useTheme } from 'react-native-paper';
 import { MD3Colors } from 'react-native-paper/lib/typescript/types';
 
-type InspirationProps = Omit<TouchableOpacityProps, 'activeOpacity'> & {
+export type InspirationProps = Omit<TouchableOpacityProps, 'activeOpacity'> & {
   title: string;
   image: string;
   name: string;
