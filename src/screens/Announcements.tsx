@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, ScrollView, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { Appbar, MD3Theme, Text, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -19,23 +19,37 @@ export const Announcements = () => {
   const [contents, setContents] = useState<ContentModel[]>([]);
   const [contentTypes, setContentTypes] = useState<ContentTypeModel[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [page, setPage] = useState(DEFAULT_PAGE);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
-  const { isFetching: isFetchingAnnouncements } = useQuery(
-    ['contents', DEFAULT_PAGE, PAGE_SIZE, token, selectedCategoryId],
-    async () => {
+  const fetchAnnouncements = useCallback(
+    async (pageNum: number) => {
       const response = await API.get('/api/contents', {
         params: {
-          page: DEFAULT_PAGE,
+          page: pageNum,
           page_size: PAGE_SIZE,
           content_type_id: selectedCategoryId,
         },
       });
       return response.data || [];
     },
+    [selectedCategoryId] // Add dependencies here
+  );
+
+  const { isFetching: isFetchingAnnouncements } = useQuery(
+    ['contents', page, PAGE_SIZE, token, selectedCategoryId],
+    () => fetchAnnouncements(page),
     {
       onSuccess: (data) => {
-        setContents(data);
+        if (page === DEFAULT_PAGE) {
+          setContents(data);
+        } else {
+          setContents(prev => [...prev, ...data]);
+        }
+        setHasMore(data.length === PAGE_SIZE); // If we get less than page size, there's no more data
       },
+      enabled: !isLoadingMore, // Prevent fetching when loading more
     }
   );
 
@@ -52,12 +66,41 @@ export const Announcements = () => {
     }
   );
 
-  // Handle category press
   const handleCategoryPress = (categoryId: number) => {
-    setSelectedCategoryId(categoryId === selectedCategoryId ? null : categoryId); // Toggle selection
+    setSelectedCategoryId(categoryId === selectedCategoryId ? null : categoryId);
+    setPage(DEFAULT_PAGE); // Reset to first page when category changes
+    setContents([]); // Clear existing contents
   };
 
-  if (isFetchingAnnouncements || isFetchingContentTypes) {
+  const loadMore = useCallback(async () => {
+    if (!isLoadingMore && hasMore && !isFetchingAnnouncements) {
+      setIsLoadingMore(true);
+      const nextPage = page + 1;
+      try {
+        const newData = await fetchAnnouncements(nextPage);
+        setContents(prev => [...prev, ...newData]);
+        setPage(nextPage);
+        setHasMore(newData.length === PAGE_SIZE);
+      } catch (error) {
+        console.error('Error loading more announcements:', error);
+      } finally {
+        setIsLoadingMore(false);
+      }
+    }
+  }, [isLoadingMore, hasMore, isFetchingAnnouncements, page, fetchAnnouncements]);
+
+  const handleScroll = ({ nativeEvent }: any) => {
+    const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
+    const paddingToBottom = 20;
+    if (
+      layoutMeasurement.height + contentOffset.y >=
+      contentSize.height - paddingToBottom
+    ) {
+      loadMore();
+    }
+  };
+
+  if (isFetchingContentTypes || isFetchingAnnouncements && page === DEFAULT_PAGE) {
     return (
       <View style={dynamicStyles.loaderContainer}>
         <ActivityIndicator size="large" color={colors.primary} />
@@ -86,22 +129,21 @@ export const Announcements = () => {
         />
       </Appbar.Header>
       <View style={dynamicStyles.container}>
-        {/* Category Chips */}
         <View style={dynamicStyles.chipContainer}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {contentTypes.map((type) => (
               <TouchableOpacity
-                key={type.index} // Assuming 'index' exists; replace with 'id' if needed
+                key={type.index}
                 style={[
                   dynamicStyles.interestBox,
-                  selectedCategoryId === type.id && dynamicStyles.selectedInterestBox, // Highlight selected
+                  selectedCategoryId === type.id && dynamicStyles.selectedInterestBox,
                 ]}
                 onPress={() => handleCategoryPress(type.id)}
               >
                 <Text
                   style={[
                     dynamicStyles.interestText,
-                    selectedCategoryId === type.id && dynamicStyles.selectedInterestText, // Highlight text
+                    selectedCategoryId === type.id && dynamicStyles.selectedInterestText,
                   ]}
                 >
                   {type.name}
@@ -111,8 +153,11 @@ export const Announcements = () => {
           </ScrollView>
         </View>
 
-        {/* Announcements List */}
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
+        >
           {contents?.map((content, index) => (
             <Announcement
               key={index}
@@ -129,6 +174,11 @@ export const Announcements = () => {
               onPress={() => {}}
             />
           ))}
+          {isLoadingMore && (
+            <View style={dynamicStyles.loadingMoreContainer}>
+              <ActivityIndicator size="small" color={colors.primary} />
+            </View>
+          )}
         </ScrollView>
       </View>
     </SafeAreaView>
@@ -210,5 +260,9 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
     selectedInterestText: {
       color: '#fff',
       fontWeight: 'bold',
+    },
+    loadingMoreContainer: {
+      padding: 16,
+      alignItems: 'center',
     },
   });

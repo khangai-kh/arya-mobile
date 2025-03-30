@@ -34,8 +34,6 @@ export const Inspiration = ({
     date: dateStyle,
   } = styles(colors);
 
-  console.log('Inspiration', image);
-
   return (
     <TouchableOpacity {...otherProps} style={[container, style]}>
       <Image
