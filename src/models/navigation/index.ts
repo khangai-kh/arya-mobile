@@ -2,7 +2,7 @@ export type MainStackParams = {
     AboutUs: undefined;
     AcademyStartups: undefined;
     Announcement: {
-      id: string;
+      id: number;
     };
     Announcements: undefined;
     Authenticate: undefined;
@@ -28,7 +28,7 @@ export type MainStackParams = {
       url: string;
     };
     Inspiration: {
-      id: string;
+      id: number;
     };
     Inspirations: undefined;
     InvestorTrainings: undefined;

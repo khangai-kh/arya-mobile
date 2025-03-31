@@ -92,7 +92,8 @@ export interface BatchModel {
     [key: string]: any;
 }
 
-export interface Image {
+export interface Image extends BaseEntityModel {
+    id: number;
     image_url?: string | null;
     alt_text?: string | null;
 
@@ -102,6 +103,15 @@ export interface Image {
 export interface ContentTypeModel extends BaseEntityModel {
     id: number;
     name?: string | null;
+
+    [key: string]: any;
+}
+
+export interface EventModel {
+    id: number;
+    event_date: string | null;
+    event_location: string | null;
+    max_participants: number | null;
 
     [key: string]: any;
 }

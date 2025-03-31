@@ -18,7 +18,6 @@ import { ProfileEditForm, ProfileEditFormValues } from '../components/forms/Prof
 import { StartUpForm, StartUpFormValues } from '../components/forms/StartUpForm';
 import { useNavigationContext } from '../contexts/NavigationContext';
 
-
 type ProfileProps = StackScreenProps<MainStackParams, 'Profile'> & {
   setAuthToken: (accessToken: string | null) => void;
 };

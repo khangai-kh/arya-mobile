@@ -1,5 +1,5 @@
 import { BaseEntityModel } from '../../base-entity.model';
-import { ContentTypeModel } from '../../general/models';
+import { ContentTypeModel, EventModel, Image } from '../../general/models';
 import { UserModelWithoutContent } from '../../users/User/user.model';
 
 export interface ContentModel extends BaseEntityModel {
@@ -14,3 +14,15 @@ export interface ContentModel extends BaseEntityModel {
 
     [key: string]: any;
 }
+
+export interface ContentDetailModel extends BaseEntityModel {
+    id: number;
+    title?: string;
+    description?: string;
+    content_type?: ContentTypeModel;
+    events?: EventModel;
+    images?: Image[];
+    created_user: UserModelWithoutContent;
+
+    [key: string]: any;
+  }

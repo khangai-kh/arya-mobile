@@ -73,6 +73,7 @@ export const Announcement = ({
           {body}
         </Text>
         <View style={footer}>
+        {type === 'Event' && (
           <View style={locationContainer}>
             <Image
               source={require('../assets/flat-icons/marker.png')}
@@ -82,20 +83,19 @@ export const Announcement = ({
               {location}
             </Text>
           </View>
-          {type === 'Event' && (
-            <View style={dateContainer}>
-                <Image
-                source={require('../assets/flat-icons/calendar.png')}
-                style={icon}
-                />
-                <Text
-                    variant="bodyMedium"
-                    numberOfLines={1}
-                    style={textLight}>
-                {dayjs(date).format('DD.MM.YYYY')}
-                </Text>
-            </View>
-          )}
+        )}
+          <View style={dateContainer}>
+              <Image
+              source={require('../assets/flat-icons/calendar.png')}
+              style={icon}
+              />
+              <Text
+                  variant="bodyMedium"
+                  numberOfLines={1}
+                  style={textLight}>
+              {dayjs(date).format('DD.MM.YYYY')}
+              </Text>
+          </View>
         </View>
       </Box>
     </TouchableOpacity>
@@ -166,6 +166,7 @@ const styles = (colors: MD3Colors) =>
             tintColor: colors.primary,
         },
         textLight: {
+            paddingTop: 6,
             fontWeight: '300',
             marginBottom: 5,
             flexShrink: 1,

@@ -62,25 +62,25 @@ export const Home = (props: HomeProps) => {
             <IconButton
               containerColor={colors.onPrimary}
               icon={require('../assets/flat-icons/upgrade.png')}
-              size={20}
+              size={18}
               onPress={navigateToMemberShip}
             />
             <IconButton
               containerColor={colors.onPrimary}
               icon={require('../assets/flat-icons/search.png')}
-              size={24}
+              size={18}
               onPress={navigateToSearch}
             />
             <IconButton
               containerColor={colors.onPrimary}
               icon={require('../assets/flat-icons/bell.png')}
-              size={20}
+              size={18}
               onPress={navigateToNotifications}
             />
             <IconButton
               containerColor={colors.onPrimary}
               icon={require('../assets/flat-icons/info.png')}
-              size={20}
+              size={18}
               onPress={navigateToAboutUs}
             />
           </View>

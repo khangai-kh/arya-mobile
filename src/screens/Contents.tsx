@@ -83,7 +83,7 @@ export const Contents = () => {
                         date={content.created_at || ''}
                         type={content.content_type?.name || ''}
                         style={[styles.announcement, index === contents.length - 1 && styles.lastAnnouncement]}
-                        onPress={() => navigate('Announcement', { id: content.title || '' })}
+                        onPress={() => navigate('Announcement', { id: content.id || 0 })}
                     />
                 ))}
             </ScrollView>
@@ -102,7 +102,7 @@ export const Contents = () => {
                     name = {inspiration.created_user?.full_name || ''}
                     date={inspiration.date}
                     style={[styles.inspiration, index === inspirations.length - 1 && styles.lastInspiration]}
-                    onPress={() => navigate('Inspiration', { id: inspiration.title || '' })}
+                    onPress={() => navigate('Inspiration', { id: inspiration.id || 0 })}
                 />
             ))}
         </ScrollView>
