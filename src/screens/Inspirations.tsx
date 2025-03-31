@@ -125,11 +125,7 @@ export const Inspirations = (props: InspirationsProps) => {
                             style={{
                                 marginBottom: index === inspirations.length - 1 ? 0 : 8
                             }}
-                            onPress={() => {
-                                navigation.navigate('Inspiration', {
-                                    id: inspiration.id.toString(),
-                                });
-                            }}
+                            onPress={() =>  navigation.navigate('Announcement', { id: inspiration.id || 0 })}
                         />
                     ))}
                     {isLoadingMore && (

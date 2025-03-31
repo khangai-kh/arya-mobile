@@ -1,4 +1,3 @@
-// BottomTab.tsx
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Image, TouchableWithoutFeedback, View, StyleSheet } from 'react-native';
@@ -16,10 +15,11 @@ declare global {
   }
 }
 
+// Renamed type: change "BottomTab" key to "CenterTab"
 export type BottomTabStackParams = {
   Home: undefined;
   Events: undefined;
-  BottomTab: undefined;
+  CenterTab: undefined;
   Messenger: undefined;
   Profile: undefined;
 };
@@ -53,9 +53,12 @@ const CustomTabButton = () => (
   </TouchableWithoutFeedback>
 );
 
+// DummyScreen defined outside to avoid inline component functions
+const DummyScreen = () => null;
+
 export const BottomTab = () => {
   const { colors } = useTheme();
-  const { hideTabBar } = useNavigationContext(); // Use the context to get hideTabBar state
+  const { hideTabBar } = useNavigationContext();
 
   const renderHomeIcon = ({ focused }: { focused: boolean }) => <HomeIcon focused={focused} />;
   const renderEventsIcon = ({ focused }: { focused: boolean }) => <EventsIcon focused={focused} />;
@@ -68,14 +71,14 @@ export const BottomTab = () => {
       screenOptions={{
         headerShown: false,
         tabBarInactiveTintColor: colors.onSurface,
-        tabBarStyle: hideTabBar ? { display: 'none' } : styles.tabBarStyle, // Apply hideTabBar dynamically
+        tabBarStyle: hideTabBar ? { display: 'none' } : styles.tabBarStyle,
         tabBarItemStyle: styles.tabBarItemStyle,
         tabBarShowLabel: false,
       }}
     >
       <BottomTabStack.Screen name="Home" component={Home} options={{ tabBarIcon: renderHomeIcon }} />
       <BottomTabStack.Screen name="Events" component={Events} options={{ tabBarIcon: renderEventsIcon }} />
-      <BottomTabStack.Screen name="BottomTab" component={() => null} options={{ tabBarButton: CustomTabButton }} />
+      <BottomTabStack.Screen name="CenterTab" component={DummyScreen} options={{ tabBarButton: CustomTabButton }} />
       <BottomTabStack.Screen name="Messenger" component={Messenger} options={{ tabBarIcon: renderMessengerIcon }} />
       <BottomTabStack.Screen name="Profile" component={Profile} options={{ tabBarIcon: renderProfileIcon }} />
     </BottomTabStack.Navigator>

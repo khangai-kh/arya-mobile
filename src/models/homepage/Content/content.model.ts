@@ -4,7 +4,7 @@ import { UserModelWithoutContent } from '../../users/User/user.model';
 
 export interface ContentModel extends BaseEntityModel {
     id: number;
-    title?: string | null;
+    title?: string;
     description?: string | null;
     image_url: string;
     location?: string | null;

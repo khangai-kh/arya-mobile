@@ -171,7 +171,7 @@ export const Announcements = () => {
                 dynamicStyles.announcement,
                 index === contents.length - 1 && dynamicStyles.lastAnnouncement,
               ]}
-              onPress={() => {}}
+              onPress={() => navigation.navigate('Announcement', { id: content.id || 0 })}
             />
           ))}
           {isLoadingMore && (
