@@ -1,10 +1,11 @@
 // ForgotPasswordModal.tsx
-import React from 'react';
+import React, { useRef } from 'react';
 import { Modal, StyleSheet, View } from 'react-native';
 import { Button, Text, TextInput as PaperTextInput } from 'react-native-paper';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { API } from '../plugins/axios';
+import { ALERT_TYPE, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 
 // Validation schema for forgot password
 const forgotPasswordValidationSchema = Yup.object().shape({
@@ -19,6 +20,9 @@ type ForgotPasswordModalProps = {
 };
 
 export const ForgotPasswordModal = ({ visible, onClose }: ForgotPasswordModalProps) => {
+  // Define a ref for the email input so we can blur it before submission
+  const emailInputRef = useRef<any>(null);
+
   return (
     <Modal
       animationType="fade"
@@ -26,74 +30,118 @@ export const ForgotPasswordModal = ({ visible, onClose }: ForgotPasswordModalPro
       visible={visible}
       onRequestClose={onClose}
     >
-      <View style={styles.modalOverlay}>
-        <View style={styles.modalContainer}>
-          <Text variant="titleLarge" style={styles.modalTitle}>
-            Forgot Password
-          </Text>
-          <Text style={styles.modalSubtitle}>
-            Enter your email to reset your password
-          </Text>
-          <Formik
-            initialValues={{ email: '' }}
-            validationSchema={forgotPasswordValidationSchema}
-            onSubmit={async (values, { resetForm }) => {
-              await API.post('/api/forgot-password', {
-                email: values.email,
-              });
-              // Leave empty for later implementation
-              console.log('Forgot Password Email:', values.email);
-              resetForm();
-              onClose();
-            }}
-          >
-            {({
-              handleChange,
-              handleBlur,
-              handleSubmit,
-              values,
-              errors,
-              touched,
-            }) => (
-              <View>
-                <PaperTextInput
-                  autoCapitalize="none"
-                  keyboardType="email-address"
-                  placeholder="Enter valid email"
-                  mode="outlined"
-                  value={values.email}
-                  onChangeText={handleChange('email')}
-                  onBlur={handleBlur('email')}
-                  style={styles.input}
-                  theme={{ roundness: 40 }}
-                  outlineStyle={{ borderWidth: 0 }}
-                  error={touched.email && !!errors.email}
-                />
-                {touched.email && errors.email && (
-                  <Text style={styles.errorText}>{errors.email}</Text>
-                )}
+      <AlertNotificationRoot>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text variant="titleLarge" style={styles.modalTitle}>
+              Forgot Password
+            </Text>
+            <Text style={styles.modalSubtitle}>
+              Enter your email to reset your password
+            </Text>
+            <Formik
+              initialValues={{ email: '' }}
+              validationSchema={forgotPasswordValidationSchema}
+              onSubmit={async (values, { resetForm, setSubmitting }) => {
+                try {
+                  // 1. Create FormData
+                  const formData = new FormData();
+                  formData.append('email', values.email);
 
-                <View style={styles.modalButtonContainer}>
-                  <Button
+                  // 2. Send FormData
+                  const response = await API.post('/api/forgot-password', formData, {
+                    headers: {
+                      'Content-Type': 'multipart/form-data',
+                    },
+                  });
+                  console.log('Forgot Password Response:', response);
+                    Toast.show({
+                      type: ALERT_TYPE.SUCCESS,
+                      title: 'Success',
+                      textBody: response.message,
+                      autoClose: 2000,
+                    });
+
+                    setTimeout(() => {
+                      resetForm();
+                      onClose();
+                    }, 2000);
+
+                } catch (error) {
+                  console.log('Forgot Password Response:', error);
+                  Toast.show({
+                    type: ALERT_TYPE.WARNING,
+                    title: 'Error',
+                    textBody: error?.data?.detail || 'An error occurred. Please try again.',
+                  });
+                } finally {
+                  setSubmitting(false);
+                }
+              }}
+            >
+              {({
+                handleChange,
+                handleBlur,
+                handleSubmit,
+                values,
+                errors,
+                touched,
+                isSubmitting,
+              }) => (
+                <View>
+                  <PaperTextInput
+                    ref={emailInputRef}
+                    autoCapitalize="none"
+                    keyboardType="email-address"
+                    placeholder="Enter valid email"
+                    placeholderTextColor={'gray'}
                     mode="outlined"
-                    style={styles.modalButton}
-                    onPress={onClose}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    mode="contained"
-                    style={styles.modalButton}
-                    onPress={() => handleSubmit()}
-                  >
-                    Submit
-                  </Button>
+                    value={values.email}
+                    onChangeText={handleChange('email')}
+                    onBlur={handleBlur('email')}
+                    style={styles.input}
+                    theme={{
+                      roundness: 40,
+                    }}
+                    outlineStyle={{ borderWidth: 0 }}
+                    error={touched.email && !!errors.email}
+                  />
+                  {touched.email && errors.email && (
+                    <Text style={styles.errorText}>{errors.email}</Text>
+                  )}
+
+                  <View style={styles.modalButtonContainer}>
+                    <Button
+                      mode="outlined"
+                      style={styles.modalButton}
+                      onPress={onClose}
+                      disabled={isSubmitting}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      mode="contained"
+                      style={styles.modalButton}
+                      onPress={() => {
+                        // Blur the email field to trigger validation updates
+                        emailInputRef.current?.blur();
+                        // Use a short delay to ensure the blur event processes
+                        setTimeout(() => {
+                          handleSubmit();
+                        }, 100);
+                      }}
+                      disabled={isSubmitting}
+                      loading={isSubmitting}
+                    >
+                      Submit
+                    </Button>
+                  </View>
                 </View>
-              </View>
-            )}
-          </Formik>
+              )}
+            </Formik>
+          </View>
         </View>
-      </View>
+      </AlertNotificationRoot>
     </Modal>
   );
 };
@@ -128,7 +176,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     marginTop: 12,
     marginBottom: 8,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     padding: 0,
     height: 40,
   },

@@ -44,7 +44,7 @@ export const Home = (props: HomeProps) => {
       agreed_agreement: false,
       agreed_confidentiality: false,
     });
-  // const navigateToSearch = () => navigation.navigate('Search');
+  const navigateToSearch = () => navigation.navigate('Search');
   const navigateToNotifications = () => navigation.navigate('Notifications');
   const navigateToAboutUs = () => navigation.navigate('AboutUs');
 
@@ -65,12 +65,12 @@ export const Home = (props: HomeProps) => {
               size={20}
               onPress={navigateToMemberShip}
             />
-            {/* <IconButton
+            <IconButton
               containerColor={colors.onPrimary}
               icon={require('../assets/flat-icons/search.png')}
               size={24}
               onPress={navigateToSearch}
-            /> */}
+            />
             <IconButton
               containerColor={colors.onPrimary}
               icon={require('../assets/flat-icons/bell.png')}

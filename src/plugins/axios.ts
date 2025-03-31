@@ -32,13 +32,14 @@ const onRejected = (error: any) => {
             store.dispatch(setAuthToken(null));
         }
         console.error('API Error Response:', error.response.data);
+        //throw new Error(error.response.data.detail || 'An error occurred.');
     } else if (error.request) {
         console.error('Network Error: No response received.', error.request);
     } else {
         console.error('Unexpected Error:', error.message);
     }
-    return Promise.reject(error);
-}
+    return Promise.reject(error.response || 'An error occurred.');
+};
 
 API.interceptors.request.use(
     onFulfilled,
