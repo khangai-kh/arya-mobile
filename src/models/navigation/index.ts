@@ -30,7 +30,7 @@ export type MainStackParams = {
       agreed: boolean;
     };
     Member: {
-      id: string;
+      id: number;
     };
     MemberFilter: undefined;
     MemberShip: {
