@@ -11,6 +11,8 @@ import { Text, useTheme } from 'react-native-paper';
 import { MD3Colors } from 'react-native-paper/lib/typescript/types';
 import { Box } from './common/Box';
 import dayjs from 'dayjs';
+import HTML from 'react-native-render-html';
+import { useWindowDimensions } from 'react-native';
 
 type AnnouncementProps = Omit<TouchableOpacityProps, 'activeOpacity'> & {
   title: string;
@@ -44,6 +46,16 @@ export const Announcement = ({
     icon,
     textLight,
   } = styles(colors);
+  const { width } = useWindowDimensions();
+
+  const truncateHtml = (html: string) => {
+    // Simple truncation - you might want to use a proper HTML parser for complex content
+    const plainText = html.replace(/<[^>]+>/g, ''); // Strip HTML tags
+    const truncated = plainText.length > 80 
+      ? plainText.substring(0, 80) + '...' 
+      : plainText;
+    return `<p>${truncated}</p>`;
+  };
 
   return (
     <TouchableOpacity {...otherProps} style={[container, style]}>
@@ -64,14 +76,21 @@ export const Announcement = ({
             style={titleStyle}>
           {title}
         </Text>
-        <Text
-          variant="bodyMedium"
-          numberOfLines={2}
-          ellipsizeMode="tail"
-          style={bodyStyle}
-        >
-          {body}
-        </Text>
+        <HTML
+          source={{ html: body ? truncateHtml(body) : '<p>No content available</p>' }}
+          contentWidth={width}
+          baseStyle={{
+            ...bodyStyle,
+            fontSize: 14,
+            lineHeight: 22,
+          }}
+          renderersProps={{
+            TText: {
+              numberOfLines: 2,
+              ellipsizeMode: 'tail',
+            },
+          }}
+        />
         <View style={footer}>
         {type === 'Event' && (
           <View style={locationContainer}>

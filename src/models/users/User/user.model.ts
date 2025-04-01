@@ -12,6 +12,7 @@ export interface UserModel extends BaseEntityModel {
     phone : null | string;
     address: null | string;
     photo: string;
+    role: ProfileModel;
     interests: InterestModel[];
     describes: DescribeModel[];
     received_references: {
@@ -40,7 +41,9 @@ export interface UserModel extends BaseEntityModel {
         payment_method: string;
         is_agreement_accepted: boolean;
         is_confidentiality_accepted: boolean;
-    }
+    };
+    is_connected?:boolean;
 }
 
-export type UserModelWithoutContent = Pick<UserModel, 'id' | 'full_name' | 'email'>;
+export type UserModelWithoutContent = Pick<UserModel, 'id' | 'full_name' | 'email' | 'photo' | 'title'>;
+export type UserModelList = Pick<UserModel, 'id' | 'full_name' | 'title' | 'photo' | 'describes' | 'role' | 'interests' | 'is_connected'>;

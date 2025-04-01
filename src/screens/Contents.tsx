@@ -38,7 +38,7 @@ export const Contents = () => {
                     params: {
                         page: DEFAULT_PAGE,
                         page_size: PAGE_SIZE - 5,
-                        content_type_id: 2,
+                        content_type_id: 11, //Finansial Insperations
                     },
                 }),
             ]);
@@ -98,13 +98,16 @@ export const Contents = () => {
                     key={index}
                     title={inspiration.title || ''}
                     image={inspiration.image_url}
-                    profileImage={inspiration.profileImage}
+                    profileImage={inspiration.created_user?.photo}
                     name = {inspiration.created_user?.full_name || ''}
                     date={inspiration.date}
                     style={[styles.inspiration, index === inspirations.length - 1 && styles.lastInspiration]}
-                    onPress={() => navigate('Inspiration', { id: inspiration.id || 0 })}
+                    onPress={() => navigate('Announcement', { id: inspiration.id || 0 })}
                 />
             ))}
+             <View style={styles.sectionBottom}>
+                {/*Overlay bottom tab */}
+             </View>
         </ScrollView>
     );
 };
@@ -113,6 +116,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         marginHorizontal: 16,
+        height:1200,
     },
     loaderContainer: {
         flex: 1,
@@ -145,5 +149,8 @@ const styles = StyleSheet.create({
     },
     lastInspiration: {
         marginBottom: 0,
+    },
+    sectionBottom:{
+        height:100,
     },
 });

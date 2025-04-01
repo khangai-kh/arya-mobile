@@ -34,7 +34,7 @@ export const Announcements = () => {
       });
       return response.data || [];
     },
-    [selectedCategoryId] // Add dependencies here
+    [selectedCategoryId]
   );
 
   const { isFetching: isFetchingAnnouncements } = useQuery(
@@ -47,9 +47,9 @@ export const Announcements = () => {
         } else {
           setContents(prev => [...prev, ...data]);
         }
-        setHasMore(data.length === PAGE_SIZE); // If we get less than page size, there's no more data
+        setHasMore(data.length === PAGE_SIZE);
       },
-      enabled: !isLoadingMore, // Prevent fetching when loading more
+      enabled: !isLoadingMore,
     }
   );
 
@@ -68,8 +68,8 @@ export const Announcements = () => {
 
   const handleCategoryPress = (categoryId: number) => {
     setSelectedCategoryId(categoryId === selectedCategoryId ? null : categoryId);
-    setPage(DEFAULT_PAGE); // Reset to first page when category changes
-    setContents([]); // Clear existing contents
+    setPage(DEFAULT_PAGE);
+    setContents([]);
   };
 
   const loadMore = useCallback(async () => {
@@ -99,14 +99,6 @@ export const Announcements = () => {
       loadMore();
     }
   };
-
-  if (isFetchingContentTypes || isFetchingAnnouncements && page === DEFAULT_PAGE) {
-    return (
-      <View style={dynamicStyles.loaderContainer}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    );
-  }
 
   return (
     <SafeAreaView style={dynamicStyles.safeArea} edges={['top']}>
@@ -158,22 +150,28 @@ export const Announcements = () => {
           onScroll={handleScroll}
           scrollEventThrottle={16}
         >
-          {contents?.map((content, index) => (
-            <Announcement
-              key={index}
-              title={content.title || ''}
-              image={content.image_url}
-              body={content.description || ''}
-              location={content.location || 'Istanbul, Turkey'}
-              date={content.created_at || ''}
-              type={content.content_type?.name || ''}
-              style={[
-                dynamicStyles.announcement,
-                index === contents.length - 1 && dynamicStyles.lastAnnouncement,
-              ]}
-              onPress={() => navigation.navigate('Announcement', { id: content.id || 0 })}
-            />
-          ))}
+          {(isFetchingAnnouncements && page === DEFAULT_PAGE) || isFetchingContentTypes ? (
+            <View style={dynamicStyles.loadingMoreContainer}>
+              <ActivityIndicator size="large" color={colors.primary} />
+            </View>
+          ) : (
+            contents?.map((content, index) => (
+              <Announcement
+                key={index}
+                title={content.title || ''}
+                image={content.image_url}
+                body={content.description || ''}
+                location={content.location || 'Istanbul, Turkey'}
+                date={content.created_at || ''}
+                type={content.content_type?.name || ''}
+                style={[
+                  dynamicStyles.announcement,
+                  index === contents.length - 1 && dynamicStyles.lastAnnouncement,
+                ]}
+                onPress={() => navigation.navigate('Announcement', { id: content.id || 0 })}
+              />
+            ))
+          )}
           {isLoadingMore && (
             <View style={dynamicStyles.loadingMoreContainer}>
               <ActivityIndicator size="small" color={colors.primary} />

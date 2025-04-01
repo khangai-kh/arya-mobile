@@ -30,9 +30,10 @@ export const Inspirations = (props: InspirationsProps) => {
             params: {
                 page: pageNum,
                 page_size: PAGE_SIZE,
-                content_type_id: 2,
+                content_type_id: 11,
             },
         });
+        console.log(response.data);
         return response.data || [];
     };
 
@@ -119,7 +120,7 @@ export const Inspirations = (props: InspirationsProps) => {
                             key={inspiration.id}
                             title={inspiration.title ?? 'Untitled'}
                             image={inspiration.image_url ?? ''}
-                            profileImage={inspiration.profileImage}
+                            profileImage={inspiration.created_user?.photo}
                             name={inspiration.created_user?.full_name ?? 'Unknown'}
                             date={inspiration.created_at ?? ''}
                             style={{

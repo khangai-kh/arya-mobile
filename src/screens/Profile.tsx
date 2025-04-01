@@ -217,7 +217,7 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
             title={
               <View style={dynamicStyles.titleContainer}>
                 <Text variant="titleMedium" style={dynamicStyles.titleText}>
-                  {profile?.additional.role.name}
+                  {profile?.additional?.role?.name}
                 </Text>
               </View>
             }
