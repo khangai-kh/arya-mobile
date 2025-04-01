@@ -11,9 +11,7 @@ import { BetterFutureCirclesDays } from '../../../screens/BetterFutureCirclesDay
 import { BKYLicense } from '../../../screens/BKYLicense';
 import { BKYSuccess } from '../../../screens/BKYSuccess';
 import { ClosedDeals } from '../../../screens/ClosedDeals';
-import { Content } from '../../../screens/Content';
 import { DisclosureText } from '../../../screens/DisclosureText';
-import { Inspiration } from '../../../screens/Inspiration';
 import { Inspirations } from '../../../screens/Inspirations';
 import { InvestorTrainings } from '../../../screens/InvestorTrainings';
 import { IPILicense } from '../../../screens/IPILicence';
@@ -98,7 +96,6 @@ export const MainStack = () => {
         />
         <Stack.Screen name="BKYLicense" component={BKYLicense} options={{ title: 'BKY License' }} />
         <Stack.Screen name="InvestorTrainings" component={InvestorTrainings} options={{ title: 'Investor trainings' }} />
-        <Stack.Screen name="Content" component={Content} options={{ headerShown: false }} />
         <Stack.Screen
           name="ClosedDeals"
           component={ClosedDeals}
@@ -128,7 +125,6 @@ export const MainStack = () => {
         />
         <Stack.Screen name="Workshop" component={Workshop} options={{ headerShown: false }} />
         <Stack.Screen name="Workshops" component={Workshops} options={{ title: 'Entrepreneur workshops' }} />
-        <Stack.Screen name="Inspiration" component={Inspiration} options={{ headerShown: false }} />
         <Stack.Screen name="IPILicense" component={IPILicense} options={{ title: 'IPI License form' }} />
         <Stack.Screen name="OnBoarding" component={OnBoarding} options={{ headerShown: false }} />
         <Stack.Screen name="Member" component={Member} options={{ headerShown: false }} />

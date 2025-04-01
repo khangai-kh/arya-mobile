@@ -14,9 +14,6 @@ export type MainStackParams = {
     ChangePassword: undefined;
     CheckIn: undefined;
     ClosedDeals: undefined;
-    Content: {
-      id: string;
-    };
     CreateProfile: {
       userId: string;
     };
@@ -26,9 +23,6 @@ export type MainStackParams = {
     Events: undefined;
     ExternalWeb: {
       url: string;
-    };
-    Inspiration: {
-      id: number;
     };
     Inspirations: undefined;
     InvestorTrainings: undefined;
