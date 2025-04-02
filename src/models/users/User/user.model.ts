@@ -42,8 +42,8 @@ export interface UserModel extends BaseEntityModel {
         is_agreement_accepted: boolean;
         is_confidentiality_accepted: boolean;
     };
-    is_connected?:boolean;
+    is_favorited?:boolean;
 }
 
 export type UserModelWithoutContent = Pick<UserModel, 'id' | 'full_name' | 'email' | 'photo' | 'title'>;
-export type UserModelList = Pick<UserModel, 'id' | 'full_name' | 'title' | 'photo' | 'describes' | 'role' | 'interests' | 'is_connected'>;
+export type UserModelList = Pick<UserModel, 'id' | 'full_name' | 'title' | 'photo' | 'describes' | 'role' | 'interests' | 'is_favorited'>;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Image, Pressable, StyleSheet, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, Image, Pressable, StyleSheet, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { Appbar, Avatar, Button, Chip, Text, useTheme, MD3Theme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -29,9 +29,10 @@ const mapDispatchToProps = {
 const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: ProfileProps) => {
   const { token } = useSelector((state: RootState) => state.auth);
   const { user_id } = useSelector((state: RootState) => state.auth);
+  const { width } = useWindowDimensions();
   const [isLoading, setIsLoading] = useState(false);
   const { colors } = useTheme();
-  const dynamicStyles = createDynamicStyles(colors);
+  const dynamicStyles = createDynamicStyles(colors,width);
   const [stage, setStage] = useState<'interest' | 'startup' | 'profile' | 'edit_profile'>('profile');
   const [interests, setInterests] = useState<InterestModel[]>([]);
   const [selectedInterests, setSelectedInterests] = useState<number[]>([]);
@@ -216,9 +217,13 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
           <Appbar.Content
             title={
               <View style={dynamicStyles.titleContainer}>
-                <Text variant="titleMedium" style={dynamicStyles.titleText}>
-                  {profile?.additional?.role?.name}
-                </Text>
+                  {profile?.additional?.role?.id === 1 && (
+                    <>
+                      <Text variant="titleMedium" style={dynamicStyles.titleText}>
+                          Premium
+                      </Text>
+                    </>
+                  )}
               </View>
             }
           />
@@ -272,13 +277,13 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
               style={dynamicStyles.appbarActionRight}
               onPress={handleLogout}
             />
-            <Appbar.Action
+            {/* <Appbar.Action
               icon={require('../assets/flat-icons/badge.png')}
               color="#414042"
               size={20}
               style={dynamicStyles.appbarActionRight}
               onPress={() => navigation.navigate('PaymentLocation')}
-            />
+            /> */}
           </>
         )}
       </Appbar.Header>
@@ -294,7 +299,27 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
                 />
                 <View>
                   <Text variant="titleSmall" style={dynamicStyles.nameText}>
-                    {profile?.full_name}
+                    {profile?.full_name} {profile?.additional?.role.id === 2 && (
+                        <Image
+                          resizeMode="contain"
+                          source={require('../assets/flat-icons/rocket.png')}
+                          style={[dynamicStyles.roleIcon, { tintColor: '#B61D8D' }]}
+                        />
+                      )}
+                      {profile?.additional?.role.id === 1 && (
+                        <Image
+                          resizeMode="contain"
+                          source={require('../assets/flat-icons/diamond.png')}
+                          style={[dynamicStyles.roleIcon, { tintColor: '#00AEEF' }]}
+                        />
+                      )}
+                      {profile?.additional?.role.id === 3 && (
+                        <Image
+                          resizeMode="contain"
+                          source={require('../assets/flat-icons/diamond.png')}
+                          style={[dynamicStyles.roleIcon, { tintColor: '#B61D8D' }]}
+                        />
+                      )}
                   </Text>
                   <View style={dynamicStyles.locationContainer}>
                     <View style={dynamicStyles.locationItem}>
@@ -317,24 +342,16 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
                     </View>
                   </View>
                   <View>
-                  <View style={styles.roleBadge}>
-                    {profile?.describes?.map((describe, index) => (
-                        <TouchableOpacity
-                          key={index}
-                          style={styles.interestBox}
-                          onPress={() => {}}
-                        >
-                          <Image
-                            source={
-                              describe.icon
-                                ? { uri: describe.icon }
-                                : require('../assets/flat-icons/rocket-outlined.png')
-                            }
-                            style={styles.interestIcon}
-                          />
-                          <Text style={styles.interestText}>{describe.name}</Text>
-                        </TouchableOpacity>
-                      ))}
+                    <View style={dynamicStyles.roleBadge}>
+                      {profile?.describes?.map((describe, index) => (
+                          <TouchableOpacity
+                            key={index}
+                            style={styles.interestBox}
+                            onPress={() => {}}
+                          >
+                            <Text style={styles.interestText}>{describe.name}</Text>
+                          </TouchableOpacity>
+                        ))}
                     </View>
                   </View>
                 </View>
@@ -399,7 +416,6 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
                   style={dynamicStyles.startupItem}
                   onPress={() => navigation.navigate('Startup', { id: startup?.id.toString() })}
                 >
-                  <Text>{startup?.id.toString()}</Text>
                   <View style={dynamicStyles.startupItem}>
                     <Image
                       source={startup.startup_logo ? { uri: startup.startup_logo } : require('../assets/wave.png')}
@@ -470,18 +486,20 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
 
 export const Profile = connect(null, mapDispatchToProps)(ProfileComponent);
 
-const createDynamicStyles = (colors: MD3Theme['colors']) =>
+const createDynamicStyles = (colors: MD3Theme['colors'], width: number) =>
   StyleSheet.create({
     safeAreaView: {
-      flex: 1,
+      width: width,
       justifyContent: 'center',
       alignItems: 'center',
     },
     scrollView: {
       paddingBottom: 150,
+      marginHorizontal: 10,
+      width: width - 20,
     },
     appbarHeader: {
-      width: '100%',
+      width: width,
       backgroundColor: 'transparent',
       alignContent: 'center',
       justifyContent: 'space-between',
@@ -492,7 +510,9 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
       marginRight: 5,
     },
     titleContainer: {
+      flexDirection: 'row',
       alignItems: 'center',
+      justifyContent:'center',
     },
     titleText: {
       fontWeight: 'bold',
@@ -508,7 +528,8 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
       justifyContent: 'space-between',
       flexDirection: 'row',
       marginBottom: 12,
-      marginHorizontal: 30,
+      width: width - 20,
+      paddingHorizontal: 10,
     },
     avatar: {
       backgroundColor: '#f2f4f7',
@@ -518,69 +539,47 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      paddingHorizontal: 5,
+      width: width - 40,
     },
     locationContainer: {
       flexDirection: 'row',
-      alignItems: 'center',
+      gap:4,
       marginVertical: 8,
+      width:250,
     },
     locationItem: {
       flexDirection: 'row',
-      alignItems: 'center',
-      marginLeft: 8,
+      alignItems: 'flex-start',
     },
     iconLocation: {
       width: 14,
       height: 14,
-      marginRight: 8,
+      marginRight: 2,
       tintColor: '#414042',
     },
     descriptionText: {
-     paddingHorizontal: 2,
-      marginHorizontal: 30,
-      width: 350,
+      paddingHorizontal: 2,
+      width: width - 24,
     },
     buttonRow: {
       flexDirection: 'row',
       marginVertical: 12,
-      width: 350,
-      marginHorizontal: 30,
+      width: width - 20,
     },
     buttonMargin: {
       marginRight: 4,
     },
-    buttonBadge: {
-      marginVertical: 4,
-      backgroundColor: '#F2A93B',
-      borderRadius: 20,
-      height: 25,
-      paddingTop: 0,
-    },
-    buttonText: {
-      fontSize: 12,
-      fontWeight: 'bold',
-      marginVertical: 8,
-      lineHeight: 15,
-    },
-    buttonContent: {
-      height: 30,
-      alignItems: 'center',
-      justifyContent: 'center',
-      flexDirection: 'row',
-    },
     sectionContainer: {
       borderRadius: 16,
       backgroundColor: '#fff',
-      paddingHorizontal: 10,
       paddingVertical: 12,
-      width: 350,
-      marginHorizontal: 30,
+      width: width - 20,
     },
     interestsContainer: {
       marginTop: 12,
       flexDirection: 'row',
       flexWrap: 'wrap',
+      marginLeft:14,
       gap: 4,
     },
     chipInterests: {
@@ -590,16 +589,14 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
       marginTop: 8,
       borderRadius: 16,
       backgroundColor: '#fff',
-      paddingHorizontal: 16,
       paddingVertical: 12,
-      width: 350,
-      marginHorizontal: 30,
+      width: width - 20,
     },
     startupItem: {
       marginTop: 12,
       paddingHorizontal: 8,
       flexDirection: 'row',
-      width: '90%',
+      width: width - 68,
     },
     startupImage: {
       width: 40,
@@ -609,16 +606,21 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
     startupText: {
       marginTop: 2,
       fontSize: 11,
+      paddingRight:10,
     },
     logoutButton: {
       marginTop: 20,
-      marginHorizontal: 30,
-      width:350,
+      width: width - 20,
+    },
+    roleBadge: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 5,
+      width: 250,
     },
     nameText: {
       color: '#414042',
-      marginLeft: 8,
-      fontSize: 20,
+      fontSize: 16,
       fontWeight: 'bold',
     },
     sectionText: {
@@ -626,6 +628,13 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
       fontSize: 14,
       fontWeight: 'bold',
       marginBottom: 8,
+      marginTop:10,
+      marginLeft:10,
+    },
+    roleIcon: {
+      width: 16,
+      height: 16,
+      marginLeft: 20,
     },
   });
 
@@ -647,12 +656,7 @@ const styles = StyleSheet.create({
     tintColor: '#B61D8D',
     marginRight: 4,
   },
-  roleBadge: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 5, 
-    width: 300,
-  },
+  
   roleEntrepreneur: {
     width: 14,
     height: 14,
@@ -665,7 +669,7 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 15,
     backgroundColor: '#f5f5f5',
-    marginBottom: 4, // Space between items vertically
+    marginBottom: 4,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -681,8 +685,8 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
   },
   interestIcon: {
-    width: 20,
-    height: 20,
+    width: 16,
+    height: 16,
     tintColor: '#A09FA0',
   },
 });

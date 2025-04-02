@@ -25,7 +25,9 @@ export const Members = () => {
   const [page, setPage] = useState(DEFAULT_PAGE);
   const { token } = useSelector((state: RootState) => state.auth);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [totalMembers, setTotalMembers] = useState(0);
   const [hasMore, setHasMore] = useState(true);
+  const [loadingFollowId, setLoadingFollowId] = useState<number | null>(null);
 
   const fetchAnnouncements = useCallback(
     async (pageNum: number) => {
@@ -35,7 +37,7 @@ export const Members = () => {
           page_size: PAGE_SIZE,
         },
       });
-      return response.data.users || [];
+      return response || [];
     },
     []
   );
@@ -46,11 +48,12 @@ export const Members = () => {
     {
       onSuccess: (data) => {
         if (page === DEFAULT_PAGE) {
-          setMembers(data);
+          setMembers(data.data);
         } else {
-          setMembers(prev => [...prev, ...data]);
+          setMembers(prev => [...prev, ...data.data]);
         }
-        setHasMore(data.length === PAGE_SIZE);
+        setTotalMembers(data.total);
+        setHasMore(data.data.length === PAGE_SIZE);
       },
       enabled: !isLoadingMore,
     }
@@ -62,9 +65,9 @@ export const Members = () => {
       const nextPage = page + 1;
       try {
         const newData = await fetchAnnouncements(nextPage);
-        setMembers(prev => [...prev, ...newData]);
+        setMembers(prev => [...prev, ...newData.data]);
         setPage(nextPage);
-        setHasMore(newData.length === PAGE_SIZE);
+        setHasMore(newData.data.length === PAGE_SIZE);
       } catch (error) {
         console.error('Error loading more announcements:', error);
       } finally {
@@ -84,12 +87,45 @@ export const Members = () => {
     }
   };
 
+  const handleFollowPress = useCallback(
+    async (userId: number) => {
+      setLoadingFollowId(userId); // Set loading state for this member
+      try {
+        // Get the current following state from the latest members array
+        const currentMember = members.find(member => member.id === userId);
+        const currentFollowing = currentMember?.is_favorited || false;
+
+        if (currentFollowing) {
+          console.log('unfollow');
+          console.log(userId)
+          await API.post('/api/users/unfollow', { user_id: userId });
+        } else {
+          console.log('follow');
+          await API.post('/api/users/follow', { user_id: userId });
+        }
+        // Update the member's following status in the state
+        setMembers(prevMembers =>
+          prevMembers.map(member =>
+            member.id === userId
+              ? { ...member, is_favorited: !currentFollowing }
+              : member
+          )
+        );
+      } catch (error) {
+        console.error('Error toggling follow status:', error);
+      } finally {
+        setLoadingFollowId(null); // Clear loading state
+      }
+    },
+    [members] // Depend on members to ensure we get the latest state
+  );
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text>200 members</Text>
+        <Text>{totalMembers} members</Text>
         <IconButton
-         icon={require('../assets/flat-icons/filter.png')}
+          icon={require('../assets/flat-icons/filter.png')}
           size={18}
           onPress={() => {}}
         />
@@ -109,19 +145,21 @@ export const Members = () => {
               key={index}
               name={member.full_name || ''}
               image={member.photo}
-              memberRole={member.role?.role_name || ''}
+              memberRole={member.role?.name || ''}
               status={member.title}
-              following={member.is_connected || false}
+              following={member.is_favorited || false}
               interests={member.interests}
+              isLoading={loadingFollowId === (member.id || 0)}
               style={[
                 styles.memberItem,
-                index === members.length - 1 && styles.lastMemberItem
+                index === members.length - 1 && styles.lastMemberItem,
               ]}
               onPress={() => {
                 navigate('Member', {
                   id: member.id,
                 });
               }}
+              onFollowPress={() => handleFollowPress(member.id || 0)}
             />
           ))
         )}
