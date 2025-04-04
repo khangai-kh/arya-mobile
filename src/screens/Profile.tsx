@@ -542,7 +542,7 @@ const createDynamicStyles = (colors: MD3Theme['colors'], width: number) =>
       width: width - 40,
     },
     locationContainer: {
-      flexDirection: 'row',
+      flexDirection: 'column',
       gap:4,
       marginVertical: 8,
       width:250,
@@ -656,7 +656,6 @@ const styles = StyleSheet.create({
     tintColor: '#B61D8D',
     marginRight: 4,
   },
-  
   roleEntrepreneur: {
     width: 14,
     height: 14,
@@ -682,7 +681,7 @@ const styles = StyleSheet.create({
   interestText: {
     fontSize: 11,
     lineHeight: 12,
-    paddingLeft: 5,
+    paddingHorizontal: 5,
   },
   interestIcon: {
     width: 16,

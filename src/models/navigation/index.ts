@@ -32,6 +32,9 @@ export type MainStackParams = {
     Member: {
       id: number;
     };
+    Members: {
+      refresh: boolean;
+    };
     MemberFilter: undefined;
     MemberShip: {
       agreed_agreement: boolean;

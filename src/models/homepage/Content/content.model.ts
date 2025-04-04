@@ -20,7 +20,7 @@ export interface ContentDetailModel extends BaseEntityModel {
     title?: string;
     description?: string;
     content_type?: ContentTypeModel;
-    events?: EventModel;
+    event?: EventModel;
     images?: Image[];
     created_user: UserModelWithoutContent;
 

@@ -1,31 +1,58 @@
 import { StackScreenProps } from '@react-navigation/stack';
-import React, { useState } from 'react';
-import { Image, View, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Image, View, StyleSheet, ActivityIndicator, Pressable, TouchableOpacity } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Appbar, Avatar, Button, Chip, Text, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MainStackParams } from '../models/navigation';
+import { UserModel } from '../models/users/User';
+import { API } from '../plugins/axios';
+import { MD3Colors } from 'react-native-paper/lib/typescript/types';
 
 type MemberProps = StackScreenProps<MainStackParams, 'Member'>;
 
 export const Member = (props: MemberProps) => {
     const { navigation, route } = props;
+    const memberId = route.params?.id;
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const { colors } = useTheme();
+    const dynamicStyles = styles(colors);
+    const [member, setMember] = useState<UserModel | null>(null);
+    const [followLoading, setFollowLoading] = useState(false);
 
-    const [member, setMember] = useState({
-        name: "Merve Kaya",
-        image: "",
-        role: "Investor",
-        status: "CTO at Nexa Innovations",
-        following: true,
-        interests: [
-            { id: 0, title: 'Financial Planning' },
-            { id: 1, title: 'Budgeting' },
-            { id: 2, title: 'Saving' },
-            { id: 3, title: 'Debt' },
-            { id: 4, title: 'Insurance' },
-        ]
-    });
+    const getYearsAgo = (dateString: string): string => {
+        if (!dateString) {
+          return 'Joined recently';
+        }
+        const inputDate = new Date(dateString);
+        if (isNaN(inputDate.getTime())) {
+          return 'Joined this year';
+        }
+        const now = new Date();
+        const msInYear = 1000 * 60 * 60 * 24 * 365.25;
+        return 'Joined' + Math.floor((now.getTime() - inputDate.getTime()) / msInYear);
+    };
+
+    useEffect(() => {
+        const fetchContent = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+                const response = await API.get(`/api/user/member-all-infos/${memberId}`);
+                console.log('API Response:', response.data); // Debug log
+                setMember(response.data);
+            } catch (err) {
+                console.error('Error fetching content:', err);
+                setError('Failed to load content');
+            } finally {
+                setLoading(false);
+            }
+        };
+        if (memberId) {
+            fetchContent();
+        }
+    }, [memberId]);
 
     const checkRole = (role: string) => {
         if (role === 'Investor') {
@@ -33,15 +60,15 @@ export const Member = (props: MemberProps) => {
                 <Image
                     resizeMode="contain"
                     source={require('../assets/flat-icons/diamond.png')}
-                    style={styles.roleIconInvestor}
+                    style={dynamicStyles.roleIconInvestor}
                 />
             );
-        } else if (role === 'Premium') {
+        } else if (role === 'Premium' || role === 'Premium Entrepreneur' || role === 'Premium Investor') {
             return (
                 <Image
                     resizeMode="contain"
                     source={require('../assets/flat-icons/crown.png')}
-                    style={styles.roleIconPremium}
+                    style={dynamicStyles.roleIconPremium}
                 />
             );
         } else if (role === 'Entrepreneur') {
@@ -49,88 +76,161 @@ export const Member = (props: MemberProps) => {
                 <Image
                     resizeMode="contain"
                     source={require('../assets/flat-icons/rocket.png')}
-                    style={styles.roleIconEntrepreneur}
+                    style={dynamicStyles.roleIconEntrepreneur}
                 />
             );
         }
     };
 
+    // const handleGoBack = () => {
+    //     // You can also emit an event that the parent screen can listen to
+    //     navigation.navigate('Members', { refresh: true });
+    // };
+
+    const handleFollowToggle = async () => {
+        console.log(member);
+        if (!member) {
+            return;
+        }
+
+        try {
+            setFollowLoading(true);
+            if (member.is_favorited) {
+                console.log('unfollow');
+                await API.post('/api/users/unfollow', { user_id: member.id });
+                setMember(prev => prev ? { ...prev, is_favorited: false } : null);
+            } else {
+                console.log('follow');
+                await API.post('/api/users/follow', { user_id: member.id });
+                setMember(prev => prev ? { ...prev, is_favorited: true } : null);
+            }
+        } catch (err) {
+            console.error('Error toggling follow:', err);
+            setError('Failed to update follow status');
+        } finally {
+            setFollowLoading(false);
+        }
+    };
+
+    if (loading) {
+        return (
+            <View style={dynamicStyles.loaderContainer}>
+                <ActivityIndicator size="large" color={colors.primary} />
+            </View>
+        );
+    }
+
+    if (error || !member) {
+        return (
+            <View style={dynamicStyles.loaderContainer}>
+                <Text>{error || 'No content available'}</Text>
+            </View>
+        );
+    }
+
     return (
-        <SafeAreaView style={styles.container} edges={['bottom']}>
+        <SafeAreaView style={dynamicStyles.container} edges={['bottom']}>
             <ScrollView showsVerticalScrollIndicator={false}>
-                <Appbar.Header style={styles.appbar}>
+                <Appbar.Header style={dynamicStyles.appbar}>
                     <Appbar.Action
                         icon={require('../assets/flat-icons/angle-small-left.png')}
                         color="#414042"
-                        style={[styles.appbarAction, { backgroundColor: colors.onPrimary }]}
+                        style={[dynamicStyles.appbarAction, { backgroundColor: colors.onPrimary }]}
                         onPress={() => navigation.goBack()}
                     />
                     <Appbar.Content
                         title={
-                            <View style={styles.titleContainer}>
-                                <Text variant='titleMedium' style={styles.titleText}>
-                                    {member.role}
+                            <View style={dynamicStyles.titleContainer}>
+                                <Text variant="titleMedium" style={dynamicStyles.titleText}>
+                                    {member.roles[0]?.role_name || 'N/A'}
                                 </Text>
-                                {checkRole(member.role)}
+                                {checkRole(member.roles[0]?.role_name)}
                             </View>
                         }
                     />
                     <Appbar.Action
                         icon={require('../assets/flat-icons/menu.png')}
                         color="#414042"
-                        size={24}
-                        style={[styles.appbarAction, { backgroundColor: colors.onPrimary }]}
+                        size={18}
+                        style={[dynamicStyles.appbarAction, { backgroundColor: colors.onPrimary }]}
                         onPress={() => {}}
                     />
                 </Appbar.Header>
 
-                <View style={styles.profileContainer}>
-                    <View style={styles.profileHeader}>
+                <View style={dynamicStyles.profileContainer}>
+                    <View style={dynamicStyles.profileHeader}>
                         <Avatar.Image
                             size={112}
-                            source={require('../assets/Image-54.png')}
-                            style={styles.avatar}
+                            source={member.photo ? { uri: member.photo } : require('../assets/flat-icons/user.png')}
+                            style={dynamicStyles.avatar}
                         />
                         <View>
-                            <Text variant='titleSmall' style={styles.nameText}>{member.name}</Text>
-                            <View style={styles.locationContainer}>
-                                <View style={styles.locationItem}>
+                            <Text variant="titleSmall" style={dynamicStyles.nameText}>{member.full_name}</Text>
+                            <View style={dynamicStyles.locationContainer}>
+                                <View style={dynamicStyles.locationItem}>
                                     <Image
                                         source={require('../assets/flat-icons/marker-outlined.png')}
-                                        style={styles.icon}
+                                        style={dynamicStyles.icon}
                                     />
-                                    <Text variant="bodySmall">Ankara</Text>
+                                    <Text variant="bodySmall">{member.address}</Text>
                                 </View>
-                                <View style={styles.locationItem}>
+                                <View style={dynamicStyles.locationItem}>
                                     <Image
                                         source={require('../assets/flat-icons/badge-outlined.png')}
-                                        style={styles.icon}
+                                        style={dynamicStyles.icon}
                                     />
-                                    <Text variant="bodySmall">1 Years Member</Text>
+                                    <Text variant="bodySmall">
+                                        {getYearsAgo(member?.created_at ?? '')}
+                                    </Text>
                                 </View>
                             </View>
-                            <Chip style={styles.chip}>
-                                <Text variant='bodySmall'>Family business</Text>
-                            </Chip>
+                            <View style={dynamicStyles.roleBadge}>
+                                {member?.describes?.map((describe, index) => (
+                                    <TouchableOpacity
+                                        key={index}
+                                        style={dynamicStyles.interestBox}
+                                        onPress={() => {}}
+                                    >
+                                    <Text style={dynamicStyles.interestText}>{describe.name}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
                         </View>
                     </View>
-                    <Text>Operations Specialist at Anatolia Logistics | Logistics and Transportation</Text>
-                    <View style={styles.buttonContainer}>
+                    <Text>
+                        {member.carrier?.title || 'No title available'}
+                    </Text>
+                    <View style={dynamicStyles.buttonContainer}>
                         <Button
-                            mode='contained'
-                            buttonColor={colors.primary}
-                            icon={require('../assets/flat-icons/user-add.png')}
-                            style={styles.connectButton}
-                            onPress={() => {}}
+                            mode="contained"
+                            buttonColor={
+                                member.is_favorited
+                                  ? colors.secondary
+                                  : colors.primary
+                            }
+                            icon={
+                                member.is_favorited
+                                  ? require('../assets/flat-icons/following.png')
+                                  : require('../assets/flat-icons/user-add.png')
+                            }
+                            style={dynamicStyles.connectButton}
+                            textColor={
+                                member.is_favorited
+                                ? colors.primary
+                                : colors.secondary
+                            }
+                            onPress={handleFollowToggle}
+                            loading={followLoading}
+                            disabled={followLoading}
                         >
-                            Connect
+                             {member.is_favorited ?  'Connected' : 'Connect'}
                         </Button>
                         <Button
-                            mode='contained'
+                            mode="contained"
                             buttonColor={colors.secondary}
                             textColor={colors.primary}
                             icon={require('../assets/flat-icons/comment-alt-outlined.png')}
-                            style={styles.messageButton}
+                            style={dynamicStyles.messageButton}
                             onPress={() => {}}
                         >
                             Message
@@ -138,48 +238,67 @@ export const Member = (props: MemberProps) => {
                     </View>
                 </View>
 
-                <View style={styles.interestsContainer}>
-                    <Text variant='titleSmall' style={styles.sectionTitle} >Interests</Text>
-                    <View style={styles.interestsChips}>
+                <View style={dynamicStyles.interestsContainer}>
+                    <Text variant="titleSmall" style={dynamicStyles.sectionTitle} >Interests</Text>
+                    <View style={dynamicStyles.interestsChips}>
                         {member.interests.map((interest) => (
-                            <Chip key={interest.id} style={styles.interestChip}>
+                            <Chip key={interest.id} style={dynamicStyles.interestChip}>
                                 <Text>{interest.title}</Text>
                             </Chip>
                         ))}
                     </View>
                 </View>
 
-                <View style={styles.startupsContainer}>
-                    <Text variant='titleSmall' style={styles.sectionTitle}>Startups</Text>
-                    <View style={styles.startupItem}>
-                        <Image
-                            source={require('../assets/wave.png')}
-                            style={styles.startupImage}
-                            resizeMode='contain'
-                        />
-                        <View>
-                            <Text variant='titleSmall' style={styles.startupTitle}>Green Wave Technologies</Text>
-                            <Text variant='bodyMedium' style={styles.startupDescription}>
-                                Empowering Sustainability Through Innovation
-                            </Text>
-                        </View>
-                    </View>
+                <View style={dynamicStyles.startupsContainer}>
+                    <Text variant="titleSmall" style={dynamicStyles.sectionTitle}>Startups</Text>
+                    {member?.startups?.map((startup, index) => (
+                        <Pressable
+                            key={startup.id || `startup-${index}`}
+                            style={dynamicStyles.startupItem}
+                            onPress={() => navigation.navigate('Startup', { id: startup?.id.toString() })}
+                            >
+                            <View style={dynamicStyles.startupItem}>
+                                <Image
+                                    source={startup.startup_logo ? { uri: startup.startup_logo } : require('../assets/wave.png')}
+                                    style={dynamicStyles.startupImage}
+                                    resizeMode="contain"
+                                />
+                                <View>
+                                <Text variant="titleSmall">{startup?.name}</Text>
+                                <Text variant="bodyMedium" style={dynamicStyles.startupDescription}>
+                                    {startup?.description}
+                                </Text>
+                                </View>
+                            </View>
+                        </Pressable>
+                    ))}
                 </View>
             </ScrollView>
         </SafeAreaView>
     );
 };
 
-const styles = StyleSheet.create({
+const styles = (colors: MD3Colors)=> StyleSheet.create({
+
     container: { flex: 1 },
-    appbar: { backgroundColor: 'transparent' },
+    appbar: {
+        backgroundColor: 'transparent',
+    },
     appbarAction: {},
+    loaderContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     titleContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
     },
-    titleText: { marginRight: 8 },
+    titleText: {
+        marginRight: 8,
+        fontSize: 14,
+    },
     roleIconInvestor: {
         width: 14,
         height: 14,
@@ -198,7 +317,9 @@ const styles = StyleSheet.create({
         tintColor: '#F99F1C',
         marginRight: 4,
     },
-    profileContainer: { padding: 16 },
+    profileContainer: {
+        padding: 16,
+    },
     profileHeader: {
         flex: 1,
         flexDirection: 'row',
@@ -206,25 +327,24 @@ const styles = StyleSheet.create({
         marginBottom: 12,
     },
     avatar: {
-        backgroundColor: '#f2f4f7',
+        backgroundColor: colors.secondary,
         marginRight: 12,
     },
     locationContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
         gap:5,
         marginVertical: 8,
+        width:'75%',
     },
     locationItem: {
         flexDirection: 'row',
-        alignItems: 'flex-start',
-        justifyContent :'flex-start',
     },
     icon: {
         width: 14,
         height: 14,
-        marginRight: 8,
         tintColor: '#414042',
+        marginRight: 4,
     },
     chip: {
         backgroundColor: '#fff',
@@ -238,7 +358,13 @@ const styles = StyleSheet.create({
         marginRight: 8,
         flex: 1,
     },
-    messageButton: { flex: 1 },
+    connectedButton: {
+        marginRight: 8,
+        flex: 1,
+    },
+    messageButton: {
+        flex: 1,
+    },
     interestsContainer: {
         borderRadius: 16,
         backgroundColor: '#fff',
@@ -286,5 +412,33 @@ const styles = StyleSheet.create({
         color: '#414042',
         fontSize: 16,
         fontWeight: 'bold',
+    },
+    interestBox: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 5,
+        borderRadius: 15,
+        backgroundColor: '#f5f5f5',
+        marginBottom: 4,
+        shadowColor: '#000',
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+    },
+    interestText: {
+        fontSize: 11,
+        lineHeight: 12,
+        paddingHorizontal: 5,
+    },
+    roleBadge: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 5,
+        width: 250,
+
     },
 });

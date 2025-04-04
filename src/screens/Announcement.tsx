@@ -25,8 +25,6 @@ export const Announcement = (props: AnnouncementProps) => {
   const [error, setError] = useState<string | null>(null);
   const { width } = useWindowDimensions();
 
-  console.log(contentId);
-
   useEffect(() => {
     const fetchContent = async () => {
       try {
@@ -99,12 +97,7 @@ export const Announcement = (props: AnnouncementProps) => {
           <Text variant="titleLarge" style={styles.title}>
             {content.title || 'Untitled'}
           </Text>
-          {content.content_type?.name === 'Event' && (
-            <Text variant="titleSmall" style={styles.titleSub}>
-              {content.event?.max_participants || 'N/A'} participants
-            </Text>
-          )}
-           {content.content_type?.name !== 'Event' &&(<View style={styles.userContainer}>
+          <View style={styles.userContainer}>
               <Avatar.Image
                   size={24}
                   source={
@@ -113,7 +106,7 @@ export const Announcement = (props: AnnouncementProps) => {
                   style={styles.avatar}
                 />
                 <Text>{content.created_user.full_name || 'Untitled'}</Text>
-          </View>)}
+          </View>
           {content.content_type?.name === 'Event' && (<Card mode="contained" style={styles.card}>
             <Card.Content>
               <View style={styles.calendarContainer}>
@@ -121,20 +114,31 @@ export const Announcement = (props: AnnouncementProps) => {
                   source={require('../assets/flat-icons/calendar-outlined.png')}
                   style={dynamicStyles.calendarIcon}
                 />
-                <Text variant="titleSmall">
+                <Text variant="titleSmall" style={styles.hostText}>
                   {content.created_at 
                     ? dayjs(content.created_at).format('MMMM DD,YYYY')
                     : 'Date not available'}
                 </Text>
               </View>
-              <View style={styles.locationContainer}>
+              <View style={styles.calendarContainer}>
                 <Image
                   source={require('../assets/flat-icons/marker-outlined.png')}
                   style={dynamicStyles.markerIcon}
                 />
                 <View style={styles.flexOne}>
-                  <Text variant="titleSmall">
+                  <Text variant="titleSmall" style={styles.hostText}>
                     {content.events?.event_location || 'Location not specified'}
+                  </Text>
+                </View>
+              </View>
+              <View style={styles.calendarContainer}>
+                <Image
+                  source={require('../assets/flat-icons/info.png')}
+                  style={dynamicStyles.markerIcon}
+                />
+                <View style={styles.flexOne}>
+                  <Text variant="titleSmall" style={styles.hostText}>
+                    {content.event?.max_participants || 'Not specified'} participants
                   </Text>
                 </View>
               </View>
@@ -151,26 +155,6 @@ export const Announcement = (props: AnnouncementProps) => {
               'No description available'
             )}
           </Text>
-              {content.content_type?.name === 'Event' && (
-                <>
-                  <Text variant="titleSmall" style={styles.hostsTitle}>
-                    Host
-                  </Text>
-                  <View  style={styles.userContainer}>
-                    <Avatar.Image
-                        size={40}
-                        source={
-                          content.created_user.photo ? { uri: content.created_user.photo } : require('../assets/avatar.png')
-                        }
-                        style={styles.avatar}
-                      />
-                      <Text>{content.created_user.full_name || 'Untitled'}</Text>
-                </View>
-                <View style={styles.hostContainer}>
-                  <Text style={styles.hostText}>{content.created_user?.title}</Text>
-                </View>
-                </>
-              )}
           </View>
         </Box>
       </ScrollView>
@@ -234,6 +218,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginLeft: 8,
+    marginVertical: 2,
+    fontSize: 11,
   },
   locationContainer: {
     flexDirection: 'row',
@@ -269,8 +255,8 @@ const styles = StyleSheet.create({
     marginRight: 4.5,
   },
   hostText:{
-    marginTop:20,
-  }
+    fontSize:12,
+  },
 });
 
 const createDynamicStyles = (colors: MD3Theme['colors']) =>

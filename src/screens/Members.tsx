@@ -1,25 +1,30 @@
-import { CompositeNavigationProp, NavigationProp, useNavigation } from '@react-navigation/native';
+import { CompositeNavigationProp, NavigationProp, useFocusEffect, useNavigation } from '@react-navigation/native';
 import React, { useState, useCallback } from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { IconButton, Text, useTheme } from 'react-native-paper';
 import { Member } from '../components/Member';
 import { MainStackParams } from '../models/navigation';
-import { BottomTabStackParams } from '../navigation/user/tabs/BottomTab';
 import { UserModelList } from '../models/users/User/user.model';
 import { API } from '../plugins/axios';
 import { DEFAULT_PAGE, PAGE_SIZE } from '../constants/constants';
 import { RootState } from '../redux/configureStore';
 import { useSelector } from 'react-redux';
 import { useQuery } from 'react-query';
+import { StackScreenProps } from '@react-navigation/stack';
+import { BottomTabStackParams } from '../navigation/user/tabs/BottomTab';
 
 type UseNavigationProps = CompositeNavigationProp<
   NavigationProp<BottomTabStackParams, 'Home'>,
   NavigationProp<MainStackParams>
 >;
+type MembersProps = StackScreenProps<MainStackParams, 'Members'>;
 
-export const Members = () => {
+
+export const Members = (props: MembersProps) => {
   const { navigate } = useNavigation<UseNavigationProps>();
+  const { route } = props;
+  const refresh = route.params?.refresh || false;
   const { colors } = useTheme();
   const [members, setMembers] = useState<UserModelList[]>([]);
   const [page, setPage] = useState(DEFAULT_PAGE);
@@ -42,7 +47,7 @@ export const Members = () => {
     []
   );
 
-  const { isFetching: isFetchingAnnouncements } = useQuery(
+  const { isFetching: isFetchingAnnouncements, refetch } = useQuery(
     ['contents', page, PAGE_SIZE, token],
     () => fetchAnnouncements(page),
     {
@@ -57,6 +62,16 @@ export const Members = () => {
       },
       enabled: !isLoadingMore,
     }
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      if (refresh) {
+        setPage(DEFAULT_PAGE);
+        setMembers([]);
+        refetch();
+      }
+    }, [refresh, refetch])
   );
 
   const loadMore = useCallback(async () => {
