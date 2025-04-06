@@ -43,6 +43,16 @@ export interface UserModel extends BaseEntityModel {
         is_confidentiality_accepted: boolean;
     };
     is_favorited?:boolean;
+    followers:{
+        id: number;
+        full_name: string
+        photo: string;
+    }[],
+    following:{
+        id: number;
+        full_name: string
+        photo: string;
+    }[],
 }
 
 export type UserModelWithoutContent = Pick<UserModel, 'id' | 'full_name' | 'email' | 'photo' | 'title'>;

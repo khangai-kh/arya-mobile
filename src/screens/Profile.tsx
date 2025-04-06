@@ -414,7 +414,7 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
                 <Pressable
                   key={startup.id || `startup-${index}`}
                   style={dynamicStyles.startupItem}
-                  onPress={() => navigation.navigate('Startup', { id: startup?.id.toString() })}
+                  onPress={() => navigation.navigate('Startup', { id: startup?.id })}
                 >
                   <View style={dynamicStyles.startupItem}>
                     <Image

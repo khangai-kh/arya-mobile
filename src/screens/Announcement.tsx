@@ -31,7 +31,7 @@ export const Announcement = (props: AnnouncementProps) => {
         setLoading(true);
         setError(null);
         const response = await API.get(`/api/content-by-id?id=${contentId}`);
-        console.log('API Response:', response.data); // Debug log
+        // console.log('API Response:', response.data); // Debug log
         setContent(response.data);
       } catch (err) {
         console.error('Error fetching content:', err);

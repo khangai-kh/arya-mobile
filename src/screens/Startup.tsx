@@ -2,8 +2,8 @@ import React from 'react';
 import { StackScreenProps } from '@react-navigation/stack';
 import { useState } from 'react';
 import { Image, View, StyleSheet, ActivityIndicator } from 'react-native';
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-import { Appbar, Avatar, Button, Chip, Divider, IconButton, MD3Theme, Modal, Portal, Text, useTheme } from 'react-native-paper';
+import { ScrollView } from 'react-native-gesture-handler';
+import { Appbar, Avatar, Button, Chip, Divider, IconButton, MD3Theme, Modal, Portal, Text, useTheme, TouchableRipple } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Box } from '../components/common/Box';
 import { Founder } from '../components/Founder';
@@ -25,11 +25,13 @@ export const Startup = ({route, navigation}: StartupProps) => {
     const [startup, setStartup] = useState<StartupModel | null>(null);
     const [isExpanded, setIsExpanded] = useState(false);
 
-     const { isFetching: isFetchingProfile, refetch } = useQuery(
+    console.log('Startup ID:', startupId);
+    const { isFetching: isFetchingProfile, refetch } = useQuery(
         ['startup', token],
         () => API.get('/api/startup/' + startupId),
         {
           onSuccess: ({ data }) => {
+            console.log('Startup data:', data);
             setStartup(data);
           },
           onError: (error) => {
@@ -40,14 +42,14 @@ export const Startup = ({route, navigation}: StartupProps) => {
 
     const [visible, setVisible] = useState(false);
 
-    const checkColor = (value: string = '') => {
+    const checkColor = (value: string | undefined): string => {
         const colorsMap: { [key: string]: string } = {
             'HealthTech': '#00AEEF',
             'Academy': '#F99F1C',
             'Closed deals': '#A09FA0',
             'Graduate': '#4CB748',
         };
-        return colorsMap[value] || undefined;
+        return colorsMap[value || ''] || '#A09FA0';
     };
 
     const formatNumber = (value: number, currencySymbol: string): string => {
@@ -71,7 +73,7 @@ export const Startup = ({route, navigation}: StartupProps) => {
           const midPoint = Math.ceil(text.length / 2);
           return `${text.substring(0, midPoint)}\n${text.substring(midPoint)}`;
         }
-        return text; // If text is too long, return as is (can be truncated with numberOfLines)
+        return text;
       };
 
     const isDataLoading = isFetchingProfile || isLoading;
@@ -79,10 +81,11 @@ export const Startup = ({route, navigation}: StartupProps) => {
     if (isDataLoading) {
         return (
         <View style={styles.loaderContainer}>
-            <ActivityIndicator size="large" color={colors.primary} />
+            <ActivityIndicator size="large" color={colors.primary || '#000000'} />
         </View>
         );
     }
+
     return (
         <SafeAreaView style={dynamicStyles.safeArea} edges={['top']}>
             <Appbar.Header style={dynamicStyles.appbarHeader}>
@@ -91,7 +94,7 @@ export const Startup = ({route, navigation}: StartupProps) => {
                     color="#414042"
                     size={20}
                     style={dynamicStyles.appbarActionRight}
-                    onPress={() => {}}
+                    onPress={() => navigation.goBack()}
                 />
                 <Appbar.Content
                     title={
@@ -129,56 +132,58 @@ export const Startup = ({route, navigation}: StartupProps) => {
                         <Box style={dynamicStyles.headerContent}>
                             <View style={dynamicStyles.chipContainer}>
                                 <Chip
-                                    style={[dynamicStyles.chip, { backgroundColor: checkColor(startup?.startup_type?.name || '') }]}
+                                    style={[dynamicStyles.chip, { backgroundColor: checkColor(startup?.startup_type?.name) }]}
                                 >
                                     <Text variant="labelMedium" style={dynamicStyles.chipText}>
-                                        {startup?.startup_type?.name}
+                                        {startup?.startup_type?.name || 'Unknown'}
                                     </Text>
                                 </Chip>
                             </View>
                             <Text variant="titleMedium" style={dynamicStyles.title}>
-                                {startup?.name}
+                                {startup?.name || 'Unnamed Startup'}
                             </Text>
                             <Text variant="bodyMedium" style={dynamicStyles.bio}>
-                                {startup?.startup_type?.description}
+                                {startup?.startup_type?.description || 'No description available'}
                             </Text>
                         </Box>
                     </View>
                     <View style={dynamicStyles.body}>
-                        <Text numberOfLines={4}>{startup?.description}</Text>
+                        <Text numberOfLines={4}>{startup?.description || 'No description'}</Text>
                     </View>
                     <View style={dynamicStyles.dataContainer}>
                         <View style={styles.badge}>
-                            <View style={[styles.badgeIcon,  { backgroundColor: '#E6F3E6'}]}>
+                            <View style={[styles.badgeIcon, { backgroundColor: '#E6F3E6' }]}>
                                 <Image
                                     source={require('../assets/flat-icons/phase.png')}
                                     style={styles.icon}
                                 />
                             </View>
-                                <Text style={styles.badgeText}>
-                                    {wrapIntoTwoLines(startup?.startup_status?.name || '', 20)}
-                                </Text>
+                            <Text style={styles.badgeText}>
+                                {wrapIntoTwoLines(startup?.startup_status?.name || 'Unknown', 20)}
+                            </Text>
                         </View>
                         <View style={styles.badge}>
-                            <View style={[styles.badgeIcon,  { backgroundColor: '#FFF8CC'}]}>
+                            <View style={[styles.badgeIcon, { backgroundColor: '#FFF8CC' }]}>
                                 <Image
                                     source={require('../assets/flat-icons/investment_type.png')}
                                     style={styles.icon}
                                 />
                             </View>
                             <Text style={styles.badgeText}>
-                                {wrapIntoTwoLines(startup?.funding_round_type?.name || '', 100)}
+                                {wrapIntoTwoLines(startup?.funding_round_type?.name || 'Unknown', 100)}
                             </Text>
                         </View>
                         <View style={styles.badge}>
-                            <View style={[styles.badgeIcon,  { backgroundColor: '#FCE4EC'}]}>
+                            <View style={[styles.badgeIcon, { backgroundColor: '#FCE4EC' }]}>
                                 <Image
                                     source={require('../assets/flat-icons/total_investment.png')}
                                     style={styles.icon}
                                 />
                             </View>
                             <Text style={styles.badgeText}>
-                                {startup?.total_investment !== undefined && startup?.total_investment !== null ? formatNumber(startup.total_investment, startup?.currency?.symbol || '') : ''}
+                                {startup?.total_investment !== undefined && startup?.total_investment !== null 
+                                    ? formatNumber(startup.total_investment, startup?.currency?.symbol || '$') 
+                                    : 'N/A'}
                             </Text>
                         </View>
                     </View>
@@ -222,16 +227,17 @@ export const Startup = ({route, navigation}: StartupProps) => {
                     <View style={dynamicStyles.foundersContainer}>
                         {startup?.founders?.map((founder, index) => (
                             <Founder
-                                key = {founder.id}
-                                userId = {founder.id}
-                                name = {founder.full_name}
-                                image = {founder.photo}
-                                founderRole = {founder.roles[0].role_name}
-                                status = {founder.title}
-                                following = {false}
-                                style={ 
+                                key={index}
+                                userId={founder.id}
+                                name={founder.full_name || ''}
+                                image={founder.photo}
+                                founderRole={founder.roles[0].role_name}
+                                status={founder.title}
+                                following={false}
+                                style={
                                     index === (startup?.founders && startup.founders.length - 1)
-                                    ? null : dynamicStyles.founderItem}
+                                    ? null : dynamicStyles.founderItem
+                                }
                                 onPress={() => navigation.navigate('Member', { id: founder.name })}
                             />
                         ))}
@@ -241,39 +247,38 @@ export const Startup = ({route, navigation}: StartupProps) => {
                 {/* Products Section */}
                 <View style={dynamicStyles.section}>
                     <Text variant="titleMedium">Products</Text>
-                    {startup?.products?.map((num: ProductModel) => (
-                        <View style={dynamicStyles.cardContainer}>
-                            <Text key={`${num.id}-name`} variant="titleMedium" style={dynamicStyles.interestText}>
+                    {startup?.products?.map((num: ProductModel, index) => (
+                        <View key={index} style={dynamicStyles.cardContainer}>
+                            <Text variant="titleMedium" style={dynamicStyles.interestText}>
                                 {num.name}
                             </Text>
                             <Text
-                                key={`${num.id}-desc`}
                                 numberOfLines={isExpanded ? 0 : 3}
                                 ellipsizeMode="tail"
                             >
                                 {num.description}
                             </Text>
-                            {num?.description?.length && num.description.length > 100 && ( 
-                                <TouchableOpacity onPress={() => setIsExpanded(!isExpanded)}>
-                                <Text style={{ color: 'blue', marginTop: 5 }}>
-                                    {isExpanded ? 'Show Less' : 'Show More'}
-                                </Text>
-                                </TouchableOpacity>
+                            {num?.description?.length && num.description.length > 100 && (
+                                <TouchableRipple onPress={() => setIsExpanded(!isExpanded)}>
+                                    <Text style={{ color: colors.primary || '#0000FF', marginTop: 5 }}>
+                                        {isExpanded ? 'Show Less' : 'Show More'}
+                                    </Text>
+                                </TouchableRipple>
                             )}
                             <ScrollView
                                 horizontal
                                 showsHorizontalScrollIndicator={false}
                                 style={dynamicStyles.productsScroll}
                             >
-                                {num?.images?.map((image) => (
+                                {num?.images?.map((image, imgIndex) => (
                                     <Image
-                                        key={num.description}
+                                        key={`${num.id}-image-${imgIndex}`}
                                         resizeMode="cover"
-                                        alt={image?.alt_text || ''}
                                         source={
-                                            image?.image_url ? 
-                                            { uri: image?.image_url } 
-                                            : require('../assets/dummy-product-1.jpeg')}
+                                            image?.image_url
+                                            ? { uri: image?.image_url }
+                                            : require('../assets/dummy-product-1.jpeg')
+                                        }
                                         style={dynamicStyles.productImage}
                                     />
                                 ))}
@@ -281,20 +286,24 @@ export const Startup = ({route, navigation}: StartupProps) => {
                         </View>
                     ))}
                 </View>
-                {/* Founders Section */}
+
+                {/* Investors Section */}
                 <View style={dynamicStyles.section}>
                     <Text variant="titleMedium">Investors</Text>
                     <View style={dynamicStyles.foundersContainer}>
                         {startup?.founders?.map((founder, index) => (
                             <Founder
-                                key = {founder.id}
-                                userId = {founder.id}
-                                name = {founder.full_name}
-                                image = {founder.photo}
-                                founderRole = {founder.roles[0].role_name}
-                                status = {founder.title}
-                                following = {false}
-                                style={index === (startup?.founders && startup.founders.length - 1) ? null : dynamicStyles.founderItem}
+                                key={index}
+                                userId={founder.id}
+                                name={founder.full_name || ''}
+                                image={founder.photo}
+                                founderRole={founder.roles[0].role_name}
+                                status={founder.title}
+                                following={false}
+                                style={
+                                    index === (startup?.founders && startup.founders.length - 1)
+                                    ? null : dynamicStyles.founderItem
+                                }
                                 onPress={() => navigation.navigate('Member', { id: founder.name })}
                             />
                         ))}
@@ -333,16 +342,22 @@ export const Startup = ({route, navigation}: StartupProps) => {
                         Your application has been forwarded to the relevant persons, thank you.
                     </Text>
                     <View style={dynamicStyles.modalButtons}>
-                        <TouchableOpacity style={dynamicStyles.modalButton}>
+                        <TouchableRipple 
+                            style={dynamicStyles.modalButton}
+                            onPress={() => {}}
+                        >
                             <Text variant="titleMedium" style={dynamicStyles.modalButtonText}>
                                 Wait for updates
                             </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={dynamicStyles.modalButtonPrimary}>
+                        </TouchableRipple>
+                        <TouchableRipple 
+                            style={dynamicStyles.modalButtonPrimary}
+                            onPress={() => {}}
+                        >
                             <Text variant="titleMedium" style={dynamicStyles.modalButtonPrimaryText}>
                                 Get in touch
                             </Text>
-                        </TouchableOpacity>
+                        </TouchableRipple>
                     </View>
                 </Modal>
             </Portal>
@@ -376,17 +391,13 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
         marginBottom: 10,
     },
     appbarActionRight: {
-        backgroundColor: colors.onPrimary,
+        backgroundColor: colors.onPrimary || '#FFFFFF',
         marginRight: 5,
     },
     titleContainer: {
         alignItems: 'center',
         justifyContent: 'space-between',
         marginLeft: 20,
-    },
-    titleText: {
-        fontWeight: 'bold',
-        paddingLeft: 50,
     },
     interestText: {
         fontWeight: 'bold',
@@ -413,7 +424,7 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
         flex: 1,
     },
     body: {
-         marginVertical: 12,
+        marginVertical: 12,
     },
     dataContainer: {
         flexDirection: 'row',
@@ -424,26 +435,6 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
         backgroundColor: '#fff',
         alignItems: 'flex-start',
         justifyContent: 'flex-start',
-        textAlignVertical: 'center',
-    },
-    dataItem: {
-        width: '50%',
-        paddingVertical: 8,
-        paddingHorizontal: 12,
-    },
-    dataItemBorderRight: {
-        borderRightWidth: 1,
-        borderRightColor: '#e0e0e0',
-    },
-    dataItemBorderBottom: {
-        borderBottomWidth: 1,
-        borderBottomColor: '#e0e0e0',
-    },
-    dataLabel: { color: '#A09FA0' },
-    dataValue: {
-        fontSize: 14,
-        fontWeight: '500',
-        color: '#414042',
     },
     section: {
         paddingHorizontal: 16,
@@ -459,8 +450,8 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
         marginBottom: 2,
     },
     divider: {
-         marginVertical: 8,
-        },
+        marginVertical: 8,
+    },
     pitchDeck: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -520,6 +511,7 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
         flex: 1,
         paddingVertical: 12.5,
         borderRadius: 32,
+        alignItems: 'center',
     },
     modalButtonText: {
         textAlign: 'center',
@@ -529,6 +521,7 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
         paddingHorizontal: 28.5,
         backgroundColor: '#4CB748',
         borderRadius: 32,
+        alignItems: 'center',
     },
     modalButtonPrimaryText: {
         color: '#FFFFFF',
@@ -548,31 +541,27 @@ const styles = StyleSheet.create({
         paddingVertical: 6,
         paddingHorizontal: 6,
         justifyContent: 'center',
-        textAlignVertical: 'center',
-      },
-      badgeIcon: {
-        flexDirection: 'row', // Ensure row layout for icon and text
+    },
+    badgeIcon: {
+        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        textAlignVertical: 'center',
         borderRadius: 20,
         paddingVertical: 6,
         paddingHorizontal: 12,
         height: 40,
         width: 40,
-        backgroundColor: '#E6F3E6',
-      },
-      badgeText: {
+    },
+    badgeText: {
         alignItems: 'center',
         justifyContent: 'center',
-        textAlignVertical: 'center',
-        fontSize:12,
-        paddingLeft:4,
+        fontSize: 12,
+        paddingLeft: 4,
         fontWeight: '500',
-      },
-      icon: {
+    },
+    icon: {
         width: 20,
-        height:20,
-        padding:5,
-      },
+        height: 20,
+        padding: 5,
+    },
 });

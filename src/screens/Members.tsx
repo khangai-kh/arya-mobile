@@ -142,7 +142,9 @@ export const Members = (props: MembersProps) => {
         <IconButton
           icon={require('../assets/flat-icons/filter.png')}
           size={18}
-          onPress={() => {}}
+          onPress={() => {
+            navigate('MemberFilter');
+          }}
         />
       </View>
       <ScrollView

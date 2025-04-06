@@ -56,7 +56,7 @@ export type MainStackParams = {
     };
     SplashScreen: undefined;
     Startup: {
-      id: string;
+      id: number;
     };
     Startups: undefined;
     StartupsFilter: undefined;
