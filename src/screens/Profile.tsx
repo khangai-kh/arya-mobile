@@ -277,13 +277,13 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
               style={dynamicStyles.appbarActionRight}
               onPress={handleLogout}
             />
-            {/* <Appbar.Action
+            <Appbar.Action
               icon={require('../assets/flat-icons/badge.png')}
               color="#414042"
               size={20}
               style={dynamicStyles.appbarActionRight}
               onPress={() => navigation.navigate('PaymentLocation')}
-            /> */}
+            />
           </>
         )}
       </Appbar.Header>

@@ -70,4 +70,15 @@ export type MainStackParams = {
     Workshops: undefined;
     PaymentLocation: undefined;
     StripePayment: undefined;
+    MokaPayment: undefined;
+    ThreeDSecureScreen: {
+      redirectUrl: string;
+    };
+    PaymentResultScreen: {
+      isSuccessful: string | null;
+      resultCode: string | null;
+      resultMessage: string | null;
+      trxCode: string | null;
+    };
+
   };
