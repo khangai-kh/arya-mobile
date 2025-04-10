@@ -34,7 +34,7 @@ import PaymentForm from '../../../components/forms/PaymentForm';
 import StripePayment from '../../../screens/StripePayment';
 import MokaPayment from '../../../screens/MokaPayment';
 import ThreeDSecureScreen from '../../../screens/ThreeDSecureScreen';
-import PaymentResultScreen from '../../../screens/PaymentResultScreen';
+
 
 const Stack = createNativeStackNavigator<MainStackParams>();
 
@@ -145,7 +145,6 @@ export const MainStack = () => {
         
         <Stack.Screen name="MokaPayment" component={MokaPayment} />
         <Stack.Screen name="ThreeDSecureScreen" component={ThreeDSecureScreen} />
-        <Stack.Screen name="PaymentResultScreen" component={PaymentResultScreen} />
       </Stack.Group>
     </Stack.Navigator>
   );

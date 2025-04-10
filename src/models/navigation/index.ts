@@ -74,11 +74,5 @@ export type MainStackParams = {
     ThreeDSecureScreen: {
       redirectUrl: string;
     };
-    PaymentResultScreen: {
-      isSuccessful: string | null;
-      resultCode: string | null;
-      resultMessage: string | null;
-      trxCode: string | null;
-    };
 
   };
