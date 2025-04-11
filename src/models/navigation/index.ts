@@ -76,7 +76,9 @@ export type MainStackParams = {
     Workshops: undefined;
     PaymentLocation: undefined;
     StripePayment: undefined;
-    MokaPayment: undefined;
+    MokaPayment: {
+      pricingPlanId: string;
+    };
     ThreeDSecureScreen: {
       redirectUrl: string;
     };

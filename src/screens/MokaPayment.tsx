@@ -1,31 +1,84 @@
-import React, { useState } from 'react';
-import { View, Button, TextInput, Alert, Image, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, TextInput, Alert, StyleSheet, Text, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
 import axios from 'axios';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { RouteProp } from '@react-navigation/native';
 
 type RootStackParamList = {
-  MokaPayment: undefined;
-  ThreeDSecureScreen: { redirectUrl: string };
-  PaymentResultScreen: { isSuccessful: string | null; resultCode: string | null; resultMessage: string | null; trxCode: string | null };
+  MokaPayment: { 
+    pricingPlanId: number;
+    eventId?: number;
+  };
+  ThreeDSecureScreen: { redirectUrl: string; orderId: number };
+  PaymentResultScreen: { 
+    isSuccessful: boolean;
+    resultCode: string;
+    resultMessage: string;
+    trxCode: string;
+  };
 };
 
 type MokaPaymentScreenNavigationProp = StackNavigationProp<RootStackParamList, 'MokaPayment'>;
+type MokaPaymentScreenRouteProp = RouteProp<RootStackParamList, 'MokaPayment'>;
 
 type Props = {
   navigation: MokaPaymentScreenNavigationProp;
+  route: MokaPaymentScreenRouteProp;
 };
 
-const MokaPayment: React.FC<Props> = ({ navigation }) => {
+const MokaPayment: React.FC<Props> = ({ navigation, route }) => {
+  const { pricingPlanId, eventId } = route.params;
   const [cardHolderFullName, setCardHolderFullName] = useState('');
   const [cardNumber, setCardNumber] = useState('');
   const [expMonth, setExpMonth] = useState('');
   const [expYear, setExpYear] = useState('');
   const [cvcNumber, setCvcNumber] = useState('');
-  const [amount, setAmount] = useState('1');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentDetails, setPaymentDetails] = useState<{
+    amount: number;
+    currency: string;
+    description: string;
+  } | null | undefined>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPaymentDetails = async () => {
+      try {
+        let details;
+        
+        if (pricingPlanId) {
+          const response = await axios.get(`https://dev.aryawomen.com/api/pricing_plan/${pricingPlanId}`);
+          details = {
+            amount: response.data.price,
+            currency: response.data.currency,
+            description: response.data.description
+          };
+        } else if (eventId) {
+          const response = await axios.get(`https://dev.aryawomen.com/api/events/${eventId}`);
+          if (!response.data.is_paid) {
+            throw new Error('This event is free');
+          }
+          details = {
+            amount: response.data.price,
+            currency: 'TL',
+            description: response.data.event_sub_title || 'Etkinlik Katılımı'
+          };
+        }
+        
+        setPaymentDetails(details);
+      } catch (error) {
+        Alert.alert('Hata', 'Ödeme bilgileri alınamadı');
+        navigation.goBack();
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPaymentDetails();
+  }, [pricingPlanId, eventId]);
 
   const handlePayment = async () => {
-    if (!validateForm()) return;
+    if (!validateForm() || !paymentDetails) return;
     setIsProcessing(true);
 
     try {
@@ -35,37 +88,46 @@ const MokaPayment: React.FC<Props> = ({ navigation }) => {
         ExpMonth: expMonth,
         ExpYear: `20${expYear}`,
         CvcNumber: cvcNumber,
-        Amount: parseFloat(amount),
         Currency: 'TL',
         InstallmentNumber: 1,
-        VirtualPosOrderId: 'test-order-001',
+        VirtualPosOrderId: `order-${Date.now()}`,
         VoidRefundReason: 0,
-        ClientIP: '127.0.0.1',
-        RedirectUrl: 'https://dev.aryawomen.com/moka-pos/payment-result',
+        ClientIP: '192.168.1.1',
+        RedirectUrl: 'https://dev.aryawomen.com/api/mokapos/payment-result',
         UtilityCompanyBillId: 0,
         DealerStaffId: 0,
+        pricing_plan_id: pricingPlanId || undefined,
+        event_id: eventId || undefined
       });
 
-      const redirectUrl = response.data.redirectUrl;
-      navigation.navigate('ThreeDSecureScreen', { redirectUrl });
+      if (response.data.redirectUrl && response.data.order_id) {
+        navigation.navigate('ThreeDSecureScreen', { 
+          redirectUrl: response.data.redirectUrl,
+          orderId: response.data.order_id
+        });
+      } else {
+        throw new Error('Invalid response from payment gateway');
+      }
 
     } catch (error: any) {
       console.error("Payment error", error.response?.data || error.message);
-      Alert.alert('Ödeme Hatası', 'Ödeme başlatılırken bir hata oluştu. Lütfen bilgilerinizi kontrol edip tekrar deneyin.');
+      Alert.alert(
+        'Ödeme Hatası', 
+        error.response?.data?.message || 'Ödeme başlatılırken bir hata oluştu. Lütfen bilgilerinizi kontrol edip tekrar deneyin.'
+      );
     } finally {
       setIsProcessing(false);
     }
   };
 
   const validateForm = () => {
-    if (!cardHolderFullName || !cardNumber || !expMonth || !expYear || !cvcNumber || !amount) {
+    if (!cardHolderFullName || !cardNumber || !expMonth || !expYear || !cvcNumber) {
       Alert.alert('Hata', 'Lütfen tüm alanları doldurun.');
       return false;
     }
 
     const cardNumberCleaned = cardNumber.replace(/\s/g, '');
-    const cardNumberPattern = /^[0-9]{16}$/;
-    if (!cardNumberPattern.test(cardNumberCleaned)) {
+    if (!/^[0-9]{16}$/.test(cardNumberCleaned)) {
       Alert.alert('Hata', 'Geçerli bir 16 haneli kart numarası girin.');
       return false;
     }
@@ -75,18 +137,13 @@ const MokaPayment: React.FC<Props> = ({ navigation }) => {
       return false;
     }
 
-    if (expYear.length !== 2 && expYear.length !== 4) {
-      Alert.alert('Hata', 'Son kullanma yılı 2 veya 4 haneli olmalıdır.');
+    if (expYear.length !== 2) {
+      Alert.alert('Hata', 'Son kullanma yılı 2 haneli olmalıdır (ör: 25).');
       return false;
     }
 
-    if (cvcNumber.length !== 3 || !/^\d{3}$/.test(cvcNumber)) {
+    if (!/^\d{3}$/.test(cvcNumber)) {
       Alert.alert('Hata', 'CVC numarası 3 haneli olmalıdır.');
-      return false;
-    }
-
-    if (isNaN(parseFloat(amount.replace(',', '.')))) {
-      Alert.alert('Hata', 'Geçerli bir tutar girin.');
       return false;
     }
 
@@ -99,21 +156,29 @@ const MokaPayment: React.FC<Props> = ({ navigation }) => {
     return formatted.substring(0, 19);
   };
 
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#667eea" />
+      </View>
+    );
+  }
+
+  if (!paymentDetails) {
+    return (
+      <View style={styles.container}>
+        <Text>Ödeme bilgileri yüklenemedi</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        <View style={styles.cardHeader}>
-          <Text style={styles.cardHeaderText}>Ödeme Bilgileri</Text>
-          <View style={styles.cardLogos}>
-          <Image 
-            source={{ uri: '../assets/flat-icons/master.png' }} 
-            style={styles.cardLogo} 
-            resizeMode="contain" />
-          <Image 
-            source={{ uri: '../assets/flat-icons/visa.png' }} 
-            style={styles.cardLogo} 
-            resizeMode="contain" />
-          </View>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>ÖDEME İŞLEMİ</Text>
+          <Text style={styles.descriptionText}>{paymentDetails.description}</Text>
+          <Text style={styles.amountText}>{paymentDetails.amount} {paymentDetails.currency}</Text>
         </View>
 
         <View style={styles.formGroup}>
@@ -181,28 +246,13 @@ const MokaPayment: React.FC<Props> = ({ navigation }) => {
           </View>
         </View>
 
-        <View style={styles.formGroup}>
-          <Text style={styles.label}>Ödeme Tutarı</Text>
-          <View style={styles.amountContainer}>
-            <TextInput
-              placeholder="0.00"
-              value={amount}
-              onChangeText={setAmount}
-              keyboardType="numeric"
-              style={[styles.input, styles.amountInput]}
-              placeholderTextColor="#999"
-            />
-            <Text style={styles.currency}>TL</Text>
-          </View>
-        </View>
-
         <TouchableOpacity 
           style={[styles.payButton, isProcessing && styles.payButtonDisabled]} 
           onPress={handlePayment}
           disabled={isProcessing}
         >
           <Text style={styles.payButtonText}>
-            {isProcessing ? 'İşleniyor...' : 'Ödemeyi Tamamla'}
+            {isProcessing ? 'İşleniyor...' : 'ÖDEME YAP'}
           </Text>
         </TouchableOpacity>
 
@@ -222,6 +272,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#f5f7fa',
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   card: {
     backgroundColor: '#fff',
     borderRadius: 16,
@@ -232,27 +287,26 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 5,
   },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  header: {
     alignItems: 'center',
-    marginBottom: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-    paddingBottom: 15,
+    marginBottom: 25,
   },
-  cardHeaderText: {
+  headerText: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: 'bold',
     color: '#333',
   },
-  cardLogos: {
-    flexDirection: 'row',
+  descriptionText: {
+    fontSize: 16,
+    color: '#555',
+    marginTop: 10,
+    textAlign: 'center',
   },
-  cardLogo: {
-    width: 40,
-    height: 25,
-    marginLeft: 10,
+  amountText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#667eea',
+    marginTop: 10,
   },
   formGroup: {
     marginBottom: 20,
@@ -287,19 +341,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginHorizontal: 5,
     color: '#666',
-  },
-  amountContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  amountInput: {
-    flex: 1,
-  },
-  currency: {
-    marginLeft: 10,
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
   },
   payButton: {
     borderRadius: 10,

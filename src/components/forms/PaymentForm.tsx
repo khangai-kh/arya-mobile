@@ -11,12 +11,22 @@ export const PaymentForm = ({ navigation }: Props) => {
   const handleLocationVerified = (isInTurkey: boolean) => {
     if (isInTurkey) {
       Alert.alert("Test Sonucu", "Yurtiçi konum algılandı 🌍", [
-        { text: "Ödeme Yap", onPress: () => navigation.navigate("MokaPayment") },
+        { 
+          text: "Ödeme Yap", 
+          onPress: () => navigation.navigate("MokaPayment", { 
+            pricingPlanId: "1" // Yurtiçi Premium parametresi
+          }) 
+        },
         { text: "İptal", style: "cancel" }
       ]);
     } else {
-      Alert.alert("Test Sonucu", "Yurtdışı konum algılandı 🌍", [
-        { text: "Ödeme Yap", onPress: () => navigation.navigate("StripePayment") }, // Stripe Ödeme Sayfasına Git
+      Alert.alert("Test Sonucu", "Yurtiçi konum algılandı 🌍", [
+        { 
+          text: "Ödeme Yap", 
+          onPress: () => navigation.navigate("MokaPayment", { 
+            pricingPlanId: "1" // Yurtiçi Premium parametresi
+          }) 
+        },
         { text: "İptal", style: "cancel" }
       ]);
     }
