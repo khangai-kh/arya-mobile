@@ -9,7 +9,12 @@ export type MainStackParams = {
     BetterFutureCirclesDays: undefined;
     BKYLicense: undefined;
     BKYSuccess: undefined;
-    BottomTab: undefined;
+    BottomTab: {
+      index: number;
+      filterModel: any;
+      hideTabBar?: boolean;
+    };
+
     CalendarlyScreen: undefined;
     ChangePassword: undefined;
     CheckIn: undefined;
@@ -33,8 +38,9 @@ export type MainStackParams = {
       id: number;
     };
     Members: {
-      refresh: boolean;
-    };
+      filterModel?: Record<string, any>;
+      refresh?: boolean
+    } | undefined;
     MemberFilter: undefined;
     MemberShip: {
       agreed_agreement: boolean;

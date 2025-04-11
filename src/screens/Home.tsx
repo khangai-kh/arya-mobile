@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { Image, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
+import { TabBar, TabView } from 'react-native-tab-view';
 import { MainStackParams } from '../models/navigation';
 import { BottomTabStackParams } from '../navigation/user/tabs/BottomTab';
 import { Contents } from './Contents';
@@ -19,19 +19,17 @@ type HomeProps = CompositeScreenProps<
   StackScreenProps<MainStackParams>
 >;
 
-const renderScene = SceneMap({
-  contents: Contents,
-  members: Members,
-  investments: Investments,
-  entrepreneurship: Entrepreneurship,
-});
-
 export const Home = (props: HomeProps) => {
-  const { navigation } = props;
+  const { navigation, route } = props;
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
 
-  const [index, setIndex] = useState(0);
+  // Safely extract route params with defaults if not provided.
+  const params: { filterModel?: Record<string, any>; index?: number } = route.params ?? {};
+  const filterModel = params.filterModel ?? {};
+  const initialTabIndex = params.index ?? 0;
+
+  const [index, setIndex] = useState(initialTabIndex);
   const [routes] = useState([
     { key: 'contents', title: 'Contents' },
     { key: 'members', title: 'Members' },
@@ -47,6 +45,27 @@ export const Home = (props: HomeProps) => {
   const navigateToSearch = () => navigation.navigate('Search');
   const navigateToNotifications = () => navigation.navigate('Notifications');
   const navigateToAboutUs = () => navigation.navigate('AboutUs');
+
+  // Custom renderScene: pass filterModel to Members
+  const renderScene = ({ route }: { route: { key: string } }) => {
+    switch (route.key) {
+      case 'contents':
+        return <Contents />;
+      case 'members':
+        return (
+          <Members
+            filterModel={filterModel}
+            refresh={false}
+          />
+        );
+      case 'investments':
+        return <Investments />;
+      case 'entrepreneurship':
+        return <Entrepreneurship />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
@@ -94,7 +113,7 @@ export const Home = (props: HomeProps) => {
           onIndexChange={setIndex}
           initialLayout={{ width }}
           navigationState={{ index, routes }}
-          renderTabBar={tabProps => (
+          renderTabBar={(tabProps) => (
             <TabBar
               {...tabProps}
               inactiveColor={colors.onSurface}
@@ -138,7 +157,7 @@ const styles = StyleSheet.create({
     width: 'auto',
   },
   indicatorStyle: {
-    backgroundColor: 'transparent', 
+    backgroundColor: 'transparent',
   },
   tabBar: {
     backgroundColor: 'transparent',

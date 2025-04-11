@@ -15,9 +15,9 @@ declare global {
   }
 }
 
-// Renamed type: change "BottomTab" key to "CenterTab"
+// Update Home screen to accept filterModel and index as parameters
 export type BottomTabStackParams = {
-  Home: undefined;
+  Home?: { filterModel?: any; index?: number };
   Events: undefined;
   CenterTab: undefined;
   Messenger: undefined;
@@ -56,9 +56,16 @@ const CustomTabButton = () => (
 // DummyScreen defined outside to avoid inline component functions
 const DummyScreen = () => null;
 
-export const BottomTab = () => {
+export const BottomTab = (props: any) => {
   const { colors } = useTheme();
   const { hideTabBar } = useNavigationContext();
+
+  // Extract route params (if any) passed into BottomTab
+  const { route } = props;
+  const { filterModel, index: tabIndex } = route?.params || {};
+
+  // console.log('BottomTab filterModel', filterModel);
+  // console.log('BottomTab index', tabIndex);
 
   const renderHomeIcon = ({ focused }: { focused: boolean }) => <HomeIcon focused={focused} />;
   const renderEventsIcon = ({ focused }: { focused: boolean }) => <EventsIcon focused={focused} />;
@@ -76,7 +83,12 @@ export const BottomTab = () => {
         tabBarShowLabel: false,
       }}
     >
-      <BottomTabStack.Screen name="Home" component={Home} options={{ tabBarIcon: renderHomeIcon }} />
+      <BottomTabStack.Screen
+        name="Home"
+        component={Home}
+        options={{ tabBarIcon: renderHomeIcon }}
+        initialParams={{ filterModel: filterModel, index: tabIndex }}
+      />
       <BottomTabStack.Screen name="Events" component={Events} options={{ tabBarIcon: renderEventsIcon }} />
       <BottomTabStack.Screen name="CenterTab" component={DummyScreen} options={{ tabBarButton: CustomTabButton }} />
       <BottomTabStack.Screen name="Messenger" component={Messenger} options={{ tabBarIcon: renderMessengerIcon }} />
@@ -141,3 +153,5 @@ const styles = StyleSheet.create({
     height: 50,
   },
 });
+
+export default BottomTab;
