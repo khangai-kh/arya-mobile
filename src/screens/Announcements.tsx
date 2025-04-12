@@ -159,7 +159,7 @@ export const Announcements = () => {
               <Announcement
                 key={index}
                 title={content.title || ''}
-                image={content.image_url}
+                image={content.images?.[0]?.image_url || ''}
                 body={content.description || ''}
                 location={content.location || 'Istanbul, Turkey'}
                 date={content.created_at || ''}

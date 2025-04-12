@@ -12,7 +12,7 @@ import { ProductModel } from './product.model';
 export interface StartupModel extends BaseEntityModel {
     id: number;
     name?: string | null;
-    startup_logo?: string | null;
+    logo?: string | null;
     description?: string | null;
     funding_round_type?: FundingRoundType | null;
     startup_type?: StartupType | null;
@@ -26,6 +26,9 @@ export interface StartupModel extends BaseEntityModel {
     currency?: CurrencyModel | null;
     founder_title?: string | null;
     joined_at?: string | null;
+    valuation?: number | null;
+    target_amount?: number | null;
+    amount_collected?: number | null;
 
     [key: string]: any;
 }

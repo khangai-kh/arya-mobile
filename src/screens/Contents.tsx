@@ -97,7 +97,7 @@ export const Contents = () => {
                 <Inspiration
                     key={index}
                     title={inspiration.title || ''}
-                    image={inspiration.image_url}
+                    image={inspiration.images?.[0]?.image_url || ''}
                     profileImage={inspiration.created_user?.photo}
                     name = {inspiration.created_user?.full_name || ''}
                     date={inspiration.date}

@@ -106,7 +106,7 @@ type MembershipFormProps = MemberShipProps & MemberFormProps;
 export const MembershipForm = ({ navigation, route, initialValues, onSubmit }: MembershipFormProps) => {
   const agreed_agreement = route.params?.agreed_agreement as boolean;
   const agreed_confidentiality = route.params?.agreed_confidentiality as boolean;
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(3);
   const [isLoading, setIsLoading] = useState(false);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [formData, setFormData] = useState<UserModel>(initialValues);
@@ -119,8 +119,6 @@ export const MembershipForm = ({ navigation, route, initialValues, onSubmit }: M
       setStep(step - 1);
     }
   };
-
-  console.log('Initial Values:', initialValues);
 
   const handleStepSubmit = async (values: any, actions: any, nextStep?: number) => {
     try {

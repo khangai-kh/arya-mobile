@@ -3,14 +3,16 @@ import { View, TextInput, Alert, StyleSheet, Text, TouchableOpacity, ActivityInd
 import axios from 'axios';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/configureStore';
 
 type RootStackParamList = {
-  MokaPayment: { 
+  MokaPayment: {
     pricingPlanId: number;
     eventId?: number;
   };
   ThreeDSecureScreen: { redirectUrl: string; orderId: number };
-  PaymentResultScreen: { 
+  PaymentResultScreen: {
     isSuccessful: boolean;
     resultCode: string;
     resultMessage: string;
@@ -27,13 +29,14 @@ type Props = {
 };
 
 const MokaPayment: React.FC<Props> = ({ navigation, route }) => {
-  const { pricingPlanId, eventId } = route.params;
+  const { pricingPlanId, eventId } = route.params || { pricingPlanId: undefined, eventId: undefined };
   const [cardHolderFullName, setCardHolderFullName] = useState('');
   const [cardNumber, setCardNumber] = useState('');
   const [expMonth, setExpMonth] = useState('');
   const [expYear, setExpYear] = useState('');
   const [cvcNumber, setCvcNumber] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const { token } = useSelector((state: RootState) => state.auth);
   const [paymentDetails, setPaymentDetails] = useState<{
     amount: number;
     currency: string;
@@ -45,13 +48,13 @@ const MokaPayment: React.FC<Props> = ({ navigation, route }) => {
     const fetchPaymentDetails = async () => {
       try {
         let details;
-        
+
         if (pricingPlanId) {
           const response = await axios.get(`https://dev.aryawomen.com/api/pricing_plan/${pricingPlanId}`);
           details = {
             amount: response.data.price,
             currency: response.data.currency,
-            description: response.data.description
+            description: response.data.description,
           };
         } else if (eventId) {
           const response = await axios.get(`https://dev.aryawomen.com/api/events/${eventId}`);
@@ -61,10 +64,10 @@ const MokaPayment: React.FC<Props> = ({ navigation, route }) => {
           details = {
             amount: response.data.price,
             currency: 'TL',
-            description: response.data.event_sub_title || 'Etkinlik Katılımı'
+            description: response.data.event_sub_title || 'Etkinlik Katılımı',
           };
         }
-        
+
         setPaymentDetails(details);
       } catch (error) {
         Alert.alert('Hata', 'Ödeme bilgileri alınamadı');
@@ -75,44 +78,53 @@ const MokaPayment: React.FC<Props> = ({ navigation, route }) => {
     };
 
     fetchPaymentDetails();
-  }, [pricingPlanId, eventId]);
+  }, [pricingPlanId, eventId, navigation]);
 
   const handlePayment = async () => {
-    if (!validateForm() || !paymentDetails) return;
+    if (!validateForm() || !paymentDetails) {
+      return;
+    }
     setIsProcessing(true);
 
     try {
-      const response = await axios.post('https://dev.aryawomen.com/api/mokapos/payment/3d', {
-        CardHolderFullName: cardHolderFullName,
-        CardNumber: cardNumber,
-        ExpMonth: expMonth,
-        ExpYear: `20${expYear}`,
-        CvcNumber: cvcNumber,
-        Currency: 'TL',
-        InstallmentNumber: 1,
-        VirtualPosOrderId: `order-${Date.now()}`,
-        VoidRefundReason: 0,
-        ClientIP: '192.168.1.1',
-        RedirectUrl: 'https://dev.aryawomen.com/api/moka-pos/payment-result',
-        UtilityCompanyBillId: 0,
-        DealerStaffId: 0,
-        pricing_plan_id: pricingPlanId || undefined,
-        event_id: eventId || undefined
-      });
+      const response = await axios.post(
+        'https://dev.aryawomen.com/api/mokapos/payment/3d',
+        {
+          CardHolderFullName: cardHolderFullName,
+          CardNumber: cardNumber,
+          ExpMonth: expMonth,
+          ExpYear: `20${expYear}`,
+          CvcNumber: cvcNumber,
+          Currency: 'TL',
+          InstallmentNumber: 1,
+          VirtualPosOrderId: `order-${Date.now()}`,
+          VoidRefundReason: 0,
+          ClientIP: '192.168.1.1',
+          RedirectUrl: 'https://dev.aryawomen.com/api/moka-pos/payment-result',
+          UtilityCompanyBillId: 0,
+          DealerStaffId: 0,
+          pricing_plan_id: pricingPlanId || undefined,
+          event_id: eventId || undefined,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (response.data.redirectUrl && response.data.order_id) {
-        navigation.navigate('ThreeDSecureScreen', { 
+        navigation.navigate('ThreeDSecureScreen', {
           redirectUrl: response.data.redirectUrl,
-          orderId: response.data.order_id
+          orderId: response.data.order_id,
         });
       } else {
         throw new Error('Invalid response from payment gateway');
       }
-
     } catch (error: any) {
-      console.error("Payment error", error.response?.data || error.message);
+      console.error('Payment error', error.response?.data || error.message);
       Alert.alert(
-        'Ödeme Hatası', 
+        'Ödeme Hatası',
         error.response?.data?.message || 'Ödeme başlatılırken bir hata oluştu. Lütfen bilgilerinizi kontrol edip tekrar deneyin.'
       );
     } finally {
@@ -132,7 +144,7 @@ const MokaPayment: React.FC<Props> = ({ navigation, route }) => {
       return false;
     }
 
-    if (expMonth.length !== 2 || parseInt(expMonth) < 1 || parseInt(expMonth) > 12) {
+    if (expMonth.length !== 2 || parseInt(expMonth, 10) < 1 || parseInt(expMonth, 10) > 12) {
       Alert.alert('Hata', 'Son kullanma ayı 01 ile 12 arasında olmalıdır.');
       return false;
     }
@@ -178,7 +190,9 @@ const MokaPayment: React.FC<Props> = ({ navigation, route }) => {
         <View style={styles.header}>
           <Text style={styles.headerText}>ÖDEME İŞLEMİ</Text>
           <Text style={styles.descriptionText}>{paymentDetails.description}</Text>
-          <Text style={styles.amountText}>{paymentDetails.amount} {paymentDetails.currency}</Text>
+          <Text style={styles.amountText}>
+            {paymentDetails.amount} {paymentDetails.currency}
+          </Text>
         </View>
 
         <View style={styles.formGroup}>
@@ -246,8 +260,8 @@ const MokaPayment: React.FC<Props> = ({ navigation, route }) => {
           </View>
         </View>
 
-        <TouchableOpacity 
-          style={[styles.payButton, isProcessing && styles.payButtonDisabled]} 
+        <TouchableOpacity
+          style={[styles.payButton, isProcessing && styles.payButtonDisabled]}
           onPress={handlePayment}
           disabled={isProcessing}
         >

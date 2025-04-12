@@ -32,7 +32,8 @@ export const MemberShip = ({ navigation, route }: MemberShipProps) => {
   );
 
   const handleSubmit = (values: UserModel) => {
-    navigation.navigate('PremiumSuccess');
+    navigation.navigate('PaymentLocation')
+    //navigation.navigate('PremiumSuccess');
   };
 
   // Show loading state while fetching

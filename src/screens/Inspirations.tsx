@@ -119,7 +119,7 @@ export const Inspirations = (props: InspirationsProps) => {
                         <Inspiration
                             key={inspiration.id}
                             title={inspiration.title ?? 'Untitled'}
-                            image={inspiration.image_url ?? ''}
+                            image={inspiration.images?.[0]?.image_url ?? ''}
                             profileImage={inspiration.created_user?.photo}
                             name={inspiration.created_user?.full_name ?? 'Unknown'}
                             date={inspiration.created_at ?? ''}
