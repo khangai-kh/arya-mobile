@@ -93,7 +93,7 @@ const MokaPayment: React.FC<Props> = ({ navigation, route }) => {
         VirtualPosOrderId: `order-${Date.now()}`,
         VoidRefundReason: 0,
         ClientIP: '192.168.1.1',
-        RedirectUrl: 'https://dev.aryawomen.com/api/mokapos/payment-result',
+        RedirectUrl: 'https://dev.aryawomen.com/api/moka-pos/payment-result',
         UtilityCompanyBillId: 0,
         DealerStaffId: 0,
         pricing_plan_id: pricingPlanId || undefined,

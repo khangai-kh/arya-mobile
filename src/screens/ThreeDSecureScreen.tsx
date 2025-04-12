@@ -63,7 +63,7 @@ const ThreeDSecureScreen: React.FC<ThreeDSecureScreenProps> = ({ route, navigati
     const { url } = navState;
     console.log('Current URL:', url);
 
-    if (url.includes('/moka-pos/payment-result')) {
+    if (url.includes('/moka-pos/payment-result-screen')) {
       webViewRef.current?.injectJavaScript(`
         try {
           const response = {
