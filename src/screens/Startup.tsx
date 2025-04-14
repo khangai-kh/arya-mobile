@@ -110,7 +110,6 @@ export const Startup = ({route, navigation}: StartupProps) => {
     
             const remainingWords = words.slice(firstLine.length);
             const secondLine = remainingWords.length > 0 ? `${remainingWords.join(' ')} ${afterParen}` : afterParen;
-    
             return firstLine.length > 0 ? `${firstLine.join(' ')}\n${secondLine.trim()}` : text;
         }
     };
@@ -269,16 +268,19 @@ export const Startup = ({route, navigation}: StartupProps) => {
                         <View>
                             <Text variant="titleSmall" style={dynamicStyles.sectionTitle}>Pitch deck</Text>
                             <View style={dynamicStyles.pitchDeck}>
-                                <Image
-                                    source={require('../assets/flat-icons/download.png')}
-                                    style={dynamicStyles.downloadIcon}
-                                />
-                               <Text
-                                    onPress={() => handlePitchDeckPress(startup?.pitch_decks?.[0]?.file_url ?? undefined)}
-                                    style={styles.pitchDeckText}
-                                >
-                                    {startup?.pitch_decks?.[0]?.file_name || 'Not available'}
-                                </Text>
+                                {startup?.pitch_decks?.[0]?.file_name && (
+                                    <>
+                                        <Image
+                                            source={require('../assets/flat-icons/download.png')}
+                                            style={dynamicStyles.downloadIcon} />
+                                        <Text
+                                            onPress={() => handlePitchDeckPress(startup?.pitch_decks?.[0]?.file_url ?? undefined)}
+                                            style={styles.pitchDeckText}
+                                        >
+                                            {startup?.pitch_decks?.[0]?.file_name || 'Not available'}
+                                        </Text>
+                                    </>
+                                )}
                             </View>
                         </View>
                     </View>

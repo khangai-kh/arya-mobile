@@ -54,10 +54,10 @@ export const Investments = () => {
           onPress={() => {
             switch (item.type) {
               case 'startups':
-                navigate({ name: 'Startups', params: { refresh: false } });
+                navigate({ name: 'Startups', params: { type: 1 } });
                 break;
               case 'closedDeals':
-                navigate('ClosedDeals');
+                navigate({ name: 'Startups', params: { type: 2 } });
                 break;
               case 'betterFutureCirclesDays':
                 navigate('BetterFutureCirclesDays');

@@ -16,8 +16,9 @@ import { StackScreenProps } from '@react-navigation/stack';
 
 type StartupsProps = StackScreenProps<MainStackParams, 'Startups'>;
 
-export const Startups = ({ navigation }: StartupsProps) => {
+export const Startups = ({ navigation, route }: StartupsProps) => {
     const { colors } = useTheme();
+    const type = route.params?.type;
     const dynamicStyles = createDynamicStyles(colors);
     const [page, setPage] = useState(DEFAULT_PAGE);
     const { token } = useSelector((state: RootState) => state.auth);
@@ -26,6 +27,8 @@ export const Startups = ({ navigation }: StartupsProps) => {
     const [hasMore, setHasMore] = useState(true);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
     const [loadingFollowId, setLoadingFollowId] = useState<number | null>(null);
+
+    console.log('Startups screen loaded with type:', type);
 
     const fetchStartupsData = useCallback(
         async (pageNum: number) => {
@@ -38,7 +41,7 @@ export const Startups = ({ navigation }: StartupsProps) => {
                     params: {
                         page: pageNum,
                         page_size: PAGE_SIZE,
-                        is_active_funding: true,
+                        startup_investment_status_ids: type,
                     },
                     headers: { Authorization: `Bearer ${token.trim()}` },
                 });

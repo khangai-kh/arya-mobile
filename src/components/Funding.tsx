@@ -100,7 +100,7 @@ export const Funding = (props: FundingProps) => {
           }
           size={18}
           iconColor={following ? '#fff' : '#B61D8D'}
-          style={{ backgroundColor: following ? colors.primary : colors.onPrimary }}
+          style={{ backgroundColor: following ? colors.primary : colors.onPrimary, marginTop: 20 }}
           onPress={onFollowPress}
           disabled={isLoading}
         />
@@ -112,7 +112,7 @@ export const Funding = (props: FundingProps) => {
       <View style={styles.header}>
         <View style={styles.innerHeader}>
           <Avatar.Image
-            size={54}
+            size={55}
             source={image ? { uri: image } : require('../assets/Image-54.png')}
             style={styles.avatar}
           />
