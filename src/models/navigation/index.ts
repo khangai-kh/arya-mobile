@@ -64,10 +64,7 @@ export type MainStackParams = {
     Startup: {
       id: number;
     };
-    Startups: {
-      //filterModel?: Record<string, any>;
-      refresh?: boolean
-    } | undefined;
+    Startups: undefined;
     StartupsFilter: undefined;
     PremiumSuccess: undefined;
     Training: {

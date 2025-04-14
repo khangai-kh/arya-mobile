@@ -1,10 +1,9 @@
 import React from 'react';
-import { useNavigation } from '@react-navigation/native';
-import { StyleSheet, TouchableOpacity, TouchableOpacityProps, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, TouchableOpacity, TouchableOpacityProps, View } from 'react-native';
 import { Avatar, Chip, IconButton, Text, useTheme } from 'react-native-paper';
 import { MD3Colors } from 'react-native-paper/lib/typescript/types';
 import { Box } from './common/Box';
-import { InvestmentStage, StartupType } from '../models/general/models';
+import { CurrencyModel, InvestmentStage, StartupType } from '../models/general/models';
 
 type FundingProps = Omit<TouchableOpacityProps, 'activeOpacity'> & {
   startup_id: number;
@@ -14,15 +13,18 @@ type FundingProps = Omit<TouchableOpacityProps, 'activeOpacity'> & {
   type?: StartupType;
   following?: boolean;
   status?: InvestmentStage;
-  investmentStatus?: string;
-  valuation?: string;
-  targetAmount?: string;
-  amountCollected?: string;
-  totalInvestment?: string;
+  investmentStatus?: InvestmentStage;
+  currency?: CurrencyModel;
+  fundingRound?: string;
+  valuation?: number;
+  targetAmount?: number;
+  amountCollected?: number;
+  totalInvestment?: number;
+  isLoading?: boolean;
+  onFollowPress?: () => void;
 };
 
 export const Funding = (props: FundingProps) => {
-  const { navigate } = useNavigation();
   const { colors } = useTheme();
   const styles = getStyles(colors);
   const {
@@ -31,21 +33,26 @@ export const Funding = (props: FundingProps) => {
     image,
     bio,
     amountCollected,
+    fundingRound,
     following,
     investmentStatus,
     status,
     targetAmount,
     totalInvestment,
+    valuation,
     type,
+    currency,
+    isLoading = false,
+    onFollowPress,
     ...otherProps
   } = props;
 
   const checkColor = (value: string) => {
-    if (value === 'Funding round') {
-      return '#00AEEF';
+    if (value === 'Funding Round') {
+      return '#00A3E0';
     } else if (value === 'Academy') {
       return '#F99F1C';
-    } else if (value === 'Closed deals') {
+    } else if (value === 'Closed') {
       return '#A09FA0';
     } else if (value === 'Graduate') {
       return '#4CB748';
@@ -54,13 +61,59 @@ export const Funding = (props: FundingProps) => {
     }
   };
 
+  const formatNumber = (value: number, currencySymbol: string): string => {
+    const sign = value < 0 ? '-' : '';
+    const absValue = Math.abs(value);
+    let formattedValue: string;
+
+    if (absValue >= 1000000) {
+      formattedValue = (absValue / 1_000_000).toFixed(1).replace(/\.0$/, '') + ' M';
+    } else if (absValue >= 1000) {
+      formattedValue = (absValue / 1_000).toFixed(1).replace(/\.0$/, '') + ' K';
+    } else {
+      formattedValue = absValue.toString();
+    }
+
+    return `${sign}${currencySymbol} ${formattedValue}`;
+  };
+
+  // eslint-disable-next-line react/no-unstable-nested-components
+  const FollowButton = () => {
+      if (isLoading) {
+        return (
+          <TouchableOpacity
+            style={styles.followButtonLoading}
+            onPress={onFollowPress}
+            disabled={isLoading}
+          >
+            <ActivityIndicator size={20} color={colors.primary} />
+          </TouchableOpacity>
+        );
+      }
+
+      return (
+        <IconButton
+          icon={
+            following
+              ? require('../assets/flat-icons/heart-outlined.png')
+              : require('../assets/flat-icons/heart.png')
+          }
+          size={18}
+          iconColor={following ? '#fff' : '#B61D8D'}
+          style={{ backgroundColor: following ? colors.primary : colors.onPrimary }}
+          onPress={onFollowPress}
+          disabled={isLoading}
+        />
+      );
+    };
+
   return (
     <TouchableOpacity {...otherProps} style={[styles.course, style]}>
       <View style={styles.header}>
         <View style={styles.innerHeader}>
           <Avatar.Image
             size={54}
-            source={require('../assets/Image-54.png')}
+            source={image ? { uri: image } : require('../assets/Image-54.png')}
             style={styles.avatar}
           />
           <Box style={styles.box}>
@@ -71,6 +124,14 @@ export const Funding = (props: FundingProps) => {
               >
                 <Text variant="labelMedium" style={styles.chipText}>
                   {type?.name}
+                </Text>
+              </Chip>
+              <Chip
+                key={type?.id}
+                style={[styles.chip, { backgroundColor: checkColor(investmentStatus?.name || '') }]}
+              >
+                <Text variant="labelMedium" style={styles.chipText}>
+                  {investmentStatus?.name}
                 </Text>
               </Chip>
             </View>
@@ -87,42 +148,32 @@ export const Funding = (props: FundingProps) => {
             </Text>
           </Box>
         </View>
-        <IconButton
-          icon={
-            following
-              ? require('../assets/flat-icons/heart-outlined.png')
-              : require('../assets/flat-icons/heart.png')
-          }
-          size={18}
-          iconColor={following ? '#fff' : '#B61D8D'}
-          style={{ backgroundColor: following ? colors.primary : colors.onPrimary }}
-          onPress={() => {}}
-        />
+        <FollowButton />
       </View>
       <View style={styles.infoContainer}>
         <View style={[styles.infoCell, styles.borderRight, styles.borderBottom]}>
           <Text style={styles.infoLabel}>Status:</Text>
-          <Text style={styles.infoValue}>Prototype ready</Text>
+          <Text style={styles.infoValue}>{status?.name}</Text>
         </View>
         <View style={[styles.infoCell, styles.borderBottom]}>
           <Text style={styles.infoLabel}>Investment status:</Text>
-          <Text style={styles.infoValue}>Pre-seed</Text>
+          <Text style={styles.infoValue}>{fundingRound}</Text>
         </View>
         <View style={[styles.infoCell, styles.borderRight, styles.borderBottom]}>
           <Text style={styles.infoLabel}>Total investment:</Text>
-          <Text style={styles.infoValue}>$400K</Text>
+          <Text style={styles.infoValue}>{formatNumber(totalInvestment ?? 0, currency?.symbol ?? '$')}</Text>
         </View>
         <View style={[styles.infoCell, styles.borderBottom]}>
           <Text style={styles.infoLabel}>Valuation:</Text>
-          <Text style={styles.infoValue}>$3M</Text>
+          <Text style={styles.infoValue}>{formatNumber(valuation ?? 0, currency?.symbol ?? '$')}</Text>
         </View>
         <View style={[styles.infoCell, styles.borderRight]}>
           <Text style={styles.infoLabel}>Target amount:</Text>
-          <Text style={styles.infoValue}>$500K</Text>
+          <Text style={styles.infoValue}>{formatNumber(targetAmount ?? 0, currency?.symbol ?? '$')}</Text>
         </View>
         <View style={styles.infoCell}>
           <Text style={styles.infoLabel}>Amount collected:</Text>
-          <Text style={styles.infoValue}>$350K</Text>
+          <Text style={styles.infoValue}>{formatNumber(amountCollected ?? 0, currency?.symbol ?? '$')}</Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -204,5 +255,23 @@ const getStyles = (colors: MD3Colors) =>
       fontSize: 14,
       fontWeight: 'bold',
       color: '#000',
+    },
+    followButton: {
+      marginTop: 10,
+      backgroundColor: colors.primary,
+    },
+    followButtonActive: {
+      marginTop: 10,
+      backgroundColor: colors.onPrimary,
+    },
+    followButtonLoading: {
+      backgroundColor: colors.surfaceVariant,
+      width: 35,
+      height: 35,
+      borderRadius: 20,
+      justifyContent: 'center',
+      marginRight: 5,
+      marginTop:5,
+      alignItems: 'center',
     },
   });

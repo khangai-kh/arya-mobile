@@ -109,23 +109,9 @@ export const MainStack = () => {
         />
         <Stack.Screen name="DisclosureText" component={DisclosureText} options={{ title: 'Disclosure text' }} />
         <Stack.Screen name="Search" component={Search} options={{ headerShown: false }} />
-        <Stack.Screen
-          name="Startup"
-          component={Startup}
-          options={{
-            title: 'Startup',
-            headerRight: () => <StartupHeaderRight />,
-          }}
-        />
+        <Stack.Screen name="Startup" component={Startup} options={{ headerShown: false }}/>
         <Stack.Screen name="StartupsFilter" component={StartupsFilter} options={{ headerShown: false }} />
-        <Stack.Screen
-          name="Startups"
-          component={Startups}
-          options={{
-            title: 'Startups in funding round',
-            headerRight: () => <SearchIconButton onPress={() => {}} />,
-          }}
-        />
+        <Stack.Screen name="Startups" component={Startups} options={{ headerShown: false }}/>
         <Stack.Screen name="Workshop" component={Workshop} options={{ headerShown: false }} />
         <Stack.Screen name="Workshops" component={Workshops} options={{ title: 'Entrepreneur workshops' }} />
         <Stack.Screen name="IPILicense" component={IPILicense} options={{ title: 'IPI License form' }} />

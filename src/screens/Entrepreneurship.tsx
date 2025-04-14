@@ -43,6 +43,7 @@ export const Entrepreneurship = () => {
         >
             {menuItems.map((item, index) => (
                 <Entrepreneur
+                    key={index}
                     title={item.title}
                     type={item.type}
                     style={{

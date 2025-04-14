@@ -1,7 +1,7 @@
 import React from 'react';
 import { StackScreenProps } from '@react-navigation/stack';
 import { useState } from 'react';
-import { Image, View, StyleSheet, ActivityIndicator } from 'react-native';
+import { Image, View, StyleSheet, ActivityIndicator, Linking } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Appbar, Avatar, Button, Chip, Divider, IconButton, MD3Theme, Modal, Portal, Text, useTheme, TouchableRipple } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -17,7 +17,7 @@ import { API } from '../plugins/axios';
 type StartupProps = StackScreenProps<MainStackParams, 'Startup'>;
 
 export const Startup = ({route, navigation}: StartupProps) => {
-    const { token } = useSelector((state: RootState) => state.auth);
+    const { token, user_id } = useSelector((state: RootState) => state.auth);
     const { colors } = useTheme();
     const dynamicStyles = createDynamicStyles(colors);
     const [isLoading, setIsLoading] = useState(false);
@@ -25,8 +25,9 @@ export const Startup = ({route, navigation}: StartupProps) => {
     const [startup, setStartup] = useState<StartupModel | null>(null);
     const [isExpanded, setIsExpanded] = useState(false);
 
-    console.log('Startup ID:', startupId);
-    const { isFetching: isFetchingProfile, refetch } = useQuery(
+    console.log('User ID:', user_id);
+
+    const { isFetching: isFetchingProfile } = useQuery(
         ['startup', token],
         () => API.get('/api/startup/' + startupId),
         {
@@ -69,13 +70,67 @@ export const Startup = ({route, navigation}: StartupProps) => {
     };
 
     const wrapIntoTwoLines = (text: string, maxLength: number = 50): string => {
-        if (text.length <= maxLength) {
-          const midPoint = Math.ceil(text.length / 2);
-          return `${text.substring(0, midPoint)}\n${text.substring(midPoint)}`;
-        }
-        return text;
-      };
 
+    
+        const indexOfParen = text.indexOf('(');
+        if (indexOfParen === -1) {
+            // No parenthesis, wrap word by word
+            const words = text.trim().split(/\s+/);
+            let firstLineLength = 0;
+            let firstLine: string[] = [];
+    
+            for (const word of words) {
+                if (firstLineLength + word.length + firstLine.length <= Math.floor(maxLength / 2)) {
+                    firstLine.push(word);
+                    firstLineLength += word.length;
+                } else {
+                    break;
+                }
+            }
+    
+            const secondLine = words.slice(firstLine.length).join(' ');
+            return firstLine.length > 0 && secondLine ? `${firstLine.join(' ')}\n${secondLine}` : text;
+        } else {
+            // Parenthesis found, keep ( ) content intact
+            const beforeParen = text.substring(0, indexOfParen).trim();
+            const afterParen = text.substring(indexOfParen);
+    
+            const words = beforeParen.split(/\s+/);
+            let firstLineLength = 0;
+            let firstLine: string[] = [];
+    
+            for (const word of words) {
+                if (firstLineLength + word.length + firstLine.length <= Math.floor(maxLength / 2)) {
+                    firstLine.push(word);
+                    firstLineLength += word.length;
+                } else {
+                    break;
+                }
+            }
+    
+            const remainingWords = words.slice(firstLine.length);
+            const secondLine = remainingWords.length > 0 ? `${remainingWords.join(' ')} ${afterParen}` : afterParen;
+    
+            return firstLine.length > 0 ? `${firstLine.join(' ')}\n${secondLine.trim()}` : text;
+        }
+    };
+
+    const handlePitchDeckPress = async (url: string | undefined) => {
+        if (!url) {
+            console.log('No pitch deck URL available');
+            return;
+        }
+        try {
+            const supported = await Linking.canOpenURL(url);
+            if (supported) {
+                await Linking.openURL(url);
+            } else {
+                console.error('Cannot open URL:', url);
+            }
+        } catch (error) {
+            console.error('Error opening pitch deck:', error);
+        }
+    };
     const isDataLoading = isFetchingProfile || isLoading;
 
     if (isDataLoading) {
@@ -99,8 +154,9 @@ export const Startup = ({route, navigation}: StartupProps) => {
                 <Appbar.Content
                     title={
                         <View style={dynamicStyles.titleContainer}>
+
                             <Text variant="titleMedium" style={dynamicStyles.interestText}>
-                                My startup
+                                Startup
                             </Text>
                         </View>
                     }
@@ -112,13 +168,15 @@ export const Startup = ({route, navigation}: StartupProps) => {
                     style={dynamicStyles.appbarActionRight}
                     onPress={() => {}}
                 />
-                <Appbar.Action
+                {user_id === startup?.created_user && (
+                    <Appbar.Action
                     icon={require('../assets/flat-icons/edit.png')}
                     color="#414042"
                     size={20}
                     style={dynamicStyles.appbarActionRight}
                     onPress={() => {}}
-                />
+                />)}
+ 
             </Appbar.Header>
 
             <ScrollView showsVerticalScrollIndicator={false}>
@@ -159,7 +217,7 @@ export const Startup = ({route, navigation}: StartupProps) => {
                                 />
                             </View>
                             <Text style={styles.badgeText}>
-                                {wrapIntoTwoLines(startup?.startup_status?.name || 'Unknown', 20)}
+                                {wrapIntoTwoLines(startup?.startup_status?.name || 'Unknown', 30)}
                             </Text>
                         </View>
                         <View style={styles.badge}>
@@ -195,17 +253,17 @@ export const Startup = ({route, navigation}: StartupProps) => {
                     <View style={dynamicStyles.card}>
                         <View>
                             <Text variant="titleSmall" style={dynamicStyles.sectionTitle}>Funding deadline</Text>
-                            <Text>15.01.2025</Text>
+                            <Text>{startup?.fundings?.[0]?.funding_deadline || 'No deadline available'}</Text>
                         </View>
                         <Divider style={dynamicStyles.divider} />
                         <View>
                             <Text variant="titleSmall" style={dynamicStyles.sectionTitle}>Use of funds</Text>
-                            <Text>40% for product development and improvements...</Text>
+                            <Text>{startup?.fundings?.[0]?.use_of_funds || 'Not available'}</Text>
                         </View>
                         <Divider style={dynamicStyles.divider} />
                         <View>
                             <Text variant="titleSmall" style={dynamicStyles.sectionTitle}>Investment terms</Text>
-                            <Text>Equity offered: 15%...</Text>
+                            <Text>Equity offered: {startup?.fundings?.[0]?.equity_offered || 0 } %</Text>
                         </View>
                         <Divider style={dynamicStyles.divider} />
                         <View>
@@ -215,7 +273,12 @@ export const Startup = ({route, navigation}: StartupProps) => {
                                     source={require('../assets/flat-icons/download.png')}
                                     style={dynamicStyles.downloadIcon}
                                 />
-                                <Text>Foodsy Pitch Deck.pdf</Text>
+                               <Text
+                                    onPress={() => handlePitchDeckPress(startup?.pitch_decks?.[0]?.file_url ?? undefined)}
+                                    style={styles.pitchDeckText}
+                                >
+                                    {startup?.pitch_decks?.[0]?.file_name || 'Not available'}
+                                </Text>
                             </View>
                         </View>
                     </View>
@@ -231,7 +294,7 @@ export const Startup = ({route, navigation}: StartupProps) => {
                                 userId={founder.id}
                                 name={founder.full_name || ''}
                                 image={founder.photo}
-                                founderRole={founder.roles[0].role_name}
+                                founderRole={founder.roles[0].name}
                                 status={founder.title}
                                 following={false}
                                 style={
@@ -291,13 +354,13 @@ export const Startup = ({route, navigation}: StartupProps) => {
                 <View style={dynamicStyles.section}>
                     <Text variant="titleMedium">Investors</Text>
                     <View style={dynamicStyles.foundersContainer}>
-                        {startup?.founders?.map((founder, index) => (
+                        {startup?.investors?.map((founder, index) => (
                             <Founder
                                 key={index}
                                 userId={founder.id}
                                 name={founder.full_name || ''}
                                 image={founder.photo}
-                                founderRole={founder.roles[0].role_name}
+                                founderRole={founder.roles[0].name}
                                 status={founder.title}
                                 following={false}
                                 style={
@@ -549,19 +612,23 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         paddingVertical: 6,
         paddingHorizontal: 12,
-        height: 40,
-        width: 40,
+        height: 35,
+        width: 35,
     },
     badgeText: {
         alignItems: 'center',
         justifyContent: 'center',
-        fontSize: 12,
+        fontSize: 10,
         paddingLeft: 4,
         fontWeight: '500',
     },
     icon: {
-        width: 20,
-        height: 20,
+        width: 18,
+        height: 18,
         padding: 5,
+    },
+    pitchDeckText: {
+        color: '#007AFF',
+        textDecorationLine: 'underline',
     },
 });

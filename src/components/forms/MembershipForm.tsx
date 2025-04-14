@@ -122,7 +122,7 @@ export const MembershipForm = ({ navigation, route, initialValues, onSubmit }: M
 
   const handleStepSubmit = async (values: any, actions: any, nextStep?: number) => {
     try {
-      console.log(`Submitting Step ${step} values:`, values);
+      //console.log(`Submitting Step ${step} values:`, values);
       if(step === 1){
            setIsLoading(true);
             await API.put('/api/user-my-personal-information', {
