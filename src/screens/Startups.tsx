@@ -128,7 +128,7 @@ export const Startups = ({ navigation, route }: StartupsProps) => {
                 const currentMember = startups.find((startup) => startup.id === startupId);
                 const currentFollowing = currentMember?.is_favorite || false;
                 console.log('Current following status:', currentFollowing);
-                await API.put(
+                await API.post(
                     '/api/startups/add-favorites',
                     { startup_id: startupId, status: !currentFollowing },
                 );

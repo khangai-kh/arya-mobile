@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { StackScreenProps } from '@react-navigation/stack';
 import { useState } from 'react';
 import { Image, View, StyleSheet, ActivityIndicator, Linking } from 'react-native';
@@ -6,13 +6,14 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { Appbar, Avatar, Button, Chip, Divider, IconButton, MD3Theme, Modal, Portal, Text, useTheme, TouchableRipple } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Box } from '../components/common/Box';
-import { Founder } from '../components/Founder';
 import { MainStackParams } from '../models/navigation';
 import { ProductModel, StartupModel } from '../models/homepage/Startup';
 import { useQuery } from 'react-query';
 import { RootState } from '../redux/configureStore';
 import { useSelector } from 'react-redux';
 import { API } from '../plugins/axios';
+import { Member } from '../components/Member';
+import { UserModelList } from '../models/users/User/user.model';
 
 type StartupProps = StackScreenProps<MainStackParams, 'Startup'>;
 
@@ -24,8 +25,9 @@ export const Startup = ({route, navigation}: StartupProps) => {
     const startupId = route.params?.id;
     const [startup, setStartup] = useState<StartupModel | null>(null);
     const [isExpanded, setIsExpanded] = useState(false);
-
-    console.log('User ID:', user_id);
+    const [loadingFollowId, setLoadingFollowId] = useState<number | null>(null);
+    const [founders, setFounders] = useState<UserModelList[]>([]);
+    const [investors, setInvestors] = useState<UserModelList[]>([]);
 
     const { isFetching: isFetchingProfile } = useQuery(
         ['startup', token],
@@ -34,12 +36,14 @@ export const Startup = ({route, navigation}: StartupProps) => {
           onSuccess: ({ data }) => {
             console.log('Startup data:', data);
             setStartup(data);
+            setFounders(data.founders || []);
+            setInvestors(data.investors || []);
           },
           onError: (error) => {
             console.error('Error fetching startups:', error);
           },
         }
-      );
+    );
 
     const [visible, setVisible] = useState(false);
 
@@ -70,15 +74,13 @@ export const Startup = ({route, navigation}: StartupProps) => {
     };
 
     const wrapIntoTwoLines = (text: string, maxLength: number = 50): string => {
-
-    
         const indexOfParen = text.indexOf('(');
         if (indexOfParen === -1) {
             // No parenthesis, wrap word by word
             const words = text.trim().split(/\s+/);
             let firstLineLength = 0;
             let firstLine: string[] = [];
-    
+
             for (const word of words) {
                 if (firstLineLength + word.length + firstLine.length <= Math.floor(maxLength / 2)) {
                     firstLine.push(word);
@@ -87,18 +89,18 @@ export const Startup = ({route, navigation}: StartupProps) => {
                     break;
                 }
             }
-    
+
             const secondLine = words.slice(firstLine.length).join(' ');
             return firstLine.length > 0 && secondLine ? `${firstLine.join(' ')}\n${secondLine}` : text;
         } else {
             // Parenthesis found, keep ( ) content intact
             const beforeParen = text.substring(0, indexOfParen).trim();
             const afterParen = text.substring(indexOfParen);
-    
+
             const words = beforeParen.split(/\s+/);
             let firstLineLength = 0;
             let firstLine: string[] = [];
-    
+
             for (const word of words) {
                 if (firstLineLength + word.length + firstLine.length <= Math.floor(maxLength / 2)) {
                     firstLine.push(word);
@@ -107,7 +109,7 @@ export const Startup = ({route, navigation}: StartupProps) => {
                     break;
                 }
             }
-    
+
             const remainingWords = words.slice(firstLine.length);
             const secondLine = remainingWords.length > 0 ? `${remainingWords.join(' ')} ${afterParen}` : afterParen;
             return firstLine.length > 0 ? `${firstLine.join(' ')}\n${secondLine.trim()}` : text;
@@ -130,6 +132,84 @@ export const Startup = ({route, navigation}: StartupProps) => {
             console.error('Error opening pitch deck:', error);
         }
     };
+
+    const handleFollowPress = useCallback(
+        async (userId: number) => {
+          setLoadingFollowId(userId);
+          try {
+            const currentMember = founders.find((member) => member.id === userId);
+            const currentFollowing = currentMember?.is_favorited || false;
+
+            if (currentFollowing) {
+              await API.post('/api/users/unfollow', { user_id: userId });
+            } else {
+              await API.post('/api/users/follow', { user_id: userId });
+            }
+            setFounders((prevMembers) =>
+              prevMembers.map((member) =>
+                member.id === userId
+                  ? { ...member, is_favorited: !currentFollowing }
+                  : member
+              )
+            );
+          } catch (error) {
+            console.error('Error toggling follow status:', error);
+          } finally {
+            setLoadingFollowId(null);
+          }
+        },
+        [founders]
+    );
+
+    const handleFollowPress1 = useCallback(
+        async (userId: number) => {
+          setLoadingFollowId(userId);
+          try {
+            const currentMember = investors.find((member) => member.id === userId);
+            const currentFollowing = currentMember?.is_favorited || false;
+
+            if (currentFollowing) {
+              await API.post('/api/users/unfollow', { user_id: userId });
+            } else {
+              await API.post('/api/users/follow', { user_id: userId });
+            }
+            setInvestors((prevMembers) =>
+              prevMembers.map((member) =>
+                member.id === userId
+                  ? { ...member, is_favorited: !currentFollowing }
+                  : member
+              )
+            );
+          } catch (error) {
+            console.error('Error toggling follow status:', error);
+          } finally {
+            setLoadingFollowId(null);
+          }
+        },
+        [investors]
+    );
+
+    const handleFollowPress3 = async (id: number) => {
+        if (!id || loadingFollowId !== null) {
+            return;
+        }
+        console.log('Follow button pressed:', id);
+        setLoadingFollowId(id);
+        try {
+            const currentFollowing = startup?.is_favorite || false;
+            console.log('Current following status:', currentFollowing);
+            await API.post(
+                '/api/startups/add-favorites',
+                { startup_id: id, status: !currentFollowing },
+            );
+            setStartup(prev => prev ? { ...prev, is_favorite: !currentFollowing } : prev);
+        } catch (error: any) {
+            console.error('Error toggling follow status:', error.response?.data || error.message);
+        } finally {
+            setLoadingFollowId(null);
+        }
+    };
+
     const isDataLoading = isFetchingProfile || isLoading;
 
     if (isDataLoading) {
@@ -161,11 +241,19 @@ export const Startup = ({route, navigation}: StartupProps) => {
                     }
                 />
                 <Appbar.Action
-                    icon={require('../assets/flat-icons/heart-outlined.png')}
-                    color="#414042"
+                    icon={
+                        startup?.is_favorite
+                        ? require('../assets/flat-icons/heart-outlined.png')
+                        : require('../assets/flat-icons/heart.png')
+                    }
+                    iconColor={startup?.is_favorite ? '#fff' : '#B61D8D'}
+                    style={[
+                        {
+                            backgroundColor: startup?.is_favorite ? colors.primary : colors.onPrimary,
+                        },
+                    ]}
                     size={20}
-                    style={dynamicStyles.appbarActionRight}
-                    onPress={() => {}}
+                    onPress={() => handleFollowPress3(startupId)}
                 />
                 {user_id === startup?.created_user && (
                     <Appbar.Action
@@ -175,7 +263,7 @@ export const Startup = ({route, navigation}: StartupProps) => {
                     style={dynamicStyles.appbarActionRight}
                     onPress={() => {}}
                 />)}
- 
+
             </Appbar.Header>
 
             <ScrollView showsVerticalScrollIndicator={false}>
@@ -238,8 +326,8 @@ export const Startup = ({route, navigation}: StartupProps) => {
                                 />
                             </View>
                             <Text style={styles.badgeText}>
-                                {startup?.total_investment !== undefined && startup?.total_investment !== null 
-                                    ? formatNumber(startup.total_investment, startup?.currency?.symbol || '$') 
+                                {startup?.total_investment !== undefined && startup?.total_investment !== null
+                                    ? formatNumber(startup.total_investment, startup?.currency?.symbol || '$')
                                     : 'N/A'}
                             </Text>
                         </View>
@@ -290,20 +378,24 @@ export const Startup = ({route, navigation}: StartupProps) => {
                 <View style={dynamicStyles.section}>
                     <Text variant="titleMedium">Founders</Text>
                     <View style={dynamicStyles.foundersContainer}>
-                        {startup?.founders?.map((founder, index) => (
-                            <Founder
+                        {founders?.map((founder, index) => (
+                            <Member
                                 key={index}
-                                userId={founder.id}
                                 name={founder.full_name || ''}
                                 image={founder.photo}
-                                founderRole={founder.roles[0].name}
+                                memberRole={founder.role?.name || ''}
                                 status={founder.title}
-                                following={false}
-                                style={
-                                    index === (startup?.founders && startup.founders.length - 1)
-                                    ? null : dynamicStyles.founderItem
-                                }
-                                onPress={() => navigation.navigate('Member', { id: founder.name })}
+                                following={founder.is_favorited || false}
+                                interests={[]}
+                                isLoading={loadingFollowId === (founder.id || 0)}
+                                style={[
+                                    styles.memberItem,
+                                    index === (startup?.founders?.length ?? 0) - 1 && styles.lastMemberItem,
+                                ]}
+                                onPress={() => {
+                                    navigation.navigate('Member', { id: founder.id });
+                                }}
+                                onFollowPress={() => handleFollowPress1(founder.id || 0)}
                             />
                         ))}
                     </View>
@@ -356,31 +448,37 @@ export const Startup = ({route, navigation}: StartupProps) => {
                 <View style={dynamicStyles.section}>
                     <Text variant="titleMedium">Investors</Text>
                     <View style={dynamicStyles.foundersContainer}>
-                        {startup?.investors?.map((founder, index) => (
-                            <Founder
-                                key={index}
-                                userId={founder.id}
-                                name={founder.full_name || ''}
-                                image={founder.photo}
-                                founderRole={founder.roles[0].name}
-                                status={founder.title}
-                                following={false}
-                                style={
-                                    index === (startup?.founders && startup.founders.length - 1)
-                                    ? null : dynamicStyles.founderItem
-                                }
-                                onPress={() => navigation.navigate('Member', { id: founder.name })}
-                            />
+                        {investors?.map((founder, index) => (
+                             <Member
+                             key={index}
+                             name={founder.full_name || ''}
+                             image={founder.photo}
+                             memberRole={founder.role?.name || ''}
+                             status={founder.title}
+                             following={founder.is_favorited || false}
+                             interests={[]}
+                             isLoading={loadingFollowId === (founder.id || 0)}
+                             style={[
+                                 styles.memberItem,
+                                 index === (startup?.founders?.length ?? 0) - 1 && styles.lastMemberItem,
+                             ]}
+                             onPress={() => {
+                                 navigation.navigate('Member', { id: founder.id });
+                             }}
+                             onFollowPress={() => handleFollowPress(founder.id || 0)}
+                         />
                         ))}
                     </View>
                 </View>
             </ScrollView>
 
-            <Box px={16} py={16}>
-                <Button mode="contained" onPress={() => setVisible(true)}>
-                    Apply for round
-                </Button>
-            </Box>
+            {user_id === startup?.created_user && (
+                <Box px={16} py={16}>
+                    <Button mode="contained" onPress={() => setVisible(true)}>
+                        Apply for round
+                    </Button>
+                </Box>
+            )}
 
             <Portal>
                 <Modal
@@ -407,7 +505,7 @@ export const Startup = ({route, navigation}: StartupProps) => {
                         Your application has been forwarded to the relevant persons, thank you.
                     </Text>
                     <View style={dynamicStyles.modalButtons}>
-                        <TouchableRipple 
+                        <TouchableRipple
                             style={dynamicStyles.modalButton}
                             onPress={() => {}}
                         >
@@ -415,7 +513,7 @@ export const Startup = ({route, navigation}: StartupProps) => {
                                 Wait for updates
                             </Text>
                         </TouchableRipple>
-                        <TouchableRipple 
+                        <TouchableRipple
                             style={dynamicStyles.modalButtonPrimary}
                             onPress={() => {}}
                         >
@@ -458,6 +556,7 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
     appbarActionRight: {
         backgroundColor: colors.onPrimary || '#FFFFFF',
         marginRight: 5,
+        marginTop: 20,
     },
     titleContainer: {
         alignItems: 'center',
@@ -632,5 +731,11 @@ const styles = StyleSheet.create({
     pitchDeckText: {
         color: '#007AFF',
         textDecorationLine: 'underline',
+    },
+    memberItem: {
+        marginBottom: 8,
+    },
+    lastMemberItem: {
+        marginBottom: 0,
     },
 });

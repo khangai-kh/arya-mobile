@@ -26,7 +26,6 @@ export const Contents = () => {
     const { isFetching } = useQuery(
         ['combinedData', DEFAULT_PAGE, PAGE_SIZE, token],
         async () => {
-            // Make both API calls concurrently using Promise.all
             const [announcementsResponse, inspirationsResponse] = await Promise.all([
                 API.get('/api/contents', {
                     params: {
@@ -49,7 +48,6 @@ export const Contents = () => {
         },
         {
             onSuccess: (data) => {
-                // Set both states from the combined data
                 setContents(data.announcements);
                 setInspirations(data.inspirations);
             },
@@ -77,7 +75,7 @@ export const Contents = () => {
                     <Announcement
                         key={index}
                         title={content.title || ''}
-                        image={content.image_url}
+                        image={content.images?.[0]?.image_url || ''}
                         body={content.description || ''}
                         location={content.location || 'Istanbul, Turkey'}
                         date={content.created_at || ''}

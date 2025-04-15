@@ -1,102 +1,97 @@
+import React from 'react';
 import { StackScreenProps } from '@react-navigation/stack';
 import { useState } from 'react';
-import { View } from 'react-native';
+import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { useTheme } from 'react-native-paper';
+import { Appbar, MD3Theme, Text, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Announcement } from '../components/Announcement';
 import { MainStackParams } from '../models/navigation';
+import { ContentModel } from '../models/homepage/Content';
+import { API } from '../plugins/axios';
+import { DEFAULT_PAGE, PAGE_SIZE } from '../constants/constants';
+import { useQuery } from 'react-query';
+import { RootState } from '../redux/configureStore';
+import { useSelector } from 'react-redux';
+
 type BetterFutureCirclesDaysProps = StackScreenProps<MainStackParams, 'BetterFutureCirclesDays'>;
 
 export const BetterFutureCirclesDays = (props: BetterFutureCirclesDaysProps) => {
-
     const { navigation } = props;
     const { colors } = useTheme();
-    const [
-        betterFutureCirclesDays,
-        setBetterFutureCirclesDays
-    ] = useState([
-        {
-            title: "Arya Retreat'24",
-            image: "",
-            body: "Freedom: Manage Your Money, Discover Your Power",
-            location: "Tasigo Hotel Eskişehir",
-            date: "2024-09-24",
-            type: "Event",
+    const dynamicStyles = createDynamicStyles(colors);
+    const [contents, setContents] = useState<ContentModel[]>([]);
+    const { token } = useSelector((state: RootState) => state.auth);
+
+    const { isFetching } = useQuery(
+        ['trainings', DEFAULT_PAGE, PAGE_SIZE, token],
+        async () => {
+            const [announcementsResponse] = await Promise.all([
+                API.get('/api/contents', {
+                    params: {
+                        page: DEFAULT_PAGE,
+                        page_size: PAGE_SIZE,
+                        is_better_future_circle_days: true,
+                    },
+                }),
+            ]);
+            return {
+                announcements: announcementsResponse.data || [],
+            };
         },
         {
-            title: "Arya GSYF Invests $250,000 in PhiTech",
-            image: "",
-            body: "Health biotechnology focused on genome technologies",
-            location: "Tasigo Hotel Eskişehir",
-            date: "16.11.2023",
-            type: "Event",
-        }, {
-            title: "Arya Retreat'24",
-            image: "",
-            body: "Freedom: Manage Your Money, Discover Your Power",
-            location: "Tasigo Hotel Eskişehir",
-            date: "2024-09-24",
-            type: "Event",
-        },
-        {
-            title: "Arya Retreat'24",
-            image: "",
-            body: "Freedom: Manage Your Money, Discover Your Power",
-            location: "Tasigo Hotel Eskişehir",
-            date: "2024-09-24",
-            type: "Event",
-        }, {
-            title: "Arya Retreat'24",
-            image: "",
-            body: "Freedom: Manage Your Money, Discover Your Power",
-            location: "Tasigo Hotel Eskişehir",
-            date: "2024-09-24",
-            type: "Event",
-        },
-        {
-            title: "Arya Retreat'24",
-            image: "",
-            body: "Freedom: Manage Your Money, Discover Your Power",
-            location: "Tasigo Hotel Eskişehir",
-            date: "2024-09-24",
-            type: "Event",
+            onSuccess: (data) => {
+                const announcements = Array.isArray(data.announcements) ? data.announcements : [];
+                setContents(announcements);
+            },
+            onError: (error) => {
+                console.error('Error fetching trainings:', error);
+                setContents([]);
+            },
         }
-    ]);
+    );
+
+    if (isFetching) {
+        return (
+            <View style={styles.loaderContainer}>
+                <ActivityIndicator size="large" color={colors.primary} />
+            </View>
+        );
+    }
 
     return (
-        <SafeAreaView
-            style={{
-                flex: 1
-            }}
-            edges={[
-                'bottom'
-            ]}
-        >
-            <View
-                style={{
-                    flex: 1,
-                    marginTop: 24,
-                    marginHorizontal: 16
-                }}
-            >
+        <SafeAreaView style={styles.safeArea} edges={['bottom']}>
+            <Appbar.Header style={styles.appbarHeader}>
+                <Appbar.Action
+                    icon={require('../assets/flat-icons/angle-small-left.png')}
+                    color="#414042"
+                    size={20}
+                    style={dynamicStyles.appbarActionRight}
+                    onPress={() => navigation.goBack()}
+                />
+                <Appbar.Content
+                    title={
+                        <View style={dynamicStyles.titleContainer}>
+                            <Text variant="titleMedium" style={dynamicStyles.interestText}>
+                                Better Future Circle Days
+                            </Text>
+                        </View>
+                    }
+                />
+            </Appbar.Header>
+            <View style={styles.container}>
                 <ScrollView showsVerticalScrollIndicator={false}>
-                    {betterFutureCirclesDays.map((item, index) => (
+                    {contents.map((content, index) => (
                         <Announcement
-                            title={item.title}
-                            image={item.image}
-                            body={item.body}
-                            location={item.location}
-                            date={item.date}
-                            type={item.type}
-                            style={{
-                                marginBottom: index === BetterFutureCirclesDays.length - 1 ? 0 : 8
-                            }}
-                            onPress={() => {
-                                navigation.navigate('Announcement', {
-                                    id: item.title
-                                });
-                            }}
+                            key={index}
+                            title={content.title || ''}
+                            image={content.images?.[0]?.image_url || ''}
+                            body={content.description || ''}
+                            location={content.location || 'Istanbul, Turkey'}
+                            date={content.created_at || ''}
+                            type={content.content_type?.name || ''}
+                            style={[styles.announcement, index === contents.length - 1 && styles.lastAnnouncement]}
+                            onPress={() => navigation.navigate('Announcement', { id: content.id || 0 })}
                         />
                     ))}
                 </ScrollView>
@@ -104,3 +99,54 @@ export const BetterFutureCirclesDays = (props: BetterFutureCirclesDaysProps) => 
         </SafeAreaView>
     );
 };
+const createDynamicStyles = (colors: MD3Theme['colors']) =>
+    StyleSheet.create({
+        appbarActionRight: {
+            backgroundColor: colors.onPrimary || '#FFFFFF',
+            marginRight: 5,
+            marginTop: 20,
+        },
+        titleContainer: {
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexDirection: 'row',
+        },
+        interestText: {
+            fontWeight: 'bold',
+            paddingLeft: 0,
+            marginLeft: -40,
+        },
+    });
+const styles = StyleSheet.create({
+    safeArea: {
+        flex: 1,
+    },
+    appbarHeader: {
+        width: '100%',
+        backgroundColor: 'transparent',
+        alignContent: 'center',
+        justifyContent: 'center',
+    },
+    container: {
+        flex: 1,
+        marginTop: 24,
+        marginHorizontal: 16,
+        alignContent: 'center',
+        justifyContent: 'center',
+    },
+    announcement: {
+        height : 'auto',
+        marginBottom: 10,
+    },
+    announcementItem: {
+        marginBottom: 8,
+    },
+    lastAnnouncement: {
+        marginRight: 0,
+    },
+    loaderContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+});
