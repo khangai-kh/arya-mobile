@@ -107,7 +107,7 @@ export const Announcement = (props: AnnouncementProps) => {
                 />
                 <Text>{content.created_user.full_name || 'Untitled'}</Text>
           </View>
-          {content.content_type?.name === 'Event' && (<Card mode="contained" style={styles.card}>
+          {content.content_type?.name === 'Event' || content.content_type?.name === 'Workshop' && (<Card mode="contained" style={styles.card}>
             <Card.Content>
               <View style={styles.calendarContainer}>
                 <Image

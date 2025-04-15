@@ -92,7 +92,7 @@ export const Announcement = ({
           }}
         />
         <View style={footer}>
-        {type === 'Event' && (
+        {type === 'Event' || type === 'Workshop'  && (
           <View style={locationContainer}>
             <Image
               source={require('../assets/flat-icons/marker.png')}

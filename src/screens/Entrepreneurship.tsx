@@ -1,5 +1,7 @@
+import React from 'react';
 import { CompositeNavigationProp, NavigationProp, useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
+import { StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Entrepreneur } from '../components/Entrepreneur';
 import { MainStackParams } from '../models/navigation';
@@ -10,35 +12,28 @@ type UseNavigationProps = CompositeNavigationProp<NavigationProp<BottomTabStackP
 export const Entrepreneurship = () => {
     const { navigate } = useNavigation<UseNavigationProps>();
 
-    const [
-        menuItems,
-        setMenuItems
-    ] = useState([
+    const [menuItems, setMenuItems] = useState([
         {
-            title: "Startups in Funding Round",
-            type: "startups",
+            title: 'Startups in Funding Round',
+            type: 'startups',
         },
         {
-            title: "Closed Deals",
-            type: "closedDeals",
+            title: 'Closed Deals',
+            type: 'closedDeals',
         },
         {
-            title: "Venture Academy Startups",
-            type: "academyStartups",
+            title: 'Venture Academy Startups',
+            type: 'academyStartups',
         },
         {
-            title: "Entrepreneur Workshops",
-            type: "workshops",
-        }
+            title: 'Entrepreneur Workshops',
+            type: 'workshops',
+        },
     ]);
 
     return (
         <ScrollView
-            style={{
-                flex: 1,
-                marginHorizontal: 16,
-                marginTop: 24
-            }}
+            style={styles.scrollView}
             showsVerticalScrollIndicator={false}
         >
             {menuItems.map((item, index) => (
@@ -46,16 +41,14 @@ export const Entrepreneurship = () => {
                     key={index}
                     title={item.title}
                     type={item.type}
-                    style={{
-                        marginBottom: index === menuItems.length - 1 ? 0 : 8
-                    }}
+                    style={styles.menuItem}
                     onPress={() => {
                         if (item.type === 'startups') {
-                            navigate('Startups');
+                            navigate({ name: 'Startups', params: { type: 1 } });
                         } else if (item.type === 'closedDeals') {
-                            navigate('ClosedDeals');
+                            navigate({ name: 'Startups', params: { type: 2 } });
                         } else if (item.type === 'academyStartups') {
-                            navigate('AcademyStartups');
+                            navigate({ name: 'Startups', params: { type: 0 } });
                         } else if (item.type === 'workshops') {
                             navigate('Workshops');
                         }
@@ -65,3 +58,14 @@ export const Entrepreneurship = () => {
         </ScrollView>
     );
 };
+
+const styles = StyleSheet.create({
+    scrollView: {
+        flex: 1,
+        marginHorizontal: 16,
+        marginTop: 24,
+    },
+    menuItem: {
+        marginBottom: 8,
+    },
+});

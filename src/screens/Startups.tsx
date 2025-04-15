@@ -38,10 +38,14 @@ export const Startups = ({ navigation, route }: StartupsProps) => {
 
             try {
                 const response = await API.get('/api/startups/', {
-                    params: {
+                    params: type !== 0 ? {
                         page: pageNum,
                         page_size: PAGE_SIZE,
                         startup_investment_status_ids: type,
+                    } : {
+                        page: pageNum,
+                        page_size: PAGE_SIZE,
+                        startup_types_ids: 1,
                     },
                     headers: { Authorization: `Bearer ${token.trim()}` },
                 });
@@ -58,7 +62,7 @@ export const Startups = ({ navigation, route }: StartupsProps) => {
                 throw error;
             }
         },
-        [navigation, token]
+        [navigation, token, type]
     );
 
     const { isFetching: isFetchingStartups, refetch } = useQuery(
@@ -121,7 +125,7 @@ export const Startups = ({ navigation, route }: StartupsProps) => {
 
     const handleFollowPress = useCallback(
         async (startupId: number) => {
-            if (!startupId || loadingFollowId !== null) return;
+            if (!startupId || loadingFollowId !== null) {return;}
             console.log('Follow button pressed:', startupId);
             setLoadingFollowId(startupId);
             try {
@@ -180,7 +184,7 @@ export const Startups = ({ navigation, route }: StartupsProps) => {
                     title={
                         <View style={dynamicStyles.titleContainer}>
                             <Text variant="titleMedium" style={dynamicStyles.titleText}>
-                                Startups
+                                {type === 0 ? 'Academy startups' : 'Startups'}
                             </Text>
                         </View>
                     }

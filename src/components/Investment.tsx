@@ -1,6 +1,6 @@
+import React from 'react';
 import { Image, StyleSheet, TouchableOpacity, TouchableOpacityProps, View } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
-import { MD3Colors } from 'react-native-paper/lib/typescript/types';
+import { Text } from 'react-native-paper';
 import { Box } from './common/Box';
 
 type InvestmentProps = Omit<TouchableOpacityProps, 'activeOpacity'> & {
@@ -8,22 +8,7 @@ type InvestmentProps = Omit<TouchableOpacityProps, 'activeOpacity'> & {
     type: string;
 };
 
-const styles = (colors: MD3Colors) => StyleSheet.create({
-    course: {
-        flex: 1,
-        padding: 12,
-        position: 'relative',
-        borderRadius: 24,
-        overflow: 'hidden',
-        borderWidth: StyleSheet.hairlineWidth,
-        borderColor: colors.outlineVariant,
-        backgroundColor: '#fff'
-    }
-});
-
 export const Investment = (props: InvestmentProps) => {
-    const { colors } = useTheme();
-    const { course } = styles(colors);
     const {
         style,
         title,
@@ -34,97 +19,51 @@ export const Investment = (props: InvestmentProps) => {
     return (
         <TouchableOpacity
             {...otherProps}
-            style={[
-                course,
-                style
-            ]}
+            style={[styles.course, style]}
         >
-            <View
-                style={{
-                    flex: 1,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between'
-                }}
-            >
-                <View
-                    style={{
-                        flex: 1,
-                        flexDirection: 'row',
-                        alignItems: 'center'
-                    }}
-                >
-                    <View
-                        style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            marginLeft: 8,
-                            borderRadius: '50%',
-                            borderWidth: 1,
-                            borderColor: '#00AEEF',
-                            padding: 18
-                        }}
-                    >
+            <View style={styles.container}>
+                <View style={styles.content}>
+                    <View style={styles.iconContainer}>
                         {(() => {
                             switch (type) {
                                 case 'startups':
                                     return (
                                         <Image
                                             source={require('../assets/flat-icons/rocket.png')}
-                                            style={{
-                                                width: 20,
-                                                height: 20,
-                                                tintColor: '#00AEEF'
-                                            }}
-                                            resizeMode='contain'
+                                            style={styles.icon}
+                                            resizeMode="contain"
                                         />
                                     );
                                 case 'closedDeals':
                                     return (
                                         <Image
                                             source={require('../assets/flat-icons/assept-document.png')}
-                                            style={{
-                                                width: 20,
-                                                height: 20,
-                                                tintColor: '#00AEEF'
-                                            }}
-                                            resizeMode='contain'
+                                            style={styles.icon}
+                                            resizeMode="contain"
                                         />
                                     );
                                 case 'betterFutureCirclesDays':
                                     return (
                                         <Image
                                             source={require('../assets/flat-icons/sun.png')}
-                                            style={{
-                                                width: 20,
-                                                height: 20,
-                                                tintColor: '#00AEEF'
-                                            }}
-                                            resizeMode='contain'
+                                            style={styles.icon}
+                                            resizeMode="contain"
                                         />
                                     );
                                 case 'investorTrainings':
                                     return (
                                         <Image
                                             source={require('../assets/flat-icons/graduation-cap.png')}
-                                            style={{
-                                                width: 20,
-                                                height: 20,
-                                                tintColor: '#00AEEF'
-                                            }}
-                                            resizeMode='contain'
+                                            style={styles.icon}
+                                            resizeMode="contain"
                                         />
                                     );
                                 default:
                                     return (
                                         <Image
                                             source={require('../assets/flat-icons/badge.png')}
-                                            style={{
-                                                width: 20,
-                                                height: 20,
-                                                tintColor: '#00AEEF'
-                                            }}
-                                            resizeMode='contain'
+                                            style={styles.icon}
+                                            resizeMode="contain"
                                         />
                                     );
                             }
@@ -141,13 +80,52 @@ export const Investment = (props: InvestmentProps) => {
                 </View>
                 <Image
                     source={require('../assets/flat-icons/chevron-small-right.png')}
-                    style={{
-                        width: 20,
-                        height: 20,
-                        tintColor: '#A09FA0'
-                    }}
+                    style={styles.chevron}
                 />
             </View>
         </TouchableOpacity>
     );
 };
+
+const styles = StyleSheet.create({
+    course: {
+        flex: 1,
+        padding: 12,
+        position: 'relative',
+        borderRadius: 24,
+        overflow: 'hidden',
+        borderWidth: StyleSheet.hairlineWidth,
+        borderColor: '#A09FA0', // Using a fallback color; adjust as needed
+        backgroundColor: '#fff',
+    },
+    container: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    content: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    iconContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginLeft: 8,
+        borderRadius: 50,
+        borderWidth: 1,
+        borderColor: '#00AEEF',
+        padding: 18,
+    },
+    icon: {
+        width: 20,
+        height: 20,
+        tintColor: '#00AEEF',
+    },
+    chevron: {
+        width: 20,
+        height: 20,
+        tintColor: '#A09FA0',
+    },
+});
