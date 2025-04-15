@@ -256,8 +256,6 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
             backgroundColor: 'transparent',
             alignContent: 'flex-start',
             justifyContent: 'space-between',
-            borderBottomColor: colors.outline,
-            borderBottomWidth: StyleSheet.hairlineWidth,
             shadowColor: '#000',
             shadowOffset: { width: 0, height: 2 },
             shadowOpacity: 0.25,

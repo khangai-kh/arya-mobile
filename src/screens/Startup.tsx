@@ -251,8 +251,9 @@ export const Startup = ({route, navigation}: StartupProps) => {
                         {
                             backgroundColor: startup?.is_favorite ? colors.primary : colors.onPrimary,
                         },
+                        dynamicStyles.appbarActionRightHeart,
                     ]}
-                    size={20}
+                    size={18}
                     onPress={() => handleFollowPress3(startupId)}
                 />
                 {user_id === startup?.created_user && (
@@ -555,6 +556,10 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
     },
     appbarActionRight: {
         backgroundColor: colors.onPrimary || '#FFFFFF',
+        marginRight: 5,
+        marginTop: 20,
+    },
+    appbarActionRightHeart: {
         marginRight: 5,
         marginTop: 20,
     },
