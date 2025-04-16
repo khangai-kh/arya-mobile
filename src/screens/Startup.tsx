@@ -473,13 +473,11 @@ export const Startup = ({route, navigation}: StartupProps) => {
                 </View>
             </ScrollView>
 
-            {user_id === startup?.created_user && (
-                <Box px={16} py={16}>
-                    <Button mode="contained" onPress={() => setVisible(true)}>
-                        Apply for round
-                    </Button>
-                </Box>
-            )}
+            <Box px={16} py={16}>
+                <Button mode="contained" onPress={() => setVisible(true)}>
+                    Apply for round
+                </Button>
+            </Box>
 
             <Portal>
                 <Modal

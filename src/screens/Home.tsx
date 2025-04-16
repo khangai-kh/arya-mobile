@@ -24,7 +24,7 @@ export const Home = (props: HomeProps) => {
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
 
-  // Safely extract route params with defaults if not provided.
+  // Extract route params safely.
   const params: { filterModel?: Record<string, any>; index?: number } = route.params ?? {};
   const filterModel = params.filterModel ?? {};
   const initialTabIndex = params.index ?? 0;
@@ -46,25 +46,30 @@ export const Home = (props: HomeProps) => {
   const navigateToNotifications = () => navigation.navigate('Notifications');
   const navigateToAboutUs = () => navigation.navigate('AboutUs');
 
-  // Custom renderScene: pass filterModel to Members
+  // Wrap each scene in a container that fills available space.
   const renderScene = ({ route }: { route: { key: string } }) => {
+    let content = null;
     switch (route.key) {
       case 'contents':
-        return <Contents />;
+        content = <Contents />;
+        break;
       case 'members':
-        return (
-          <Members
-            filterModel={filterModel}
-            refresh={false}
-          />
-        );
+        content = <Members filterModel={filterModel} refresh={false} />;
+        break;
       case 'investments':
-        return <Investments />;
+        content = <Investments />;
+        break;
       case 'entrepreneurship':
-        return <Entrepreneurship />;
+        content = <Entrepreneurship />;
+        break;
       default:
         return null;
     }
+    return (
+      <View key={route.key} style={styles.scene}>
+        {content}
+      </View>
+    );
   };
 
   return (
@@ -109,6 +114,7 @@ export const Home = (props: HomeProps) => {
       {/* TabView Section */}
       <View style={styles.tabViewContainer}>
         <TabView
+          lazy
           renderScene={renderScene}
           onIndexChange={setIndex}
           initialLayout={{ width }}
@@ -156,11 +162,17 @@ const styles = StyleSheet.create({
   tabStyle: {
     width: 'auto',
   },
+  // Standard indicator style.
   indicatorStyle: {
+    height: 2,
     backgroundColor: 'transparent',
   },
   tabBar: {
     backgroundColor: 'transparent',
+  },
+  // New style: wrap each scene.
+  scene: {
+    flex: 1,
   },
 });
 
