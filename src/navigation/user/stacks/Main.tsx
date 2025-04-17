@@ -31,9 +31,10 @@ import { BottomTab } from '../tabs/BottomTab';
 import { Profile } from '../../../screens/Profile';
 import {PremiumSuccess} from '../../../screens/PremiumSuccess';
 import PaymentForm from '../../../components/forms/PaymentForm';
-import StripePayment from '../../../screens/StripePayment';
-import MokaPayment from '../../../screens/MokaPayment';
+import { StripePayment } from '../../../screens/StripePayment';
+import { MokaPayment } from '../../../screens/MokaPayment';
 import ThreeDSecureScreen from '../../../screens/ThreeDSecureScreen';
+import { FundingRound } from '../../../screens/FundingRound';
 
 
 const Stack = createNativeStackNavigator<MainStackParams>();
@@ -109,6 +110,7 @@ export const MainStack = () => {
         />
         <Stack.Screen name="DisclosureText" component={DisclosureText} options={{ title: 'Disclosure text' }} />
         <Stack.Screen name="Search" component={Search} options={{ headerShown: false }} />
+        <Stack.Screen name="FundingRound" component={FundingRound} options={{ headerShown: false }} />
         <Stack.Screen name="Startup" component={Startup} options={{ headerShown: false }}/>
         <Stack.Screen name="StartupsFilter" component={StartupsFilter} options={{ headerShown: false }} />
         <Stack.Screen name="Startups" component={Startups} options={{ headerShown: false }}/>

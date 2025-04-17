@@ -472,10 +472,14 @@ export const Startup = ({route, navigation}: StartupProps) => {
                     </View>
                 </View>
             </ScrollView>
-
             <Box px={16} py={16}>
                 <Button mode="contained" onPress={() => setVisible(true)}>
                     Apply for round
+                </Button>
+            </Box>
+            <Box px={16} py={16}>
+                <Button mode="contained" onPress={() =>(navigation.navigate('FundingRound'))}>
+                    Start your funding round
                 </Button>
             </Box>
 
@@ -569,7 +573,8 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
     interestText: {
         fontWeight: 'bold',
         paddingLeft: 0,
-        marginLeft: 0,
+        marginTop: 10,
+        marginLeft: -30,
     },
     headerContent: {
         flex: 1,

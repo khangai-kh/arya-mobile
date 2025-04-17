@@ -28,7 +28,7 @@ type Props = {
   route: MokaPaymentScreenRouteProp;
 };
 
-const MokaPayment: React.FC<Props> = ({ navigation, route }) => {
+export const MokaPayment: React.FC<Props> = ({ navigation, route }) => {
   const { pricingPlanId, eventId } = route.params || { pricingPlanId: undefined, eventId: undefined };
   const [cardHolderFullName, setCardHolderFullName] = useState('');
   const [cardNumber, setCardNumber] = useState('');
@@ -393,4 +393,3 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MokaPayment;

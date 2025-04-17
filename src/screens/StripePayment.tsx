@@ -4,7 +4,7 @@ import { useStripe, StripeProvider } from '@stripe/stripe-react-native';
 
 const STRIPE_API_URL = 'https://dev.aryawomen.com/api/stripe/create-payment-intent';
 
-const StripePayment = () => {
+export const StripePayment = () => {
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
