@@ -35,6 +35,7 @@ import { StripePayment } from '../../../screens/StripePayment';
 import { MokaPayment } from '../../../screens/MokaPayment';
 import ThreeDSecureScreen from '../../../screens/ThreeDSecureScreen';
 import { FundingRound } from '../../../screens/FundingRound';
+import { FundingSuccess } from '../../../screens/FundingSuccess';
 
 
 const Stack = createNativeStackNavigator<MainStackParams>();
@@ -121,6 +122,7 @@ export const MainStack = () => {
         <Stack.Screen name="Member" component={Member} options={{ headerShown: false }} />
         <Stack.Screen name="MemberShip" component={MemberShip} options={{ title: 'Membership' }} />
         <Stack.Screen name="PremiumSuccess" component={PremiumSuccess} options={{ title: 'Premium Success' }} />
+        <Stack.Screen name="FundingSuccess" component={FundingSuccess} options={{ headerShown: false }} />
         <Stack.Screen name="MemberFilter" component={MemberFilter} options={{ headerShown: false }} />
         <Stack.Screen name="Inspirations" component={Inspirations} options={{ title: 'Inspirations' }} />
         <Stack.Screen name="BKYSuccess" component={BKYSuccess} options={{ headerShown: false }} />
@@ -130,7 +132,6 @@ export const MainStack = () => {
 
         <Stack.Screen name="PaymentLocation" component={PaymentForm} />
         <Stack.Screen name="StripePayment" component={StripePayment} />
-        
         <Stack.Screen name="MokaPayment" component={MokaPayment} />
         <Stack.Screen name="ThreeDSecureScreen" component={ThreeDSecureScreen} />
       </Stack.Group>

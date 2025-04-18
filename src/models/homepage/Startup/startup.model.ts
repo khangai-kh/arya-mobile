@@ -34,7 +34,7 @@ export interface StartupModel extends BaseEntityModel {
     target_amount?: number | null;
     amount_collected?: number | null;
     created_user?: number | null;
-    
+
     [key: string]: any;
 }
 

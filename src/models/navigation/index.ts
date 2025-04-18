@@ -29,7 +29,12 @@ export type MainStackParams = {
     ExternalWeb: {
       url: string;
     };
-    FundingRound: undefined;
+    FundingRound: {
+      id: number;
+    };
+    FundingSuccess: {
+      id: number;
+    };
     Inspirations: undefined;
     InvestorTrainings: undefined;
     IPILicense: {

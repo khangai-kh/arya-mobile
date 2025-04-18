@@ -14,6 +14,7 @@ import { useSelector } from 'react-redux';
 import { API } from '../plugins/axios';
 import { Member } from '../components/Member';
 import { UserModelList } from '../models/users/User/user.model';
+import { InvestmentStage } from '../models/general/models';
 
 type StartupProps = StackScreenProps<MainStackParams, 'Startup'>;
 
@@ -210,6 +211,27 @@ export const Startup = ({route, navigation}: StartupProps) => {
         }
     };
 
+    const checkStatus = (status : InvestmentStage) =>{
+        if(status.id !== 1 ){
+            return true;
+        }
+        return false;
+    };
+
+    const checkMessage = (status : InvestmentStage) =>{
+        if(status.id === 1 ){
+            return 'Start your funding round';
+        }
+
+        if(status.id === 2 ){
+            return 'Funding closed';
+        }
+
+        return 'Approval pending';
+    };
+
+    const isFounder = founders.some(f => f.id === user_id);
+
     const isDataLoading = isFetchingProfile || isLoading;
 
     if (isDataLoading) {
@@ -234,7 +256,7 @@ export const Startup = ({route, navigation}: StartupProps) => {
                     title={
                         <View style={dynamicStyles.titleContainer}>
 
-                            <Text variant="titleMedium" style={dynamicStyles.interestText}>
+                            <Text variant="titleMedium" style={dynamicStyles.interestTitle}>
                                 Startup
                             </Text>
                         </View>
@@ -472,16 +494,25 @@ export const Startup = ({route, navigation}: StartupProps) => {
                     </View>
                 </View>
             </ScrollView>
-            <Box px={16} py={16}>
+            {isFounder ? (
+                <Box px={16} py={16}>
+                <Button
+                    mode="contained"
+                    onPress={() => navigation.navigate('FundingRound', { id: startupId })}
+                    disabled={startup?.startup_status ? checkStatus(startup.startup_status) : false}
+                >
+                    {startup?.startup_status
+                    ? checkMessage(startup.startup_status)
+                    : 'Start your funding round'}
+                </Button>
+                </Box>
+            ) : (
+                <Box px={16} py={16}>
                 <Button mode="contained" onPress={() => setVisible(true)}>
                     Apply for round
                 </Button>
-            </Box>
-            <Box px={16} py={16}>
-                <Button mode="contained" onPress={() =>(navigation.navigate('FundingRound'))}>
-                    Start your funding round
-                </Button>
-            </Box>
+                </Box>
+            )}
 
             <Portal>
                 <Modal
@@ -570,11 +601,16 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
         justifyContent: 'space-between',
         marginLeft: 20,
     },
-    interestText: {
+    interestTitle: {
         fontWeight: 'bold',
         paddingLeft: 0,
         marginTop: 10,
         marginLeft: -30,
+    },
+    interestText: {
+        fontWeight: 'bold',
+        paddingLeft: 0,
+        marginBottom:10,
     },
     headerContent: {
         flex: 1,
@@ -711,7 +747,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 16,
         paddingVertical: 6,
-        paddingHorizontal: 6,
+        paddingHorizontal: 4,
         justifyContent: 'center',
     },
     badgeIcon: {
