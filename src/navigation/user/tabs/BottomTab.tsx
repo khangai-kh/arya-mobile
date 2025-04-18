@@ -1,6 +1,6 @@
 import React from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Image, TouchableWithoutFeedback, View, StyleSheet } from 'react-native';
+import { BottomTabBarButtonProps, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Image, TouchableWithoutFeedback, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { Events } from '../../../screens/Events';
 import { Home } from '../../../screens/Home';
@@ -8,6 +8,7 @@ import { Messenger } from '../../../screens/Messenger';
 import { Profile } from '../../../screens/Profile';
 import { MainStackParams } from '../../../models/navigation';
 import { useNavigationContext } from '../../../contexts/NavigationContext';
+import { MemberDiscovery } from '../../../screens/MemberDiscovery';
 
 declare global {
   namespace ReactNavigation {
@@ -19,7 +20,7 @@ declare global {
 export type BottomTabStackParams = {
   Home?: { filterModel?: any; index?: number };
   Events: undefined;
-  CenterTab: undefined;
+  MemberDiscovery: undefined;
   Messenger: undefined;
   Profile: undefined;
 };
@@ -45,16 +46,18 @@ const MessengerIcon = ({ focused }: { focused: boolean }) =>
 const ProfileIcon = ({ focused }: { focused: boolean }) =>
   getTabIcon(focused, require('../../../assets/flat-icons/user.png'), require('../../../assets/flat-icons/user-outlined.png'));
 
-const CustomTabButton = () => (
-  <TouchableWithoutFeedback>
-    <View style={styles.floatingButton}>
-      <Image source={require('../../../assets/bottom-tab.png')} style={styles.floatingIcon} />
-    </View>
-  </TouchableWithoutFeedback>
+const CustomTabButton: React.FC<BottomTabBarButtonProps> = ({ onPress, style }) => (
+  <TouchableOpacity
+    activeOpacity={0.7}
+    onPress={onPress}
+    style={[styles.floatingButton, style]}
+  >
+    <Image
+      source={require('../../../assets/flower.png')}
+      style={styles.floatingIcon}
+    />
+  </TouchableOpacity>
 );
-
-// DummyScreen defined outside to avoid inline component functions
-const DummyScreen = () => null;
 
 export const BottomTab = (props: any) => {
   const { colors } = useTheme();
@@ -90,7 +93,13 @@ export const BottomTab = (props: any) => {
         initialParams={{ filterModel: filterModel, index: tabIndex }}
       />
       <BottomTabStack.Screen name="Events" component={Events} options={{ tabBarIcon: renderEventsIcon }} />
-      <BottomTabStack.Screen name="CenterTab" component={DummyScreen} options={{ tabBarButton: CustomTabButton }} />
+      <BottomTabStack.Screen 
+        name="MemberDiscovery" 
+        component={MemberDiscovery} 
+        options={{
+          tabBarButton: (props) => <CustomTabButton children={undefined} {...props} />,
+        }}
+        />
       <BottomTabStack.Screen name="Messenger" component={Messenger} options={{ tabBarIcon: renderMessengerIcon }} />
       <BottomTabStack.Screen name="Profile" component={Profile} options={{ tabBarIcon: renderProfileIcon }} />
     </BottomTabStack.Navigator>
@@ -107,10 +116,7 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     backgroundColor: '#FFFFFF',
     borderTopColor: 'transparent',
-    shadowColor: '#000',
     shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 10,
     elevation: 5,
     paddingTop: 20,
     paddingRight: 10,
@@ -136,16 +142,10 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 32,
-    backgroundColor: '#FFFFFF',
+    bottom: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 8,
-    elevation: 5,
     position: 'absolute',
-    bottom: 20,
     alignSelf: 'center',
   },
   floatingIcon: {

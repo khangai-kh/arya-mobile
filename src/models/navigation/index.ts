@@ -52,6 +52,7 @@ export type MainStackParams = {
       agreed_agreement: boolean;
       agreed_confidentiality: boolean;
     };
+    MemberDiscovery : undefined;
     MembershipForm: undefined;
     Messenger: undefined;
     Notifications: undefined;
