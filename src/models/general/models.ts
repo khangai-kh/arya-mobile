@@ -10,7 +10,7 @@ export interface DescribeModel extends BaseEntityModel {
 
 export interface InterestModel extends BaseEntityModel {
     id: number;
-    interes_name: string;
+    name: string;
     title: string;
     category_id: number;
     icon?: string | null;

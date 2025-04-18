@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   View,
   ImageBackground,
   StyleSheet,
   useWindowDimensions,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import {
   Appbar,
@@ -15,68 +16,103 @@ import {
   Button,
 } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MainStackParams } from '../models/navigation';
 import { StackScreenProps } from '@react-navigation/stack';
+import { MainStackParams } from '../models/navigation';
+import { UserModel } from '../models/users/User';
+import { API } from '../plugins/axios';
 
-type MemberDiscoveryProps = StackScreenProps<
-  MainStackParams,
-  'MemberDiscovery'
->;
+type MemberDiscoveryProps = StackScreenProps<MainStackParams, 'MemberDiscovery'>;
 
 export const MemberDiscovery = ({ navigation }: MemberDiscoveryProps) => {
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
   const styles = makeStyles(colors, width);
 
-  // Determine icon + tint for each role
-  const getRoleProps = (role: string) => {
-    let iconSource: any;
-    let tintColor: string;
+  const [member, setMember] = useState<UserModel | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const getYearsAgo = useCallback((dateString: string): number => {
+    const inputDate = new Date(dateString);
+    if (isNaN(inputDate.getTime())) {return 0;}
+    const now = Date.now();
+    const msInYear = 1000 * 60 * 60 * 24 * 365.25;
+    return Math.floor((now - inputDate.getTime()) / msInYear);
+  }, []);
+
+  const getRoleProps = useCallback((role: string) => {
     switch (role) {
       case 'Investor':
-        iconSource = require('../assets/flat-icons/diamond.png');
-        tintColor = '#00AEEF';
-        break;
+        return { icon: require('../assets/flat-icons/diamond.png'), tint: '#00AEEF' };
       case 'Premium':
-        iconSource = require('../assets/flat-icons/crown.png');
-        tintColor = '#B61D8D';
-        break;
+        return { icon: require('../assets/flat-icons/crown.png'), tint: '#B61D8D' };
       case 'Entrepreneur':
-        iconSource = require('../assets/flat-icons/rocket.png');
-        tintColor = '#F99F1C';
-        break;
+        return { icon: require('../assets/flat-icons/rocket.png'), tint: '#F99F1C' };
       default:
-        iconSource = require('../assets/flat-icons/diamond.png');
-        tintColor = colors.primary;
+        return { icon: require('../assets/flat-icons/user-outlined.png'), tint: '#F99F1C' };
     }
-    return { iconSource, tintColor };
-  };
+  }, []);
 
-  // Example member data; replace with API-driven data as needed
-  const member = {
-    photo: { uri: 'https://example.com/ozlem-kurt.jpg' },
-    role: 'Investor',
-    name: 'Özlem Kurt',
-    position: 'Managing Partner at Kurt & Partners',
-    yearsMember: 4,
-    interests: ['Competition Law', 'Technology', 'Data', 'GRC', 'Anti‑Trust'],
-  };
+  const fetchContent = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { data } = await API.get<UserModel>('/api/user/discovery-user');
+      setMember(data);
+    } catch (err) {
+      console.error(err);
+      setError('Failed to load content');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-  const { iconSource, tintColor } = getRoleProps(member.role);
+  useEffect(() => {
+    fetchContent();
+  }, [fetchContent]);
+
+  if (loading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
+
+  if (error || !member) {
+    return (
+      <View style={styles.loaderContainer}>
+        <Text style={styles.errorText}>{error || 'No content available'}</Text>
+        <Button mode="contained" onPress={() => {
+          setLoading(true);
+          setError(null);
+          // re-run effect
+          API.get<UserModel>('/api/user/discovery-user')
+            .then(({ data }) => setMember(data))
+            .catch(() => setError('Failed to load content'))
+            .finally(() => setLoading(false));
+        }}>
+          Retry
+        </Button>
+      </View>
+    );
+  }
+
+  const { icon: roleIcon, tint: roleTint } = getRoleProps(member.role.name);
 
   return (
     <SafeAreaView style={styles.container}>
       <Appbar.Header style={styles.appbarHeader}>
         <Appbar.Content
-            title={
-                <View style={styles.titleContainer}>
-                    <Text variant="titleMedium" style={styles.titleText}>
-                        Member Discovery
-                    </Text>
-                </View>
-            }
+          title={
+            <View style={styles.titleContainer}>
+              <Text variant="titleMedium" style={styles.titleText}>
+                Member Discovery
+              </Text>
+            </View>
+          }
         />
-    </Appbar.Header>
+      </Appbar.Header>
 
       <View style={styles.cardWrapper}>
         <ImageBackground
@@ -85,49 +121,37 @@ export const MemberDiscovery = ({ navigation }: MemberDiscoveryProps) => {
           imageStyle={styles.imageStyle}
         >
           <View style={styles.badgeContainer}>
-            <View
-              style={[styles.badge, { backgroundColor: tintColor }]}
-            >
-              <Image
-                source={iconSource}
-                style={styles.roleIcon}
-                resizeMode="contain"
-              />
-              <Text style={styles.badgeText}>{member.role}</Text>
+            <View style={[styles.badge, { backgroundColor: roleTint }]}>
+              <Image source={roleIcon} style={styles.roleIcon} />
+              <Text style={styles.badgeText}>{member.role.role_name}</Text>
             </View>
           </View>
 
           <View style={styles.overlay}>
             <Text variant="headlineSmall" style={styles.nameText}>
-              {member.name}
+              {member.full_name}
             </Text>
 
             <View style={styles.infoRow}>
-              <Icon
-                source={require('../assets/flat-icons/briefcase.png')}
-                size={16}
-                color="#E0E0E0"
-              />
+              <Icon source={require('../assets/flat-icons/briefcase.png')} size={16} color="#E0E0E0" />
               <Text variant="bodyMedium" style={styles.infoText}>
-                {member.position}
+                {member.carrier?.title || 'Attending'} at {member.carrier?.company_name || 'Arya Women'}
               </Text>
             </View>
 
             <View style={styles.infoRow}>
-              <Icon
-                source={require('../assets/flat-icons/badge.png')}
-                size={16}
-                color="#E0E0E0"
-              />
+              <Icon source={require('../assets/flat-icons/badge.png')} size={16} color="#E0E0E0" />
               <Text variant="bodyMedium" style={styles.infoText}>
-                {member.yearsMember} Years Member
+                {getYearsAgo(member.created_at || '') === 0
+                  ? 'Joined this year'
+                  : `${getYearsAgo(member.created_at || '')} years ago`}
               </Text>
             </View>
 
             <View style={styles.interestsRow}>
-              {member.interests.map((tag) => (
-                <Text key={tag} style={styles.infoText}>
-                  #{tag}
+              {member.interests?.map((tag) => (
+                <Text key={tag.id} style={styles.infoText}>
+                  #{tag.name}
                 </Text>
               ))}
             </View>
@@ -135,31 +159,28 @@ export const MemberDiscovery = ({ navigation }: MemberDiscoveryProps) => {
             <View style={styles.actionsRow}>
               <Button
                 mode="contained"
-                style={[styles.actionButton, { width: 40, height: 60, borderRadius: 40, justifyContent: 'center', alignItems: 'center' }]}
-                onPress={() => {}}
+                style={[styles.actionButton, { width: 40, height: 60, borderRadius: 40 }]}
+                onPress={() =>{fetchContent()}}
               >
-                <Image
-                  source={require('../assets/flat-icons/x.png')}
-                  style={{ width: 24, height: 24 }}
-                />
+                <Image source={require('../assets/flat-icons/x.png')} style={styles.actionIcon} />
               </Button>
               <Button
-                style={[styles.actionButton, styles.actionSecondary, { width: 40, height: 60, justifyContent: 'center', alignItems: 'center' }]}
+                style={[styles.actionButton, styles.actionSecondary, { width: 40, height: 60 }]}
                 onPress={() => {}}
               >
                 <Image
                   source={require('../assets/flat-icons/comment-alt-outlined.png')}
-                  style={{ width: 24, height: 24, tintColor:colors.primary }}
-                   resizeMode="contain"
+                  style={[styles.actionIcon, { tintColor: colors.primary }]}
+                  resizeMode="contain"
                 />
               </Button>
               <Button
-                style={[styles.actionButton, styles.actionPrimary, { width: 40, height: 60, justifyContent: 'center', alignItems: 'center' }]}
-                onPress={() => {}}
+                style={[styles.actionButton, styles.actionPrimary, { width: 40, height: 60 }]}
+                onPress={() => {navigation.navigate('Member', { id: member.id })}}
               >
                 <Image
                   source={require('../assets/flat-icons/info.png')}
-                  style={{ width: 24, height: 24, tintColor:'white' }}
+                  style={[styles.actionIcon, { tintColor: 'white' }]}
                   resizeMode="contain"
                 />
               </Button>
@@ -177,9 +198,10 @@ const makeStyles = (colors: MD3Theme['colors'], width: number) =>
       flex: 1,
       backgroundColor: '#f5f5f5',
     },
-    header: {
-      backgroundColor: 'transparent',
-      elevation: 0,
+    loaderContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     cardWrapper: {
       alignItems: 'center',
@@ -189,8 +211,8 @@ const makeStyles = (colors: MD3Theme['colors'], width: number) =>
     imageBackground: {
       width: width - 32,
       height: '92%',
-      overflow: 'hidden',
       borderRadius: 16,
+      overflow: 'hidden',
     },
     imageStyle: {
       borderRadius: 16,
@@ -202,32 +224,22 @@ const makeStyles = (colors: MD3Theme['colors'], width: number) =>
       left: 12,
     },
     badge: {
-      borderRadius: 12,
-      width:100,
-      flex:1,
-      flexDirection:'row',
-      alignContent:'center',
-     paddingVertical:2,
-     paddingHorizontal:6 
-    },
-    badgeContent: {
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'center',
+      borderRadius: 12,
+      paddingVertical: 4,
       paddingHorizontal: 8,
     },
     badgeText: {
       color: '#fff',
       fontSize: 11,
       fontWeight: 'bold',
+      marginLeft: 4,
     },
     roleIcon: {
       width: 14,
       height: 14,
-      marginRight: 6,
-      marginLeft: 6,
-      marginTop:2,
-      tintColor:'white',
+      tintColor: 'white',
     },
     overlay: {
       position: 'absolute',
@@ -247,23 +259,26 @@ const makeStyles = (colors: MD3Theme['colors'], width: number) =>
     infoRow: {
       flexDirection: 'row',
       alignItems: 'center',
+      marginVertical: 4,
     },
     infoText: {
       color: '#E0E0E0',
-      marginLeft: 10,
-      fontSize: 11,
+      marginLeft: 8,
+      fontSize: 12,
     },
     interestsRow: {
       flexDirection: 'row',
       flexWrap: 'wrap',
-      marginVertical: 4,
+      marginVertical: 8,
     },
     actionsRow: {
       flexDirection: 'row',
       justifyContent: 'space-around',
-      marginTop: 4,
+      marginTop: 12,
     },
     actionButton: {
+      justifyContent: 'center',
+      alignItems: 'center',
       backgroundColor: '#fff',
       borderRadius: 40,
     },
@@ -273,22 +288,22 @@ const makeStyles = (colors: MD3Theme['colors'], width: number) =>
     actionPrimary: {
       backgroundColor: colors.primary,
     },
+    actionIcon: {
+      width: 24,
+      height: 24,
+    },
     appbarHeader: {
-      width: '100%',
       backgroundColor: 'transparent',
-      alignContent: 'flex-start',
-      justifyContent: 'space-between',
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.25,
-      shadowRadius: 3.84,
-      elevation: 5,
+      elevation: 4,
     },
     titleContainer: {
       alignItems: 'center',
     },
     titleText: {
-        fontWeight: 'bold',
-        marginLeft: -20,
+      fontWeight: 'bold',
+      marginLeft: -20,
     },
-  });
+    errorText:{
+      marginBottom: 12,
+    },
+});

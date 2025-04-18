@@ -99,19 +99,21 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
         user_id: user_id,
         interest_ids: selectedInterests,
       });
-      setStage('profile');
+
     } catch (error) {
       console.error('Error saving user info:', error);
     } finally {
       setIsLoading(false);
+      setStage('profile');
+      await refetch();
     }
   };
 
   const handleSelectInterest = (interest: InterestModel) => {
     setSelectedInterests((prev) =>
-      prev.includes(interest.interest_id)
-        ? prev.filter((id) => id !== interest.interest_id)
-        : [...prev, interest.interest_id]
+      prev.includes(interest.id)
+        ? prev.filter((id) => id !== interest.id)
+        : [...prev, interest.id]
     );
   };
 
@@ -123,13 +125,17 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
         await API.put('/api/users/current-user-full_name', { full_name: values.full_name });
         updatedProfile.full_name = values.full_name ?? updatedProfile.full_name;
       }
+      if (values.is_mentor !== profile?.is_mentor) {
+        await API.put('/api/users/current-user-is-mentor', { is_mentor: values.is_mentor });
+        updatedProfile.is_mentor = values.is_mentor ?? updatedProfile.is_mentor;
+      }
       if (values.company !== profile?.carrier.company_name) {
         updatedProfile.carrier.company_name = values.company ?? updatedProfile.carrier.company_name;
       }
-      if (values.sector?.sector_id !== profile?.carrier.sector?.id) {
+      if (values.sector?.value !== profile?.carrier.sector?.id) {
         updatedProfile.carrier.sector = {
           ...updatedProfile.carrier.sector,
-          id: values.sector?.sector_id ?? updatedProfile.carrier.sector.id,
+          id: values.sector?.value ?? updatedProfile.carrier.sector.id,
         };
       }
       if (values.title !== profile?.carrier.title) {
@@ -220,7 +226,27 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
                   {profile?.additional?.role?.id === 1 && (
                     <>
                       <Text variant="titleMedium" style={dynamicStyles.titleText}>
-                          Premium
+                          {Number(profile?.additional?.role.id) === 2 && (
+                            <Image
+                              resizeMode="contain"
+                              source={require('../assets/flat-icons/rocket.png')}
+                              style={[dynamicStyles.roleIcon, { tintColor: '#B61D8D' }]}
+                            />
+                          )}
+                          {profile?.additional?.role.id === 1 && (
+                            <Image
+                              resizeMode="contain"
+                              source={require('../assets/flat-icons/diamond.png')}
+                              style={[dynamicStyles.roleIcon, { tintColor: '#00AEEF' }]}
+                            />
+                          )}
+                          {Number(profile?.additional?.role.id) === 3 && (
+                            <Image
+                              resizeMode="contain"
+                              source={require('../assets/flat-icons/diamond.png')}
+                              style={[dynamicStyles.roleIcon, { tintColor: '#B61D8D' }]}
+                            />
+                          )} {profile?.additional?.role.name}
                       </Text>
                     </>
                   )}
@@ -266,14 +292,14 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
             <Appbar.Action
               icon={require('../assets/flat-icons/edit.png')}
               color="#414042"
-              size={20}
+              size={16}
               style={dynamicStyles.appbarActionRight}
               onPress={() => setStage('edit_profile')}
             />
             <Appbar.Action
               icon={require('../assets/flat-icons/logout.png')}
               color="#414042"
-              size={20}
+              size={16}
               style={dynamicStyles.appbarActionRight}
               onPress={handleLogout}
             />
@@ -292,28 +318,13 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
                 />
                 <View>
                   <Text variant="titleSmall" style={dynamicStyles.nameText}>
-                    {profile?.full_name} {profile?.additional?.role.id === 2 && (
-                        <Image
-                          resizeMode="contain"
-                          source={require('../assets/flat-icons/rocket.png')}
-                          style={[dynamicStyles.roleIcon, { tintColor: '#B61D8D' }]}
-                        />
-                      )}
-                      {profile?.additional?.role.id === 1 && (
-                        <Image
-                          resizeMode="contain"
-                          source={require('../assets/flat-icons/diamond.png')}
-                          style={[dynamicStyles.roleIcon, { tintColor: '#00AEEF' }]}
-                        />
-                      )}
-                      {profile?.additional?.role.id === 3 && (
-                        <Image
-                          resizeMode="contain"
-                          source={require('../assets/flat-icons/diamond.png')}
-                          style={[dynamicStyles.roleIcon, { tintColor: '#B61D8D' }]}
-                        />
-                      )}
+                    {profile?.full_name} 
                   </Text>
+                  {profile?.is_mentor === true && (
+                  <Text variant="titleSmall" style={dynamicStyles.mentorShipText}>
+                    Mentorship
+                  </Text>
+                  )}
                   <View style={dynamicStyles.locationContainer}>
                     <View style={dynamicStyles.locationItem}>
                       <Image
@@ -350,7 +361,7 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
                 </View>
               </View>
               <Text style={dynamicStyles.descriptionText}>
-              {profile?.carrier?.title} | {profile?.carrier?.area_of_expertise}
+                {profile?.carrier?.title} | {profile?.carrier?.area_of_expertise}
               </Text>
               <View style={dynamicStyles.buttonRow}>
                 <Button
@@ -451,6 +462,7 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
                 ? { id: profile.carrier.sector.id, name: profile.carrier.sector.name }
                 : undefined,
               title: profile?.carrier.title,
+              is_mentor: profile?.is_mentor || false,
             }}
             onSubmit={handleProfileUpdate}
           />
@@ -500,7 +512,6 @@ const createDynamicStyles = (colors: MD3Theme['colors'], width: number) =>
     },
     appbarActionRight: {
       backgroundColor: colors.onPrimary,
-      marginRight: 5,
     },
     titleContainer: {
       flexDirection: 'row',
@@ -514,7 +525,7 @@ const createDynamicStyles = (colors: MD3Theme['colors'], width: number) =>
     interestText: {
       fontWeight: 'bold',
       paddingLeft: 0,
-      marginLeft: 0,
+      marginLeft: -40,
     },
     profileHeader: {
       alignItems: 'center',
@@ -616,6 +627,10 @@ const createDynamicStyles = (colors: MD3Theme['colors'], width: number) =>
       fontSize: 16,
       fontWeight: 'bold',
     },
+    mentorShipText: {
+      color: '#4CB748',
+      fontSize: 13,
+    },
     sectionText: {
       color: '#414042',
       fontSize: 14,
@@ -625,11 +640,12 @@ const createDynamicStyles = (colors: MD3Theme['colors'], width: number) =>
       marginLeft:10,
     },
     roleIcon: {
-      width: 16,
-      height: 16,
+      width: 14,
+      height: 14,
+      marginTop:10,
       marginLeft: 20,
     },
-  });
+});
 
 const styles = StyleSheet.create({
   loaderContainer: {

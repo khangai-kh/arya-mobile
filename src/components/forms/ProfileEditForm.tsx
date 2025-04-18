@@ -11,7 +11,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Text, Button, Avatar, IconButton } from 'react-native-paper';
+import { Text, Button, Avatar, IconButton, Switch } from 'react-native-paper';
 import { Asset, launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -28,6 +28,7 @@ export interface ProfileEditFormValues {
   sector?: Sector;
   address?: string;
   title?: string;
+  is_mentor: boolean;
 }
 export interface ProfileEditProps {
   initialValues: ProfileEditFormValues;
@@ -178,6 +179,7 @@ export const ProfileEditForm = ({ initialValues, onSubmit }: ProfileEditProps) =
                 errors,
                 touched,
                 isSubmitting,
+                setFieldValue,
               }) => (
                 <View style={styles.formContainer}>
                   <Text variant="titleSmall" style={styles.title}>
@@ -213,8 +215,8 @@ export const ProfileEditForm = ({ initialValues, onSubmit }: ProfileEditProps) =
                     apiUrl="/api/sectors"
                     fieldName="sector"
                     label="Sector"
-                    labelKey="sector_name"
-                    valueKey="sector_id"
+                    labelKey="name"
+                    valueKey="id"
                     initialValue={{ label: values.sector?.name || '', value: Number(values.sector?.id) || 0 }}
                     onValueChange={(item: SelectItem<Sector> | null) => {
                       if (item) {
@@ -236,6 +238,18 @@ export const ProfileEditForm = ({ initialValues, onSubmit }: ProfileEditProps) =
                   {touched.title && errors.title && (
                     <Text style={styles.errorText}>{errors.title}</Text>
                   )}
+
+                  <View style={styles.switch}>
++                   <Text variant="bodyMedium">Mentorship</Text>
+                    <Switch
+                      value={values.is_mentor}
+                      onValueChange={(val) => {
+                        setFieldValue('is_mentor', val).catch((error) =>
+                          console.error('Error setting field value:', error)
+                        );
+                      }}
+                    />
+                  </View>
 
                   <Button
                     mode="contained"
@@ -297,6 +311,19 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     borderWidth: 1,
     padding: 12,
+    borderRadius: 20,
+    borderColor: '#f5f5f5',
+    backgroundColor: '#ffffff',
+  },
+  switch: {
+    flex:1,
+    flexDirection:'row',
+    marginTop: 12,
+    marginBottom: 8,
+    borderWidth: 1,
+    paddingHorizontal:10,
+    paddingVertical:8,
+    justifyContent: 'space-between', alignItems: 'center',
     borderRadius: 20,
     borderColor: '#f5f5f5',
     backgroundColor: '#ffffff',

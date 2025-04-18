@@ -51,9 +51,9 @@ export const Select = <T extends Record<string, any>>({
     const mapItems = (data: T[]): SelectItem<T>[] =>
       data.map((item) => ({
         label: String(
-          item[labelKey as keyof T] || item.symbol || item.name || item.sector_name || item.industries_name  || ''
+          item[labelKey as keyof T] || item.symbol || item.name || ''
         ),
-        value: item[valueKey as keyof T] || item.id || item.sector_id || item.industries_id,
+        value: item[valueKey as keyof T] || item.id ,
       }));
 
     const handleInitialValue = (mappedItems: SelectItem<T>[]) => {
@@ -164,6 +164,7 @@ const defaultStyles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
+    fontWeight: 'bold',
     marginBottom: 8,
   },
   dropdown: {

@@ -19,7 +19,7 @@ export const SelectInterest = ({
   onNextButton,
 }: SelectInterestProps) => {
   const handleSelect = (interest: InterestModel) => {
-    if (selectedInterests.includes(interest.interest_id)) {
+    if (selectedInterests.includes(interest.id)) {
       onSelect(interest);
     } else if (selectedInterests.length < 5) {
       onSelect(interest);
@@ -53,10 +53,10 @@ export const SelectInterest = ({
               </Text>
               <View style={styles.interestsContainer}>
                 {interestsGroup.map((interest) => {
-                  const isSelected = selectedInterests.includes(interest.interest_id);
+                  const isSelected = selectedInterests.includes(interest.id);
                   return (
                     <TouchableOpacity
-                      key={interest.interest_id}
+                      key={interest.id}
                       style={[
                         styles.interestBox,
                         isSelected && styles.selectedBox,
@@ -71,7 +71,7 @@ export const SelectInterest = ({
                         }
                         style={[styles.interestIcon, isSelected && styles.selectedInterestIcon]}
                       />
-                      <Text style={styles.interestText}>{interest.interest_name}</Text>
+                      <Text style={styles.interestText}>{interest.name}</Text>
                     </TouchableOpacity>
                   );
                 })}
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   categoryContainer: {
-    marginTop: 24,
+    marginTop: 16,
   },
   subheader: {
     marginBottom: 12,
@@ -113,17 +113,19 @@ const styles = StyleSheet.create({
   },
   interestsContainer: {
     flexDirection: 'row',
+    marginBottom:20,
     flexWrap: 'wrap',
     gap: 5, // Adds spacing between items
   },
   interestBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 10,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
     borderRadius: 15,
     backgroundColor: '#f5f5f5',
     marginRight: 12, // Space between items horizontally
-    marginBottom: 12, // Space between items vertically
+    marginBottom: 5,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,

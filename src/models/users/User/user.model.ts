@@ -1,5 +1,5 @@
 import type { BaseEntityModel } from '../../base-entity.model';
-import { BatchModel, DescribeModel, Industry, InterestModel, ProfileModel, Sector } from '../../general/models';
+import { BatchModel, DescribeModel, Image, Industry, InterestModel, ProfileModel, Sector } from '../../general/models';
 import { StartupBriefModel } from '../../homepage/Startup/startup.model';
 
 export interface UserModel extends BaseEntityModel {
@@ -43,6 +43,7 @@ export interface UserModel extends BaseEntityModel {
         is_confidentiality_accepted: boolean;
     };
     is_favorited?:boolean;
+    is_mentor: boolean;
     followers:{
         id: number;
         full_name: string
@@ -53,6 +54,7 @@ export interface UserModel extends BaseEntityModel {
         full_name: string
         photo: string;
     }[],
+    extra_photo : Image;
 }
 
 export type UserModelWithoutContent = Pick<UserModel, 'id' | 'full_name' | 'email' | 'photo' | 'title'>;
