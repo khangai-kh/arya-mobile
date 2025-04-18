@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -8,9 +8,9 @@ import {
   Linking,
   ActivityIndicator,
   Platform,
-} from "react-native";
-import Geolocation, { GeoError, GeoPosition } from "react-native-geolocation-service";
-import { check, PERMISSIONS, request, RESULTS } from "react-native-permissions";
+} from 'react-native';
+import Geolocation, { GeoError, GeoPosition } from 'react-native-geolocation-service';
+import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 
 type PaymentLocationProps = {
   onLocationVerified: (isInTurkey: boolean) => void;
@@ -21,19 +21,19 @@ const PaymentLocation: React.FC<PaymentLocationProps> = ({
   onLocationVerified,
   showUI = true,
 }) => {
-  const [location, setLocation] = useState<{ 
-    latitude: number; 
-    longitude: number 
+  const [location, setLocation] = useState<{
+    latitude: number;
+    longitude: number
   } | null>(null);
-  
+
   const [isLoading, setIsLoading] = useState(false);
 
   // Konum izni kontrolü ve isteği
   const handleLocationPermission = async () => {
     setIsLoading(true);
     try {
-      const permission = Platform.OS === 'android' 
-        ? PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION 
+      const permission = Platform.OS === 'android'
+        ? PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION
         : PERMISSIONS.IOS.LOCATION_WHEN_IN_USE;
 
       const permissionStatus = await check(permission);
@@ -45,11 +45,11 @@ const PaymentLocation: React.FC<PaymentLocationProps> = ({
         if (result === RESULTS.GRANTED) {
           getLocation();
         } else {
-          Alert.alert("İzin reddedildi", "Lütfen ayarlardan izin verin.");
+          Alert.alert('İzin reddedildi', 'Lütfen ayarlardan izin verin.');
         }
       }
     } catch (error) {
-      Alert.alert("Hata", "Konum izni alınamadı.");
+      Alert.alert('Hata', 'Konum izni alınamadı.');
     } finally {
       setIsLoading(false);
     }
@@ -63,10 +63,10 @@ const PaymentLocation: React.FC<PaymentLocationProps> = ({
         checkLocation(position.coords);
       },
       (error: GeoError) => handleLocationError(error),
-      { 
-        enableHighAccuracy: true, 
+      {
+        enableHighAccuracy: true,
         timeout: 15000,
-        maximumAge: 10000 
+        maximumAge: 10000,
       }
     );
   };
@@ -82,7 +82,7 @@ const PaymentLocation: React.FC<PaymentLocationProps> = ({
       );
       onLocationVerified(isInTurkey);
     } catch (error) {
-      Alert.alert("Hata", "Konum doğrulanamadı.");
+      Alert.alert('Hata', 'Konum doğrulanamadı.');
     }
   };
 
@@ -90,22 +90,22 @@ const PaymentLocation: React.FC<PaymentLocationProps> = ({
   const handleLocationError = (error: GeoError) => {
     if (error.code === 1) {
       Alert.alert(
-        "İzin Gerekli",
-        "Konum erişimi için izin vermelisiniz.",
+        'İzin Gerekli',
+        'Konum erişimi için izin vermelisiniz.',
         [
-          { 
-            text: "Ayarlar", 
-            onPress: () => Linking.openSettings() 
+          {
+            text: 'Ayarlar',
+            onPress: () => Linking.openSettings(),
           },
-          { 
-            text: "İptal", 
-            style: "cancel" 
-          }
+          {
+            text: 'İptal',
+            style: 'cancel',
+          },
         ]
       );
     } else {
       Alert.alert(
-        "Konum Hatası",
+        'Konum Hatası',
         `Hata Kodu: ${error.code}\n${error.message}`
       );
     }
@@ -115,12 +115,12 @@ const PaymentLocation: React.FC<PaymentLocationProps> = ({
     handleLocationPermission();
   }, []);
 
-  if (!showUI) return null;
+  if (!showUI) {return null;}
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Konum Doğrulama</Text>
-      
+
       {isLoading ? (
         <ActivityIndicator size="large" color="#007AFF" />
       ) : location ? (
@@ -172,4 +172,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PaymentLocation
+export default PaymentLocation;

@@ -4,7 +4,7 @@ import { CompositeScreenProps } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
 import React, { useState } from 'react';
 import { Image, StyleSheet, useWindowDimensions, View } from 'react-native';
-import { IconButton, useTheme } from 'react-native-paper';
+import { Button, Icon, IconButton, Text, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TabBar, TabView } from 'react-native-tab-view';
 import { MainStackParams } from '../models/navigation';
@@ -82,32 +82,37 @@ export const Home = (props: HomeProps) => {
             style={styles.logo}
             resizeMode="contain"
           />
-          <View style={styles.iconRow}>
-            <IconButton
-              containerColor={colors.onPrimary}
-              icon={require('../assets/flat-icons/upgrade.png')}
-              size={18}
-              onPress={navigateToMemberShip}
-            />
-            <IconButton
-              containerColor={colors.onPrimary}
-              icon={require('../assets/flat-icons/search.png')}
-              size={18}
-              onPress={navigateToSearch}
-            />
-            <IconButton
-              containerColor={colors.onPrimary}
-              icon={require('../assets/flat-icons/bell.png')}
-              size={18}
-              onPress={navigateToNotifications}
-            />
-            <IconButton
-              containerColor={colors.onPrimary}
-              icon={require('../assets/flat-icons/info.png')}
-              size={18}
-              onPress={navigateToAboutUs}
-            />
-          </View>
+
+          <View style={styles.headerRight}>
+            <View style={[styles.crownRight,{borderBlockColor:colors.primary}]}  >
+              <Icon
+                source={require('../assets/flat-icons/crown.png')}
+                color={colors.primary}
+                size={14}
+              />
+              <Text style={[styles.upgradeButtonLabel,{color:colors.primary}]} onPress={navigateToMemberShip}>Upgrade</Text></View>
+            </View>
+            <View style={styles.iconRow}>
+              <IconButton
+                containerColor={colors.onPrimary}
+                icon={require('../assets/flat-icons/search.png')}
+                size={18}
+                onPress={navigateToSearch}
+              />
+              <IconButton
+                containerColor={colors.onPrimary}
+                icon={require('../assets/flat-icons/bell.png')}
+                size={18}
+                onPress={navigateToNotifications}
+              />
+              <IconButton
+                containerColor={colors.onPrimary}
+                icon={require('../assets/flat-icons/info.png')}
+                size={18}
+                onPress={navigateToAboutUs}
+              />
+            </View>
+       
         </View>
       </View>
 
@@ -141,19 +146,48 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   headerContainer: {
-    padding: 16,
+    padding: 8,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-end',
   },
   logo: {
-    width: 98,
+    width: 85,
     height: 40,
   },
+  crown: {
+    width: 20,
+    height: 20,
+  },
+  headerRight: {
+    flexDirection:'row',
+    verticalAlign:'middle',
+    paddingBottom:10,
+    paddingLeft:30,
+    alignItems: 'center',
+  },
+  crownRight: {
+    flexDirection:'row',
+    verticalAlign:'middle',
+    paddingHorizontal:4,
+    alignItems: 'center',
+    borderRadius:10,
+    borderWidth:1,
+  },
+  upgradeButton: {
+    backgroundColor: '#C2185B', // Pink color to match the photo
+    borderRadius: 20,
+  },
+  upgradeButtonLabel: {
+    marginLeft:4,
+    fontSize: 12,
+  },
   iconRow: {
+    flex: 1,
     flexDirection: 'row',
+    justifyContent: 'flex-end',
   },
   tabViewContainer: {
     flex: 1,

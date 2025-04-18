@@ -463,6 +463,7 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
                 : undefined,
               title: profile?.carrier.title,
               is_mentor: profile?.is_mentor || false,
+              portrait_photo : profile?.portrait_photo ?? undefined,
             }}
             onSubmit={handleProfileUpdate}
           />

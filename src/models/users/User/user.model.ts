@@ -55,6 +55,7 @@ export interface UserModel extends BaseEntityModel {
         photo: string;
     }[],
     extra_photo : Image;
+    portrait_photo: string;
 }
 
 export type UserModelWithoutContent = Pick<UserModel, 'id' | 'full_name' | 'email' | 'photo' | 'title'>;

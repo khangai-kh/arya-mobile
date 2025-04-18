@@ -16,6 +16,7 @@ const PaymentForm: React.FC<Props> = ({ navigation }) => {
     if (isInTurkey) {
       navigation.navigate('MokaPayment', { pricingPlanId: '1' });
     } else {
+      console.log('11111');
       navigation.navigate('StripePayment');
     }
   };

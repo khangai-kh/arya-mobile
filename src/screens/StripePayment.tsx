@@ -8,66 +8,87 @@ export const StripePayment = () => {
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [autoPaymentTriggered, setAutoPaymentTriggered] = useState(false);
+  const [autoPaymentTriggered, setAutoPaymentTriggered] = useState<boolean>(false);
 
-  useEffect(() => {
-    fetchPaymentIntent();
-  }, []);
-
+  // Fetch payment intent from backend
   const fetchPaymentIntent = async () => {
     try {
+      setLoading(true);
       const response = await fetch(STRIPE_API_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ amount: 1000, currency: 'usd' }),
+        body: JSON.stringify({ amount: 1000, currency: 'usd' }), // Amount in cents
       });
 
       const data = await response.json();
-      console.log('Sunucu Yanıtı:', data);
+      console.log('Server Response:', data);
 
-      if (!response.ok) {throw new Error(data.error || 'Payment intent oluşturulamadı');}
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create payment intent');
+      }
 
       if (data.client_secret) {
         setClientSecret(data.client_secret);
         await initializePaymentSheet(data.client_secret);
       } else {
-        throw new Error('Client secret alınamadı');
+        throw new Error('Client secret not received');
       }
     } catch (error: any) {
-      Alert.alert('Hata', error.message);
-      console.error(error);
+      console.error('Fetch Payment Intent Error:', error);
+      Alert.alert('Error', error.message || 'Something went wrong');
     } finally {
       setLoading(false);
     }
   };
 
+  // Initialize payment sheet
   const initializePaymentSheet = async (paymentIntentSecret: string) => {
-    const { error } = await initPaymentSheet({
-      paymentIntentClientSecret: paymentIntentSecret,
-      merchantDisplayName: 'Arya Women',
-      returnURL: 'yourapp://stripe-redirect', // iOS için gerekli
-    });
+    try {
+      const { error } = await initPaymentSheet({
+        paymentIntentClientSecret: paymentIntentSecret,
+        merchantDisplayName: 'Arya Women',
+        returnURL: 'yourapp://stripe-redirect', // Required for iOS
+        applePay: { merchantCountryCode: 'US' }, // Enable Apple Pay (optional)
+        googlePay: { merchantCountryCode: 'US', testEnv: true }, // Enable Google Pay (optional)
+      });
 
-    if (error) {
+      if (error) {
+        throw new Error(`Payment sheet initialization failed: ${error.message}`);
+      }
+    } catch (error: any) {
+      console.error('Initialize Payment Sheet Error:', error);
       throw error;
     }
   };
 
+  // Handle payment
   const handlePayment = useCallback(async () => {
     if (!clientSecret) {
+      Alert.alert('Error', 'Payment configuration not ready');
       return;
     }
 
-    const { error } = await presentPaymentSheet();
-    if (error) {
-      Alert.alert('Ödeme Başarısız', error.message);
-    } else {
-      Alert.alert('Ödeme Başarılı', 'Ödemeniz başarıyla alındı! 🎉');
+    try {
+      const { error } = await presentPaymentSheet();
+      if (error) {
+        Alert.alert('Payment Failed', error.message);
+      } else {
+        Alert.alert('Payment Successful', 'Your payment was successful! 🎉');
+      }
+    } catch (error: any) {
+      console.error('Handle Payment Error:', error);
+      Alert.alert('Error', 'An unexpected error occurred during payment');
     }
   }, [clientSecret, presentPaymentSheet]);
 
+  // Fetch payment intent on component mount
+  useEffect(() => {
+    fetchPaymentIntent();
+  }, []);
+
+  // Trigger payment automatically after payment sheet is initialized
   useEffect(() => {
     if (!loading && clientSecret && !autoPaymentTriggered) {
       setAutoPaymentTriggered(true);
@@ -76,21 +97,18 @@ export const StripePayment = () => {
   }, [loading, clientSecret, autoPaymentTriggered, handlePayment]);
 
   return (
-    <View style={styles.container}>
-      {loading && <ActivityIndicator size="large" color="#6200ee" />}
-    </View>
+    <StripeProvider
+      publishableKey="pk_test_51Qp5QPGhxaN2Gp6ktuu8gFk3HZNBYCYkmeVjJGivpCcC1EkXtOsK178TJWBCRVXdTGZma2jUQw9rDKdyhS9MMJXu00rKWDbAdc"
+      urlScheme="yourapp://stripe-redirect" // Ensure this matches your app's URL scheme
+      merchantIdentifier="merchant.com.yourapp" // Required for Apple Pay
+    >
+      <View style={styles.container}>
+        {loading && <ActivityIndicator size="large" color="#6200ee" />}
+      </View>
+    </StripeProvider>
   );
 };
 
-export default () => (
-  <StripeProvider
-    publishableKey="pk_test_51Qp5QPGhxaN2Gp6ktuu8gFk3HZNBYCYkmeVjJGivpCcC1EkXtOsK178TJWBCRVXdTGZma2jUQw9rDKdyhS9MMJXu00rKWDbAdc"
-    urlScheme="yourapp://stripe-redirect"
-    merchantIdentifier="merchant.com.yourapp"
-  >
-    <StripePayment />
-  </StripeProvider>
-);
 
 const styles = StyleSheet.create({
   container: {

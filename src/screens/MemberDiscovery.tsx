@@ -116,7 +116,11 @@ export const MemberDiscovery = ({ navigation }: MemberDiscoveryProps) => {
 
       <View style={styles.cardWrapper}>
         <ImageBackground
-          source={require('../assets/portrait.png')}
+          source={
+            member?.portrait_photo
+              ? { uri: member.portrait_photo }
+              : require('../assets/portrait.png')
+          }
           style={styles.imageBackground}
           imageStyle={styles.imageStyle}
         >

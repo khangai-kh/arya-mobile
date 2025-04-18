@@ -106,7 +106,7 @@ type MembershipFormProps = MemberShipProps & MemberFormProps;
 export const MembershipForm = ({ navigation, route, initialValues, onSubmit }: MembershipFormProps) => {
   const agreed_agreement = route.params?.agreed_agreement as boolean;
   const agreed_confidentiality = route.params?.agreed_confidentiality as boolean;
-  const [step, setStep] = useState(3);
+  const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [formData, setFormData] = useState<UserModel>(initialValues);
@@ -132,6 +132,7 @@ export const MembershipForm = ({ navigation, route, initialValues, onSubmit }: M
               linkedin_url: values.linkedin_url,
               date_of_birth: values.date_of_birth,
               address: values.address,
+              is_mentor: false,
             });
             setIsLoading(false);
       }
@@ -224,7 +225,7 @@ export const MembershipForm = ({ navigation, route, initialValues, onSubmit }: M
                 full_name: initialValues.full_name || '',
                 email: initialValues.email || '',
                 phone: initialValues.phone || '',
-                linkedin_url: initialValues.linkedin_url || '',
+                linkedin_url: 'https://www.linkedin.com/in/khangaikh/',
                 date_of_birth: initialValues.date_of_birth || '',
                 address: initialValues.address || '',
               }}
@@ -345,6 +346,7 @@ export const MembershipForm = ({ navigation, route, initialValues, onSubmit }: M
                       editable={false}
                       right={
                         <PaperTextInput.Icon
+                          // eslint-disable-next-line react/no-unstable-nested-components
                           icon={() => (
                             <Image
                               source={require('../../assets/flat-icons/calendar-outlined.png')}
