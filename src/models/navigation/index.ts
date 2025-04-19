@@ -73,7 +73,7 @@ export type MainStackParams = {
     };
     Startups: {
       type: number;
-      //filterModel?: Record<string, any>;
+      filterModel?: Record<string, any>;
     };
     StartupsFilter: undefined;
     PremiumSuccess: undefined;

@@ -137,7 +137,6 @@ const styles = StyleSheet.create({
     },
     announcement: {
         marginRight: 12,
-        height : 'auto',
     },
     lastAnnouncement: {
         marginRight: 0,

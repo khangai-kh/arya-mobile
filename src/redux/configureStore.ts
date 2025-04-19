@@ -15,10 +15,12 @@ import {
 import { PersistConfig } from 'redux-persist/es/types';
 import authReducer, { AuthState } from './auth/reducer';
 import filterReducer, { FilterState } from './filter/reducer';
+import { StartupState } from './startup/reducer';
 
 export type RootState = {
   auth: AuthState;
   filter: FilterState;
+  startup: StartupState;
 };
 
 const authPersistConfig: PersistConfig<AuthState> = {

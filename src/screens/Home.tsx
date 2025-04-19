@@ -82,7 +82,6 @@ export const Home = (props: HomeProps) => {
             style={styles.logo}
             resizeMode="contain"
           />
-
           <View style={styles.headerRight}>
             <View style={[styles.crownRight,{borderBlockColor:colors.primary}]}  >
               <Icon
@@ -112,10 +111,8 @@ export const Home = (props: HomeProps) => {
                 onPress={navigateToAboutUs}
               />
             </View>
-       
         </View>
       </View>
-
       {/* TabView Section */}
       <View style={styles.tabViewContainer}>
         <TabView

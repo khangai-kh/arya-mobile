@@ -47,54 +47,6 @@ export const MemberFilter = ({ navigation }: FilterProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentFilter, setCurrentFilter] = useState<string | undefined>(undefined);
 
-  // Initialize local state from Redux filter state
-  useEffect(() => {
-    // Initialize basic states
-    setValue(filterState.in_my_favorited ? 'connections' : 'all');
-    const roleMapping: Record<number, string> = {
-      0: 'All',
-      1: 'Investors',
-      2: 'Entrepreneurs',
-    };
-    setRole(roleMapping[filterState.roleIds[0]] || 'All');
-    setIsMentorship(filterState.in_mentor);
-    setHasInvestment(filterState.have_investestment);
-    setSearchQuery(filterState.keyword);
-
-    // Initialize selectedFilters based on Redux state
-    const newSelectedFilters: Record<string, string[]> = {};
-
-    // Profile type (batches)
-    if (batches && filterState.batchIds && filterState.batchIds.length > 0 && filterState.batchIds[0] !== 0) {
-      newSelectedFilters['Profile type'] = filterState.batchIds
-        .map(id => batches.find(batch => batch.id === id)?.name)
-        .filter((name): name is string => !!name);
-    }
-
-    // Interests
-    if (interests && filterState.interestIds && filterState.interestIds.length > 0 && filterState.interestIds[0] !== 0) {
-      newSelectedFilters['Interest'] = filterState.interestIds
-        .map(id => interests.find(interest => interest.id === id)?.name)
-        .filter((name): name is string => !!name);
-    }
-
-    // Sectors
-    if (sectors && filterState.sectorIds && filterState.sectorIds.length > 0 && filterState.sectorIds[0] !== 0) {
-      newSelectedFilters['Sector'] = filterState.sectorIds
-        .map(id => sectors.find(sector => sector.id === id)?.name)
-        .filter((name): name is string => !!name);
-    }
-
-    // Locations (cities)
-    if (filterState.cities && filterState.cities.length > 0) {
-      newSelectedFilters['Location'] = filterState.cities
-        .map(cityId => TURKEY_CITIES.find(city => city.id === cityId)?.name)
-        .filter((name): name is string => !!name);
-    }
-
-    setSelectedFilters(newSelectedFilters);
-  }, [filterState, batches, interests, sectors]);
-
   // Fetch profile
   const { isFetching: isFetchingProfile } = useQuery(
     ['profile', token],
@@ -182,6 +134,53 @@ export const MemberFilter = ({ navigation }: FilterProps) => {
       };
     });
   };
+
+  useEffect(() => {
+    // Initialize basic states
+    setValue(filterState.in_my_favorited ? 'connections' : 'all');
+    const roleMapping: Record<number, string> = {
+      0: 'All',
+      1: 'Investors',
+      2: 'Entrepreneurs',
+    };
+    setRole(roleMapping[filterState.roleIds[0]] || 'All');
+    setIsMentorship(filterState.in_mentor);
+    setHasInvestment(filterState.have_investestment);
+    setSearchQuery(filterState.keyword);
+
+    // Initialize selectedFilters based on Redux state
+    const newSelectedFilters: Record<string, string[]> = {};
+
+    // Profile type (batches)
+    if (batches && filterState.batchIds && filterState.batchIds.length > 0 && filterState.batchIds[0] !== 0) {
+      newSelectedFilters['Profile type'] = filterState.batchIds
+        .map(id => batches.find(batch => batch.id === id)?.name)
+        .filter((name): name is string => !!name);
+    }
+
+    // Interests
+    if (interests && filterState.interestIds && filterState.interestIds.length > 0 && filterState.interestIds[0] !== 0) {
+      newSelectedFilters['Interest'] = filterState.interestIds
+        .map(id => interests.find(interest => interest.id === id)?.name)
+        .filter((name): name is string => !!name);
+    }
+
+    // Sectors
+    if (sectors && filterState.sectorIds && filterState.sectorIds.length > 0 && filterState.sectorIds[0] !== 0) {
+      newSelectedFilters['Sector'] = filterState.sectorIds
+        .map(id => sectors.find(sector => sector.id === id)?.name)
+        .filter((name): name is string => !!name);
+    }
+
+    // Locations (cities)
+    if (filterState.cities && filterState.cities.length > 0) {
+      newSelectedFilters['Location'] = filterState.cities
+        .map(cityId => TURKEY_CITIES.find(city => city.id === cityId)?.name)
+        .filter((name): name is string => !!name);
+    }
+
+    setSelectedFilters(newSelectedFilters);
+  }, [filterState, batches, interests, sectors]);
 
   const renderDrawerContent = () => {
     const currentFilterItems = getCurrentFilterItems();
@@ -351,7 +350,7 @@ export const MemberFilter = ({ navigation }: FilterProps) => {
               const selectedCount = selectedFilters[filter.title]?.length ?? 0;
               return (
                 <TouchableOpacity
-                  key={filter.id}
+                  key={index}
                   style={[styles.filterOption, { marginTop: 8 }]}
                   onPress={() => {
                     setCurrentFilter(filter.title);

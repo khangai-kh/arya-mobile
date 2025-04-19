@@ -153,7 +153,6 @@ const styles = (colors: MD3Colors) =>
         },
         body: {
             marginTop: 4,
-            marginBottom: 8,
             marginHorizontal: 6,
             flexShrink: 1,
             width: 300,
@@ -177,6 +176,7 @@ const styles = (colors: MD3Colors) =>
             alignItems: 'center',
             marginLeft: 8,
             flexShrink: 1,
+            //marginBottom: -30,
         },
         icon: {
             width: 14,

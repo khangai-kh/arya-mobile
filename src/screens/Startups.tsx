@@ -18,7 +18,7 @@ type StartupsProps = StackScreenProps<MainStackParams, 'Startups'>;
 
 export const Startups = ({ navigation, route }: StartupsProps) => {
   const { colors } = useTheme();
-  const type = route.params?.type;
+  const { filterModel, type: type } = route?.params || {};
   const dynamicStyles = createDynamicStyles(colors);
   const [page, setPage] = useState({ active: DEFAULT_PAGE, graduates: DEFAULT_PAGE });
   const { token } = useSelector((state: RootState) => state.auth);
