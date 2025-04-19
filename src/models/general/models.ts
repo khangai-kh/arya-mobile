@@ -110,8 +110,13 @@ export interface ContentTypeModel{
 export interface EventModel {
     id: number;
     event_date: string | null;
+    event_finish_date:  string | null;
+    event_sub_title: string | null;
     event_location: string | null;
+    event_address: string | null;
+    event_coordinates: string | null;
     max_participants: number | null;
+    is_better_future_circle_days: boolean;
 
     [key: string]: any;
 }

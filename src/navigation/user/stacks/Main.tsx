@@ -37,6 +37,7 @@ import ThreeDSecureScreen from '../../../screens/ThreeDSecureScreen';
 import { FundingRound } from '../../../screens/FundingRound';
 import { FundingSuccess } from '../../../screens/FundingSuccess';
 import { MemberDiscovery } from '../../../screens/MemberDiscovery';
+import { SplashScreen } from '../../../screens/SplashScreen';
 
 
 const Stack = createNativeStackNavigator<MainStackParams>();
@@ -131,7 +132,7 @@ export const MainStack = () => {
         <Stack.Screen name="Notifications" component={Notifications} options={{ title: 'Notifications' }} />
         <Stack.Screen name="Profile" component={Profile} options={{ title: 'Profile' }} />
         <Stack.Screen name="MemberDiscovery" component={MemberDiscovery} options={{  headerShown: false }} />
-
+        <Stack.Screen name="SplashScreen" component={SplashScreen} options={{  headerShown: false }}/>
         <Stack.Screen name="PaymentLocation" component={PaymentForm} />
         <Stack.Screen name="StripePayment" component={StripePayment} />
         <Stack.Screen name="MokaPayment" component={MokaPayment} />

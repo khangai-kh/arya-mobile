@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import { ActivityIndicator, Image, ImageBackground, StyleSheet, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
-import { Appbar, Avatar, Button, Card, MD3Theme, Text, useTheme } from 'react-native-paper';
+import { Appbar, Avatar, Button, Card, IconButton, MD3Theme, Modal, Portal, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Box } from '../components/common/Box';
 import { MainStackParams } from '../models/navigation';
@@ -12,6 +12,8 @@ import { ContentDetailModel } from '../models/homepage/Content/content.model';
 import { API } from '../plugins/axios';
 import HTML from 'react-native-render-html';
 import { useWindowDimensions } from 'react-native';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/configureStore';
 
 type AnnouncementProps = StackScreenProps<MainStackParams, 'Announcement'>;
 
@@ -24,6 +26,17 @@ export const Announcement = (props: AnnouncementProps) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { width } = useWindowDimensions();
+
+  const { role } = useSelector((state: RootState) => state.auth);
+  const [visible, setVisible] = useState(false);
+  const [visible1, setVisible1] = useState(false);
+
+  const joinEventHandler = () => {
+    if(role === 4)
+    {
+
+    }
+  };
 
   useEffect(() => {
     const fetchContent = async () => {
@@ -97,6 +110,9 @@ export const Announcement = (props: AnnouncementProps) => {
           <Text variant="titleLarge" style={styles.title}>
             {content.title || 'Untitled'}
           </Text>
+          <Text variant="titleSmall" style={styles.titleSub}>
+            {content.event?.event_sub_title || 'Untitled'}
+          </Text>
           <View style={styles.userContainer}>
               <Avatar.Image
                   size={24}
@@ -107,7 +123,7 @@ export const Announcement = (props: AnnouncementProps) => {
                 />
                 <Text>{content.created_user.full_name || 'Untitled'}</Text>
           </View>
-          {content.content_type?.name === 'Event' || content.content_type?.name === 'Workshop' && (<Card mode="contained" style={styles.card}>
+          {(content.content_type?.name === 'Event' || content.content_type?.name === 'Workshop') && (<Card mode="contained" style={styles.card}>
             <Card.Content>
               <View style={styles.calendarContainer}>
                 <Image
@@ -127,7 +143,10 @@ export const Announcement = (props: AnnouncementProps) => {
                 />
                 <View style={styles.flexOne}>
                   <Text variant="titleSmall" style={styles.hostText}>
-                    {content.events?.event_location || 'Location not specified'}
+                    {content.event?.event_location || 'Location not specified'}
+                  </Text>
+                  <Text variant="titleSmall" style={styles.hostText}>
+                    {content.event?.event_address || 'Location not specified'}
                   </Text>
                 </View>
               </View>
@@ -162,13 +181,109 @@ export const Announcement = (props: AnnouncementProps) => {
         <Box px={16} py={16} style={dynamicStyles.bottomBox}>
           <Button
             mode="contained"
-            onPress={() => {}}
+            onPress={() => {
+              if (role === 4) {
+                setVisible(true);
+              } else {
+                setVisible1(true);
+              }
+            }}
           >
             Join the event
           </Button>
       </Box>
       )}
-
+      <Portal>
+        <Modal
+            visible={visible}
+            onDismiss={() => setVisible(false)}
+            contentContainerStyle={dynamicStyles.modal}
+        >
+            <IconButton
+                icon={require('../assets/flat-icons/x.png')}
+                size={24}
+                iconColor="#A09FA0"
+                style={dynamicStyles.modalClose}
+                onPress={() => setVisible(false)}
+            />
+            <Image
+                resizeMode="contain"
+                source={require('../assets/flat-icons/diamond.png')}
+                style={dynamicStyles.modalIcon}
+            />
+            <Text variant="headlineSmall" style={dynamicStyles.modalTitle}>
+                Please become a Premium member to join
+            </Text>
+            <View style={dynamicStyles.modalButtons}>
+                <TouchableRipple
+                    style={dynamicStyles.modalButton}
+                    onPress={() => {setVisible(false);}}
+                >
+                    <Text variant="titleMedium" style={dynamicStyles.modalButtonText}>
+                        Not now
+                    </Text>
+                </TouchableRipple>
+                <TouchableRipple
+                    style={dynamicStyles.modalButtonPrimary}
+                    onPress={() => {
+                      setVisible(false);
+                      navigation.navigate('MemberShip', {
+                        agreed_agreement: false,
+                        agreed_confidentiality: false,
+                      });
+                    }}
+                >
+                    <Text variant="titleMedium" style={dynamicStyles.modalButtonPrimaryText}>
+                        Arya Premium
+                    </Text>
+                </TouchableRipple>
+            </View>
+        </Modal>
+      </Portal>
+      <Portal>
+        <Modal
+            visible={visible1}
+            onDismiss={() => setVisible1(false)}
+            contentContainerStyle={dynamicStyles.modal}
+        >
+            <IconButton
+                icon={require('../assets/flat-icons/x.png')}
+                size={24}
+                iconColor="#A09FA0"
+                style={dynamicStyles.modalClose}
+                onPress={() => setVisible1(false)}
+            />
+            <Image
+                resizeMode="contain"
+                source={require('../assets/flat-icons/check-circle.png')}
+                style={dynamicStyles.modalIcon}
+            />
+            <Text variant="headlineSmall" style={dynamicStyles.modalTitle}>
+                Successfully applied for event
+            </Text>
+            <Text variant="bodySmall" style={dynamicStyles.modalText}>
+               Event organizer will contact you, thank you.
+            </Text>
+            <View style={dynamicStyles.modalButtons}>
+                <TouchableRipple
+                    style={dynamicStyles.modalButton}
+                    onPress={() => {setVisible1(false)}}
+                >
+                    <Text variant="titleMedium" style={dynamicStyles.modalButtonText}>
+                        Wait for updates
+                    </Text>
+                </TouchableRipple>
+                <TouchableRipple
+                    style={dynamicStyles.modalButtonPrimary}
+                    onPress={() => {setVisible1(false)}}
+                >
+                    <Text variant="titleMedium" style={dynamicStyles.modalButtonPrimaryText}>
+                        Get in touch
+                    </Text>
+                </TouchableRipple>
+            </View>
+        </Modal>
+      </Portal>
     </SafeAreaView>
   );
 };
@@ -285,4 +400,54 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
       borderTopWidth: StyleSheet.hairlineWidth,
       borderColor: colors.outlineVariant,
     },
-  });
+    modal: {
+      backgroundColor: '#fff',
+      borderRadius: 24,
+      margin: 24,
+      padding: 16,
+    },
+    modalClose: {
+      position:'absolute',
+      top:10,
+      left:250,
+    },
+    modalIcon: {
+        alignSelf: 'center',
+        width: 56,
+        height: 56,
+        tintColor: '#B61D8D',
+        marginVertical: 24,
+    },
+    modalTitle: {
+        textAlign: 'center',
+    },
+    modalText: {
+        textAlign: 'center',
+        marginTop: 8,
+    },
+    modalButtons: {
+        marginTop: 24,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        rowGap: 8,
+    },
+    modalButton: {
+        flex: 1,
+        paddingVertical: 12.5,
+        borderRadius: 32,
+        alignItems: 'center',
+    },
+    modalButtonText: {
+        textAlign: 'center',
+    },
+    modalButtonPrimary: {
+        paddingVertical: 12.5,
+        paddingHorizontal: 28.5,
+        backgroundColor: '#B61D8D',
+        borderRadius: 32,
+        alignItems: 'center',
+    },
+    modalButtonPrimaryText: {
+        color: '#FFFFFF',
+    },
+});

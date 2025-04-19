@@ -4,7 +4,7 @@ import { CompositeScreenProps } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
 import React, { useState } from 'react';
 import { Image, StyleSheet, useWindowDimensions, View } from 'react-native';
-import { Button, Icon, IconButton, Text, useTheme } from 'react-native-paper';
+import { Icon, IconButton, Modal, Portal, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TabBar, TabView } from 'react-native-tab-view';
 import { MainStackParams } from '../models/navigation';
@@ -13,6 +13,8 @@ import { Contents } from './Contents';
 import { Entrepreneurship } from './Entrepreneurship';
 import { Investments } from './Investments';
 import { Members } from './Members';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/configureStore';
 
 type HomeProps = CompositeScreenProps<
   BottomTabScreenProps<BottomTabStackParams, 'Home'>,
@@ -23,7 +25,8 @@ export const Home = (props: HomeProps) => {
   const { navigation, route } = props;
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
-
+  const { role } = useSelector((state: RootState) => state.auth);
+  const [visible, setVisible] = useState(false);
   // Extract route params safely.
   const params: { filterModel?: Record<string, any>; index?: number } = route.params ?? {};
   const filterModel = params.filterModel ?? {};
@@ -34,7 +37,7 @@ export const Home = (props: HomeProps) => {
     { key: 'contents', title: 'Contents' },
     { key: 'members', title: 'Members' },
     { key: 'investments', title: 'Investment' },
-    { key: 'entrepreneurship', title: 'Entrepreneurship' },
+    ...(role !== 4 ? [{ key: 'entrepreneurship', title: 'Entrepreneurship' }] : []),
   ]);
 
   const navigateToMemberShip = () =>
@@ -54,6 +57,9 @@ export const Home = (props: HomeProps) => {
         content = <Contents />;
         break;
       case 'members':
+        if (role === 4) {
+          return null; // Prevent showing Members content when role is 4
+        }
         content = <Members filterModel={filterModel} refresh={false} />;
         break;
       case 'investments':
@@ -83,21 +89,24 @@ export const Home = (props: HomeProps) => {
             resizeMode="contain"
           />
           <View style={styles.headerRight}>
+          {role === 4 && (
             <View style={[styles.crownRight,{borderBlockColor:colors.primary}]}  >
               <Icon
                 source={require('../assets/flat-icons/crown.png')}
                 color={colors.primary}
                 size={14}
               />
-              <Text style={[styles.upgradeButtonLabel,{color:colors.primary}]} onPress={navigateToMemberShip}>Upgrade</Text></View>
-            </View>
+              <Text style={[styles.upgradeButtonLabel,{color:colors.primary}]} onPress={navigateToMemberShip}>Upgrade</Text>
+            </View>)}
+          </View>
             <View style={styles.iconRow}>
-              <IconButton
+              {role !== 4 && (
+                <IconButton
                 containerColor={colors.onPrimary}
                 icon={require('../assets/flat-icons/search.png')}
                 size={18}
                 onPress={navigateToSearch}
-              />
+              />)}
               <IconButton
                 containerColor={colors.onPrimary}
                 icon={require('../assets/flat-icons/bell.png')}
@@ -118,7 +127,13 @@ export const Home = (props: HomeProps) => {
         <TabView
           lazy
           renderScene={renderScene}
-          onIndexChange={setIndex}
+          onIndexChange={(newIndex) => {
+            if (routes[newIndex].key === 'members' && role === 4) {
+              setVisible(true);
+            } else {
+              setIndex(newIndex);
+            }
+          }}
           initialLayout={{ width }}
           navigationState={{ index, routes }}
           renderTabBar={(tabProps) => (
@@ -134,6 +149,53 @@ export const Home = (props: HomeProps) => {
           )}
         />
       </View>
+      <Portal>
+        <Modal
+            visible={visible}
+            onDismiss={() => setVisible(false)}
+            contentContainerStyle={styles.modal}
+        >
+            <IconButton
+                icon={require('../assets/flat-icons/x.png')}
+                size={20}
+                iconColor="#A09FA0"
+                style={styles.modalClose}
+                onPress={() => setVisible(false)}
+            />
+            <Image
+                resizeMode="contain"
+                source={require('../assets/flat-icons/diamond.png')}
+                style={styles.modalIcon}
+            />
+            <Text variant="headlineSmall" style={styles.modalTitle}>
+                Please become a Premium member to join
+            </Text>
+            <View style={styles.modalButtons}>
+                <TouchableRipple
+                    style={styles.modalButton}
+                    onPress={() => {setVisible(false);}}
+                >
+                    <Text variant="titleMedium" style={styles.modalButtonText}>
+                        Not now
+                    </Text>
+                </TouchableRipple>
+                <TouchableRipple
+                    style={styles.modalButtonPrimary}
+                    onPress={() => {
+                      setVisible(false);
+                      navigation.navigate('MemberShip', {
+                        agreed_agreement: false,
+                        agreed_confidentiality: false,
+                      });
+                    }}
+                >
+                    <Text variant="titleMedium" style={styles.modalButtonPrimaryText}>
+                        Arya Premium
+                    </Text>
+                </TouchableRipple>
+            </View>
+        </Modal>
+      </Portal>
     </SafeAreaView>
   );
 };
@@ -163,7 +225,7 @@ const styles = StyleSheet.create({
   headerRight: {
     flexDirection:'row',
     verticalAlign:'middle',
-    paddingBottom:10,
+    paddingBottom:12,
     paddingLeft:30,
     alignItems: 'center',
   },
@@ -206,6 +268,56 @@ const styles = StyleSheet.create({
   // New style: wrap each scene.
   scene: {
     flex: 1,
+  },
+  modal: {
+    backgroundColor: '#fff',
+    borderRadius: 24,
+    margin: 24,
+    padding: 16,
+  },
+  modalClose: {
+      position:'absolute',
+      top:10,
+      left:250,
+  },
+  modalIcon: {
+      alignSelf: 'center',
+      width: 56,
+      height: 56,
+      tintColor: '#B61D8D',
+      marginVertical: 24,
+  },
+  modalTitle: {
+      textAlign: 'center',
+  },
+  modalText: {
+      textAlign: 'center',
+      marginTop: 8,
+  },
+  modalButtons: {
+      marginTop: 24,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      rowGap: 8,
+  },
+  modalButton: {
+      flex: 1,
+      paddingVertical: 12.5,
+      borderRadius: 32,
+      alignItems: 'center',
+  },
+  modalButtonText: {
+      textAlign: 'center',
+  },
+  modalButtonPrimary: {
+      paddingVertical: 12.5,
+      paddingHorizontal: 28.5,
+      backgroundColor: '#B61D8D',
+      borderRadius: 32,
+      alignItems: 'center',
+  },
+  modalButtonPrimaryText: {
+      color: '#FFFFFF',
   },
 });
 

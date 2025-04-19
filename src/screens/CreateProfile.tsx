@@ -51,9 +51,9 @@ export const CreateProfile = ({ navigation, route }: CreateProfileProps) => {
 
     const handleSelectInterest = (interest: InterestModel) => {
         setSelectedInterests((prev) =>
-            prev.includes(interest.interest_id)
-                ? prev.filter((id) => id !== interest.interest_id)
-                : [...prev, interest.interest_id]
+            prev.includes(interest.id)
+                ? prev.filter((id) => id !== interest.id)
+                : [...prev, interest.id]
         );
     };
 

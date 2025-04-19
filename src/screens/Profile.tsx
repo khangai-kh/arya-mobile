@@ -45,7 +45,7 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
 
   const { isFetching: isFetchingProfile, refetch } = useQuery(
     ['profile', token],
-    () => API.get('/api/user/my-all-infos'),
+    () => API.get('/api/users/my-all-infos'),
     {
       onSuccess: ({ data }) => {
         setProfile(data);
@@ -454,7 +454,7 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
           <ProfileEditForm
             initialValues={{
               user_id: user_id ?? 1,
-              role: profile?.roles[0].role_name,
+              role: profile?.role.name,
               photo: profile?.photo,
               full_name: profile?.full_name ?? undefined,
               company: profile?.carrier.company_name,

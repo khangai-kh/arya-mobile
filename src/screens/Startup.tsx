@@ -30,6 +30,8 @@ export const Startup = ({route, navigation}: StartupProps) => {
     const [founders, setFounders] = useState<UserModelList[]>([]);
     const [investors, setInvestors] = useState<UserModelList[]>([]);
 
+    const { role } = useSelector((state: RootState) => state.auth);
+
     const { isFetching: isFetchingProfile } = useQuery(
         ['startup', token],
         () => API.get('/api/startup/' + startupId),
@@ -278,14 +280,14 @@ export const Startup = ({route, navigation}: StartupProps) => {
                     size={18}
                     onPress={() => handleFollowPress3(startupId)}
                 />
-                {user_id === startup?.created_user && (
+                {/* {user_id === startup?.created_user && (
                     <Appbar.Action
                     icon={require('../assets/flat-icons/edit.png')}
                     color="#414042"
                     size={20}
                     style={dynamicStyles.appbarActionRight}
                     onPress={() => {}}
-                />)}
+                />)} */}
 
             </Appbar.Header>
 
@@ -495,23 +497,29 @@ export const Startup = ({route, navigation}: StartupProps) => {
                 </View>
             </ScrollView>
             {isFounder ? (
-                <Box px={16} py={16}>
-                <Button
-                    mode="contained"
-                    onPress={() => navigation.navigate('FundingRound', { id: startupId })}
-                    disabled={startup?.startup_status ? checkStatus(startup.startup_status) : false}
-                >
-                    {startup?.startup_status
-                    ? checkMessage(startup.startup_status)
-                    : 'Start your funding round'}
-                </Button>
-                </Box>
+                 role !== 4 && (
+                    <Box px={16} py={16}>
+                        <Button
+                            mode="contained"
+                            onPress={() =>{
+                                navigation.navigate('FundingRound', { id: startupId });
+                            }}
+                            disabled={startup?.startup_status ? checkStatus(startup.startup_status) : false}
+                        >
+                            {startup?.startup_status
+                            ? checkMessage(startup.startup_status)
+                            : 'Start your funding round'}
+                        </Button>
+                    </Box>
+                )
             ) : (
-                <Box px={16} py={16}>
-                <Button mode="contained" onPress={() => setVisible(true)}>
-                    Apply for round
-                </Button>
-                </Box>
+                role !== 4 && (
+                    <Box px={16} py={16}>
+                        <Button mode="contained" onPress={() => setVisible(true)}>
+                            Apply for round
+                        </Button>
+                    </Box>
+                )
             )}
 
             <Portal>
@@ -693,14 +701,16 @@ const createDynamicStyles = (colors: MD3Theme['colors']) =>
         padding: 16,
     },
     modalClose: {
-        alignSelf: 'flex-end',
+        position:'absolute',
+        top:10,
+        left:250,
     },
     modalIcon: {
         alignSelf: 'center',
         width: 56,
         height: 56,
-        tintColor: '#4CB748',
-        marginBottom: 24,
+        tintColor: '#B61D8D',
+        marginVertical: 24,
     },
     modalTitle: {
         textAlign: 'center',

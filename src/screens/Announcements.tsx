@@ -161,7 +161,7 @@ export const Announcements = () => {
                 title={content.title || ''}
                 image={content.images?.[0]?.image_url || ''}
                 body={content.description || ''}
-                location={content.location || 'Istanbul, Turkey'}
+                location={content.event?.event_location || 'Istanbul, Turkey'}
                 date={content.created_at || ''}
                 type={content.content_type?.name || ''}
                 style={[

@@ -50,7 +50,7 @@ export const MemberFilter = ({ navigation }: FilterProps) => {
   // Fetch profile
   const { isFetching: isFetchingProfile } = useQuery(
     ['profile', token],
-    () => API.get('/api/user/my-all-infos'),
+    () => API.get('/api/users/my-all-infos'),
     {
       onSuccess: ({ data }) => setProfile(data),
       onError: (error) => console.error('Error fetching profile:', error),

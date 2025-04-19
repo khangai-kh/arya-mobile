@@ -119,7 +119,7 @@ export const MemberDiscovery = ({ navigation }: MemberDiscoveryProps) => {
           source={
             member?.portrait_photo
               ? { uri: member.portrait_photo }
-              : require('../assets/portrait.png')
+              : require('../assets/default-portrait.jpg')
           }
           style={styles.imageBackground}
           imageStyle={styles.imageStyle}

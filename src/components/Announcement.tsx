@@ -92,7 +92,7 @@ export const Announcement = ({
           }}
         />
         <View style={footer}>
-        {type === 'Event' || type === 'Workshop'  && (
+        {(type === 'Event' || type === 'Workshop')  && (
           <View style={locationContainer}>
             <Image
               source={require('../assets/flat-icons/marker.png')}
@@ -190,4 +190,4 @@ const styles = (colors: MD3Colors) =>
             marginBottom: 5,
             flexShrink: 1,
         },
-    });
+});
