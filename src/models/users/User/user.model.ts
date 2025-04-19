@@ -48,14 +48,13 @@ export interface UserModel extends BaseEntityModel {
         id: number;
         full_name: string
         photo: string;
-    }[],
+    }[];
     following:{
         id: number;
         full_name: string
         photo: string;
-    }[],
-    extra_photo : Image;
-    portrait_photo: string;
+    }[];
+    portrait_photo?: string;
 }
 
 export type UserModelWithoutContent = Pick<UserModel, 'id' | 'full_name' | 'email' | 'photo' | 'title'>;

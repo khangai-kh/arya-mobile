@@ -59,7 +59,6 @@ export const ProfileEditForm = ({ initialValues, onSubmit }: ProfileEditProps) =
   const [isUploading1, setIsUploading1] = useState(false);
   const [isPortraitLoading, setIsPortraitLoading] = useState(false);
 
-  console.log(initialValues.portrait_photo);
   const handleEditPhoto = (type:number) => {
     Alert.alert(
       'Select Photo',
@@ -316,7 +315,7 @@ export const ProfileEditForm = ({ initialValues, onSubmit }: ProfileEditProps) =
                       onLoadEnd={() => setIsPortraitLoading(false)}
                       style={styles.avatarImage}
                     />
-                    {(isUploading1) && (
+                    {(isUploading1 || isPortraitLoading) && (
                       <View style={styles.loadingOverlay}>
                         <ActivityIndicator animating={true} size="large" color="#fff" />
                       </View>
