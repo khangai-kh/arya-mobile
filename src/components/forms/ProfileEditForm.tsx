@@ -189,7 +189,7 @@ export const ProfileEditForm = ({ initialValues, onSubmit }: ProfileEditProps) =
                   source={
                     avatarUri
                       ? { uri: avatarUri }
-                      : { uri: 'https://via.placeholder.com/80?text=Profile' }
+                      : require('../../assets/default-portrait.jpg')
                   }
                   onLoadStart={() => setIsImageLoading(true)}
                   onLoadEnd={() => setIsImageLoading(false)}
@@ -202,36 +202,6 @@ export const ProfileEditForm = ({ initialValues, onSubmit }: ProfileEditProps) =
                 <TouchableOpacity
                   style={styles.editIconContainer}
                   onPress={() => handleEditPhoto(1)}
-                >
-                  <IconButton
-                    icon={require('../../assets/flat-icons/edit.png')}
-                    size={15}
-                    mode="contained"
-                    containerColor="#9C27B0"
-                    iconColor="#fff"
-                  />
-                </TouchableOpacity>
-
-              </View>
-              <View style={styles.avatarContainer}>
-                <Image
-                  source={
-                    portraitUri
-                      ? { uri: portraitUri }
-                      : { uri: 'https://via.placeholder.com/120?text=Profile' }
-                  }
-                  onLoadStart={() => setIsPortraitLoading(true)}
-                  onLoadEnd={() => setIsPortraitLoading(false)}
-                  style={styles.avatarImage}
-                />
-                {(isUploading1) && (
-                  <View style={styles.loadingOverlay}>
-                    <ActivityIndicator animating={true} size="large" color="#fff" />
-                  </View>
-                )}
-                <TouchableOpacity
-                  style={styles.editIconContainer1}
-                  onPress={() => handleEditPhoto(2)}
                 >
                   <IconButton
                     icon={require('../../assets/flat-icons/edit.png')}
@@ -329,7 +299,41 @@ export const ProfileEditForm = ({ initialValues, onSubmit }: ProfileEditProps) =
                       }}
                     />
                   </View>
-
+                  <Text variant="titleSmall" style={styles.title}>
+                    Portrait photo
+                  </Text>
+                  <Text variant="titleSmall" style={styles.input1}>
+                    This phot is displayed in Member Discovery. It must be portrait. It is not mandatory.
+                  </Text>
+                  <View style={[styles.avatarContainer, {marginBottom: 40}]}>
+                    <Image
+                      source={
+                        portraitUri
+                          ? { uri: portraitUri }
+                          : require('../../assets/default-portrait.jpg')
+                      }
+                      onLoadStart={() => setIsPortraitLoading(true)}
+                      onLoadEnd={() => setIsPortraitLoading(false)}
+                      style={styles.avatarImage}
+                    />
+                    {(isUploading1) && (
+                      <View style={styles.loadingOverlay}>
+                        <ActivityIndicator animating={true} size="large" color="#fff" />
+                      </View>
+                    )}
+                    <TouchableOpacity
+                      style={styles.editIconContainer1}
+                      onPress={() => handleEditPhoto(2)}
+                    >
+                      <IconButton
+                        icon={require('../../assets/flat-icons/edit.png')}
+                        size={15}
+                        mode="contained"
+                        containerColor="#9C27B0"
+                        iconColor="#fff"
+                      />
+                    </TouchableOpacity>
+                  </View>
                   <Button
                     mode="contained"
                     style={styles.saveButton}
@@ -391,8 +395,8 @@ const styles = StyleSheet.create({
   editIconContainer1: {
     position: 'absolute',
     bottom: 0,
-    right: -3,
-    top: 120,
+    right: 90,
+    top: 140,
   },
   formContainer: {
     marginTop: 32,
@@ -406,6 +410,17 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderColor: '#f5f5f5',
     backgroundColor: '#ffffff',
+  },
+  input1: {
+    marginTop: 12,
+    marginBottom: 8,
+    borderWidth: 1,
+    padding: 12,
+    fontSize:12,
+    fontStyle:'italic',
+    borderRadius: 20,
+    borderColor: '#f5f5f5',
+    backgroundColor: '#f5f5f5',
   },
   switch: {
     flex:1,
@@ -448,7 +463,7 @@ const styles = StyleSheet.create({
   },
   avatarImage: {
     width: 95,
-    height: 140,
+    height: 160,
     borderRadius: 5,
   },
 });

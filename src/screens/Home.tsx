@@ -153,6 +153,8 @@ const styles = StyleSheet.create({
   logo: {
     width: 85,
     height: 40,
+    marginBottom:6,
+    marginLeft:4,
   },
   crown: {
     width: 20,
