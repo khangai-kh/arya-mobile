@@ -37,7 +37,6 @@ export const Startup = ({route, navigation}: StartupProps) => {
         () => API.get('/api/startup/' + startupId),
         {
           onSuccess: ({ data }) => {
-            console.log('Startup data:', data);
             setStartup(data);
             setFounders(data.founders || []);
             setInvestors(data.investors || []);
@@ -214,6 +213,11 @@ export const Startup = ({route, navigation}: StartupProps) => {
     };
 
     const checkStatus = (status : InvestmentStage) =>{
+        console.log(role)
+        if(role !== 2){
+            return true;
+        }
+
         if(status.id !== 1 ){
             return true;
         }
@@ -515,7 +519,7 @@ export const Startup = ({route, navigation}: StartupProps) => {
             ) : (
                 role !== 4 && (
                     <Box px={16} py={16}>
-                        <Button mode="contained" onPress={() => setVisible(true)}>
+                        <Button mode="contained" onPress={() => setVisible(true)}  disabled={startup?.startup_status ? checkStatus(startup.startup_status) : false}>
                             Apply for round
                         </Button>
                     </Box>

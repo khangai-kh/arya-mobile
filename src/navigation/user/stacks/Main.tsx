@@ -38,6 +38,8 @@ import { FundingRound } from '../../../screens/FundingRound';
 import { FundingSuccess } from '../../../screens/FundingSuccess';
 import { MemberDiscovery } from '../../../screens/MemberDiscovery';
 import { SplashScreen } from '../../../screens/SplashScreen';
+import Members from '../../../screens/Members';
+import UserMembers from '../../../screens/UserMembers';
 
 
 const Stack = createNativeStackNavigator<MainStackParams>();
@@ -122,6 +124,8 @@ export const MainStack = () => {
         <Stack.Screen name="IPILicense" component={IPILicense} options={{ title: 'IPI License form' }} />
         <Stack.Screen name="OnBoarding" component={OnBoarding} options={{ headerShown: false }} />
         <Stack.Screen name="Member" component={Member} options={{ headerShown: false }} />
+        <Stack.Screen name="Members" component={Members} options={{ headerShown: false }} />
+        <Stack.Screen name="UserMembers" component={UserMembers} options={{ headerShown: false }} />
         <Stack.Screen name="MemberShip" component={MemberShip} options={{ title: 'Membership' }} />
         <Stack.Screen name="PremiumSuccess" component={PremiumSuccess} options={{ title: 'Premium Success' }} />
         <Stack.Screen name="FundingSuccess" component={FundingSuccess} options={{ headerShown: false }} />

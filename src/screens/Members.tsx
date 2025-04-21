@@ -5,7 +5,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { IconButton, Text, useTheme } from 'react-native-paper';
 import { Member } from '../components/Member';
 import { MainStackParams } from '../models/navigation';
-import { UserModelList } from '../models/users/User/user.model';
+import { UserModel, UserModelList } from '../models/users/User/user.model';
 import { API } from '../plugins/axios';
 import { DEFAULT_PAGE, PAGE_SIZE } from '../constants/constants';
 import { RootState } from '../redux/configureStore';
@@ -20,12 +20,14 @@ type UseNavigationProps = CompositeNavigationProp<
 
 type MembersProps = {
   refresh?: boolean;
+  myUsers?: boolean;
   filterModel?: Record<string, any>;
 };
 
 export const Members = (props: MembersProps) => {
   const { navigate } = useNavigation<UseNavigationProps>();
   const refresh = props.refresh || false;
+  const myUsers = props.myUsers || false;
   const { colors } = useTheme();
   const [members, setMembers] = useState<UserModelList[]>([]);
   const [page, setPage] = useState(DEFAULT_PAGE);
@@ -36,6 +38,7 @@ export const Members = (props: MembersProps) => {
   const [hasMore, setHasMore] = useState(true);
   const [loadingFollowId, setLoadingFollowId] = useState<number | null>(null);
 
+  console.log(myUsers);
   // Check if there are active filters
   const hasActiveFilters = useMemo(() => {
     return (
@@ -73,17 +76,31 @@ export const Members = (props: MembersProps) => {
   }, [filterState, props.filterModel, hasActiveFilters]);
 
   const fetchAnnouncements = useCallback(
+   
     async (pageNum: number) => {
-      console.log('Fetching members with filter:', filterModel);
-      if (Object.keys(filterModel).length > 0) {
-        const response = await API.post('/api/user/member-filter', {
-          ...filterModel,
-          page: pageNum,
-          page_size: PAGE_SIZE,
-        });
-        console.log('Members filter response:', response.data);
-        return response;
-      } else {
+      try {
+        console.log('Fetching members with filter:', filterModel);
+
+        if (Object.keys(filterModel).length > 0) {
+          const response = await API.post('/api/user/member-filter', {
+            ...filterModel,
+            page: pageNum,
+            page_size: PAGE_SIZE,
+          });
+          console.log('Members filter response:', response.data);
+          return response;
+        }
+
+        if (myUsers) {
+          const response = await API.get('/api/user/my-favorite-users', {
+            params: {
+              page: pageNum,
+              page_size: PAGE_SIZE,
+            },
+          });
+          return response;
+        }
+
         const response = await API.get('/api/users', {
           params: {
             page: pageNum,
@@ -91,9 +108,13 @@ export const Members = (props: MembersProps) => {
           },
         });
         return response;
+
+      } catch (error) {
+        console.error('Error fetching announcements:', error);
+        throw error;
       }
     },
-    [filterModel]
+    [filterModel, myUsers] // Added myUsers to dependencies
   );
 
   const { isFetching: isFetchingAnnouncements, refetch } = useQuery(
@@ -210,7 +231,8 @@ export const Members = (props: MembersProps) => {
               name={member.full_name || ''}
               image={member.photo}
               memberRole={member.role?.name || ''}
-              status={member.title}
+              company = {member.carrier?.company_name }
+              title = {member.carrier?.title }
               following={member.is_favorited || false}
               interests={member.interests}
               isLoading={loadingFollowId === (member.id || 0)}

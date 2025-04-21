@@ -58,4 +58,4 @@ export interface UserModel extends BaseEntityModel {
 }
 
 export type UserModelWithoutContent = Pick<UserModel, 'id' | 'full_name' | 'email' | 'photo' | 'title'>;
-export type UserModelList = Pick<UserModel, 'id' | 'full_name' | 'title' | 'photo' | 'describes' | 'role' | 'interests' | 'is_favorited'>;
+export type UserModelList = Pick<UserModel, 'id' | 'full_name' | 'title' | 'photo' | 'describes' | 'role' | 'interests' | 'is_favorited' | 'carrier'>;

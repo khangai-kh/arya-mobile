@@ -65,7 +65,8 @@ export const BKYLicense = (props: BKYLicenseProps) => {
     );
 };
 const createDynamicStyles = (colors: MD3Theme['colors']) =>
-    StyleSheet.create({appbarActionRight: {
+    StyleSheet.create({
+    appbarActionRight: {
         backgroundColor: colors.onPrimary || '#FFFFFF',
         marginRight: 5,
         marginTop: 20,

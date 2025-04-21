@@ -142,9 +142,9 @@ export const Member = (props: MemberProps) => {
                         title={
                             <View style={dynamicStyles.titleContainer}>
                                 <Text variant="titleMedium" style={dynamicStyles.titleText}>
-                                    {member.roles[0]?.role_name || 'N/A'}
+                                    {member.role.name || 'N/A'}
                                 </Text>
-                                {checkRole(member.roles[0]?.role_name)}
+                                {checkRole(member.role.name)}
                             </View>
                         }
                     />
@@ -243,7 +243,7 @@ export const Member = (props: MemberProps) => {
                     <View style={dynamicStyles.interestsChips}>
                         {member.interests.map((interest) => (
                             <Chip key={interest.id} style={dynamicStyles.interestChip}>
-                                <Text>{interest.title}</Text>
+                                <Text>{interest.name}</Text>
                             </Chip>
                         ))}
                     </View>
@@ -438,7 +438,7 @@ const styles = (colors: MD3Colors)=> StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         gap: 5,
-        width: 250,
+        width: 200,
 
     },
 });

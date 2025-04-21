@@ -8,7 +8,8 @@ type MemberProps = Omit<TouchableOpacityProps, 'activeOpacity'> & {
   name: string;
   image: string;
   memberRole: string;
-  status: string;
+  title: string;
+  company: string;
   following: boolean;
   interests: InterestModel[];
   isLoading?: boolean;
@@ -23,9 +24,10 @@ export const Member = (props: MemberProps) => {
     name,
     image,
     memberRole,
-    status,
     interests,
     following,
+    title,
+    company,
     isLoading = false,
     onFollowPress,
     ...otherProps
@@ -40,7 +42,7 @@ export const Member = (props: MemberProps) => {
           style={[componentStyles.roleIcon, { tintColor: '#00AEEF' }]}
         />
       );
-    } else if (role === 'Premium Entrepreneur' || role === 'Premium Investor') {
+    } else if (role === 'Premium' || role === 'Other') {
       return (
         <Image
           resizeMode="contain"
@@ -119,7 +121,7 @@ export const Member = (props: MemberProps) => {
                   numberOfLines={1}
                   style={componentStyles.roleText}
                 >
-                  {memberRole || 'Fremium'}
+                  {(memberRole && memberRole === 'Other') ? 'Premium' : memberRole}
                 </Text>
               </View>
             </Chip>
@@ -135,25 +137,26 @@ export const Member = (props: MemberProps) => {
               numberOfLines={1}
               style={componentStyles.statusText}
             >
-              {status}
+              {title || 'Works'} at {company}
             </Text>
           </View>
           <FollowButton />
         </View>
       </View>
-      <View style={componentStyles.interestsRow}>
-        {interests.map((interest, index) => (
-          <Chip
-            key={interest.interest_id}
-            style={[
-              componentStyles.interestChip,
-              index !== interests.length - 1 && componentStyles.interestChipWithMargin,
-            ]}
-          >
-            <Text>{interest.name}</Text>
-          </Chip>
-        ))}
-      </View>
+        <View style={componentStyles.interestsRow}>
+          {interests.map((interest, index) => (
+            <View
+              key={interest.id}
+              style={[
+                componentStyles.interestChip,
+                index !== interests.length - 1 && componentStyles.interestChipWithMargin,
+              ]}
+            >
+              <Text variant='labelSmall'>{interest.name}</Text>
+            </View>
+          ))}
+        </View>
+
     </TouchableOpacity>
   );
 };
@@ -228,11 +231,19 @@ const styles = (colors: MD3Colors) =>
       alignItems: 'center',
     },
     interestsRow: {
+      flex:1,
       flexDirection: 'row',
       marginTop: 4,
+      alignItems: 'center',
+      flexWrap: 'wrap',
     },
     interestChip: {
       backgroundColor: '#f2f2f2',
+      paddingHorizontal:8,
+      borderColor:'#f2f2f2',
+      borderWidth:1,
+      borderRadius:10,
+      marginVertical:2,
     },
     interestChipWithMargin: {
       marginRight: 4,

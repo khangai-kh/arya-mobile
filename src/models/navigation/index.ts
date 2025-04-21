@@ -13,6 +13,7 @@ export type MainStackParams = {
       index: number;
       filterModel: any;
       hideTabBar?: boolean;
+      myUsers?: boolean;
     };
 
     CalendarlyScreen: undefined;
@@ -45,8 +46,13 @@ export type MainStackParams = {
     };
     Members: {
       filterModel?: Record<string, any>;
-      refresh?: boolean
+      refresh?: boolean;
+      myUsers?: boolean;
     } | undefined;
+    UserMembers: {
+      refresh?: boolean;
+      myUsers?: boolean;
+    };
     MemberFilter: undefined;
     MemberShip: {
       agreed_agreement: boolean;
@@ -73,6 +79,7 @@ export type MainStackParams = {
     };
     Startups: {
       type: number;
+      myStartups:boolean;
       filterModel?: Record<string, any>;
     };
     StartupsFilter: undefined;

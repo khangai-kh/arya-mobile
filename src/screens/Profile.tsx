@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Image, Pressable, StyleSheet, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
-import { Appbar, Avatar, Button, Chip, Text, useTheme, MD3Theme } from 'react-native-paper';
+import { Appbar, Avatar, Button, Chip, Text, useTheme, MD3Theme, Portal, Modal, IconButton, TouchableRipple } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { connect, useSelector } from 'react-redux';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -29,6 +29,7 @@ const mapDispatchToProps = {
 const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: ProfileProps) => {
   const { token } = useSelector((state: RootState) => state.auth);
   const { user_id } = useSelector((state: RootState) => state.auth);
+  const { role } = useSelector((state: RootState) => state.auth);
   const { width } = useWindowDimensions();
   const [isLoading, setIsLoading] = useState(false);
   const { colors } = useTheme();
@@ -37,6 +38,7 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
   const [interests, setInterests] = useState<InterestModel[]>([]);
   const [selectedInterests, setSelectedInterests] = useState<number[]>([]);
   const [profile, setProfile] = useState<UserModel | null>(null);
+  const [visible, setVisible] = useState(false);
   const { setHideTabBar } = useNavigationContext();
 
   useEffect(() => {
@@ -226,27 +228,27 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
                   {profile?.additional?.role?.id === 1 && (
                     <>
                       <Text variant="titleMedium" style={dynamicStyles.titleText}>
-                          {Number(profile?.additional?.role.id) === 2 && (
+                          {Number(profile?.role.id) === 2 && (
                             <Image
                               resizeMode="contain"
                               source={require('../assets/flat-icons/rocket.png')}
                               style={[dynamicStyles.roleIcon, { tintColor: '#B61D8D' }]}
                             />
                           )}
-                          {profile?.additional?.role.id === 1 && (
+                          {profile?.role.id === 1 && (
                             <Image
                               resizeMode="contain"
                               source={require('../assets/flat-icons/diamond.png')}
                               style={[dynamicStyles.roleIcon, { tintColor: '#00AEEF' }]}
                             />
                           )}
-                          {Number(profile?.additional?.role.id) === 3 && (
+                          {Number(profile?.role.id) === 3 && (
                             <Image
                               resizeMode="contain"
                               source={require('../assets/flat-icons/diamond.png')}
                               style={[dynamicStyles.roleIcon, { tintColor: '#B61D8D' }]}
                             />
-                          )} {profile?.additional?.role.name}
+                          )} {profile?.role.name}
                       </Text>
                     </>
                   )}
@@ -370,18 +372,30 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
                   textColor={colors.primary}
                   icon={require('../assets/flat-icons/user-add.png')}
                   style={dynamicStyles.buttonMargin}
-                  onPress={() => {}}
+                  onPress={() => {
+                    if (role === 4) {
+                      setVisible(true);
+                    } else {
+                      navigation.navigate('UserMembers', { refresh:false , myUsers: true });
+                    }
+                  }}
                 >
-                  Connections (2)
+                  Connections ({profile?.following.length})
                 </Button>
                 <Button
                   mode="contained"
                   buttonColor={colors.secondary}
                   textColor={colors.primary}
                   icon={require('../assets/flat-icons/heart.png')}
-                  onPress={() => {}}
+                  onPress={() => {
+                    if (role === 4) {
+                      setVisible(true);
+                    } else {
+                      navigation.navigate('Startups', { type: 0, filterModel: undefined, myStartups:true });
+                    }
+                  }}
                 >
-                  Followed (10)
+                  Followed ({profile?.followers.length})
                 </Button>
               </View>
             </View>
@@ -436,10 +450,11 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
                 </Pressable>
               ))}
             </View>
-
-            <Button mode="contained" onPress={() => setStage('startup')} style={dynamicStyles.logoutButton}>
-              Add start up
-            </Button>
+            {role === 2 && (
+              <Button mode="contained" onPress={() => setStage('startup')} style={dynamicStyles.logoutButton}>
+                Add start up
+              </Button>
+            )}
           </>
         )}
         {stage === 'interest' && (
@@ -486,6 +501,53 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
           />
         )}
       </ScrollView>
+      <Portal>
+        <Modal
+            visible={visible}
+            onDismiss={() => setVisible(false)}
+            contentContainerStyle={styles.modal}
+        >
+            <IconButton
+                icon={require('../assets/flat-icons/x.png')}
+                size={20}
+                iconColor="#A09FA0"
+                style={styles.modalClose}
+                onPress={() => setVisible(false)}
+            />
+            <Image
+                resizeMode="contain"
+                source={require('../assets/flat-icons/diamond.png')}
+                style={styles.modalIcon}
+            />
+            <Text variant="headlineSmall" style={styles.modalTitle}>
+                Please become a Premium member to join
+            </Text>
+            <View style={styles.modalButtons}>
+                <TouchableRipple
+                    style={styles.modalButton}
+                    onPress={() => {setVisible(false);}}
+                >
+                    <Text variant="titleMedium" style={styles.modalButtonText}>
+                        Not now
+                    </Text>
+                </TouchableRipple>
+                <TouchableRipple
+                    style={styles.modalButtonPrimary}
+                    onPress={() => {
+                      setVisible(false);
+                      navigation.navigate('MemberShip', {
+                        agreed_agreement: false,
+                        agreed_confidentiality: false,
+                      });
+                    }}
+                >
+                    <Text variant="titleMedium" style={styles.modalButtonPrimaryText}>
+                        Arya Premium
+                    </Text>
+                </TouchableRipple>
+            </View>
+        </Modal>
+      </Portal>
     </SafeAreaView>
   );
 };
@@ -621,7 +683,7 @@ const createDynamicStyles = (colors: MD3Theme['colors'], width: number) =>
       flexDirection: 'row',
       flexWrap: 'wrap',
       gap: 5,
-      width: 250,
+      width: 200,
     },
     nameText: {
       color: '#414042',
@@ -697,5 +759,55 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
     tintColor: '#A09FA0',
+  },
+  modal: {
+    backgroundColor: '#fff',
+    borderRadius: 24,
+    margin: 24,
+    padding: 16,
+  },
+  modalClose: {
+      position:'absolute',
+      top:10,
+      left:250,
+  },
+  modalIcon: {
+      alignSelf: 'center',
+      width: 56,
+      height: 56,
+      tintColor: '#B61D8D',
+      marginVertical: 24,
+  },
+  modalTitle: {
+      textAlign: 'center',
+  },
+  modalText: {
+      textAlign: 'center',
+      marginTop: 8,
+  },
+  modalButtons: {
+      marginTop: 24,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      rowGap: 8,
+  },
+  modalButton: {
+      flex: 1,
+      paddingVertical: 12.5,
+      borderRadius: 32,
+      alignItems: 'center',
+  },
+  modalButtonText: {
+      textAlign: 'center',
+  },
+  modalButtonPrimary: {
+      paddingVertical: 12.5,
+      paddingHorizontal: 28.5,
+      backgroundColor: '#B61D8D',
+      borderRadius: 32,
+      alignItems: 'center',
+  },
+  modalButtonPrimaryText: {
+      color: '#FFFFFF',
   },
 });

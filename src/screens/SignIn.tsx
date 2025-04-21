@@ -53,7 +53,7 @@ export const SignIn = ({ navigation }: SignInProps) => {
             </Text>
             <Formik
               initialValues={{
-                email: 'duygu.aydin@gmail.com',
+                email: 'investor@aryawomen.com',
                 password: '123123',
               }}
               validationSchema={signInValidationSchema}

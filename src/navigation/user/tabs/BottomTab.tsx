@@ -23,7 +23,7 @@ declare global {
 type NavigationProp = NativeStackNavigationProp<MainStackParams>;
 
 export type BottomTabStackParams = {
-  Home?: { filterModel?: any; index?: number };
+  Home?: { filterModel?: any; index?: number, myUsers?: boolean };
   Events: undefined;
   MemberDiscovery: undefined;
   Messenger: undefined;
@@ -148,7 +148,7 @@ export const BottomTab = (props: any) => {
   const { hideTabBar } = useNavigationContext();
 
   const { route } = props;
-  const { filterModel, index: tabIndex } = route?.params || {};
+  const { filterModel, index: tabIndex, myUsers } = route?.params || {};
 
   const renderHomeIcon = ({ focused }: { focused: boolean }) => <HomeIcon focused={focused} />;
   const renderEventsIcon = ({ focused }: { focused: boolean }) => <EventsIcon focused={focused} />;
@@ -170,7 +170,7 @@ export const BottomTab = (props: any) => {
         name="Home"
         component={Home}
         options={{ tabBarIcon: renderHomeIcon }}
-        initialParams={{ filterModel: filterModel, index: tabIndex }}
+        initialParams={{ filterModel: filterModel, index: tabIndex, myUsers:myUsers }}
       />
       <BottomTabStack.Screen name="Events" component={Events} options={{ tabBarIcon: renderEventsIcon }} />
       <BottomTabStack.Screen

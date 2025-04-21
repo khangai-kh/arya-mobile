@@ -18,7 +18,7 @@ type StartupsProps = StackScreenProps<MainStackParams, 'Startups'>;
 
 export const Startups = ({ navigation, route }: StartupsProps) => {
   const { colors } = useTheme();
-  const { filterModel, type: type } = route?.params || {};
+  const { filterModel, type: type, myStartups } = route?.params || {};
   const dynamicStyles = createDynamicStyles(colors);
   const [page, setPage] = useState({ active: DEFAULT_PAGE, graduates: DEFAULT_PAGE });
   const { token } = useSelector((state: RootState) => state.auth);
@@ -35,7 +35,6 @@ export const Startups = ({ navigation, route }: StartupsProps) => {
       if (!token) {
         throw new Error('No authentication token available');
       }
-
       try {
         const params =
           fetchType === 'active'
@@ -50,14 +49,15 @@ export const Startups = ({ navigation, route }: StartupsProps) => {
             : {
                 page: pageNum,
                 page_size: PAGE_SIZE,
-                startup_investment_status_ids: [1, 2], // Adjust for graduates
+                startup_investment_status_ids: [1, 2],
               };
-
-        const response = await API.get('/api/startups/', {
-          params,
-          headers: { Authorization: `Bearer ${token.trim()}` },
-        });
-
+        const response = await API.get(
+          myStartups ? '/api/startups/my-favorite-startups/' : '/api/startups/',
+          {
+            params: myStartups ? undefined : params,
+            headers: { Authorization: `Bearer ${token.trim()}` },
+          }
+        );
         return {
           startups: response.data || [],
           total: response.pagination?.total_startups || 0,
@@ -70,7 +70,7 @@ export const Startups = ({ navigation, route }: StartupsProps) => {
         throw error;
       }
     },
-    [navigation, token, type]
+    [myStartups, navigation, token, type]
   );
 
   const { isFetching, refetch } = useQuery(
@@ -213,7 +213,7 @@ export const Startups = ({ navigation, route }: StartupsProps) => {
           title={
             <View style={dynamicStyles.titleContainer}>
               <Text variant="titleMedium" style={dynamicStyles.titleText}>
-                {type === 0 ? 'Academy startups' : 'Startups'}
+                {(type === 0 && !myStartups) ? 'Academy startups' : 'Startups'}
               </Text>
             </View>
           }
@@ -233,13 +233,15 @@ export const Startups = ({ navigation, route }: StartupsProps) => {
           <View style={styles.container}>
             <View style={styles.header}>
               <Text>{displayedTotal} startups</Text>
+              {(!myStartups) && (
               <IconButton
                 icon={require('../assets/flat-icons/filter.png')}
                 size={18}
                 onPress={() => navigation.navigate('StartupsFilter')}
               />
+            )}
             </View>
-            {type === 0 && (
+            {(type === 0 && !myStartups) && (
               <View style={styles.buttonContainer}>
                 <View style={styles.safeArea} >
                 <Button
@@ -336,6 +338,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    marginBottom:10,
   },
   fundingItem: {
     marginBottom: 8,

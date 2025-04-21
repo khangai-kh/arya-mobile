@@ -27,8 +27,8 @@ export const Home = (props: HomeProps) => {
   const { colors } = useTheme();
   const { role } = useSelector((state: RootState) => state.auth);
   const [visible, setVisible] = useState(false);
-  // Extract route params safely.
-  const params: { filterModel?: Record<string, any>; index?: number } = route.params ?? {};
+
+  const params: { filterModel?: Record<string, any>; index?: number; myUsers?:boolean } = route.params ?? {};
   const filterModel = params.filterModel ?? {};
   const initialTabIndex = params.index ?? 0;
 
@@ -37,7 +37,7 @@ export const Home = (props: HomeProps) => {
     { key: 'contents', title: 'Contents' },
     { key: 'members', title: 'Members' },
     { key: 'investments', title: 'Investment' },
-    ...(role !== 4 ? [{ key: 'entrepreneurship', title: 'Entrepreneurship' }] : []),
+    ...((role === 2) ? [{ key: 'entrepreneurship', title: 'Entrepreneurship' }] : []),
   ]);
 
   const navigateToMemberShip = () =>
@@ -60,7 +60,7 @@ export const Home = (props: HomeProps) => {
         if (role === 4) {
           return null; // Prevent showing Members content when role is 4
         }
-        content = <Members filterModel={filterModel} refresh={false} />;
+        content = <Members filterModel={filterModel} refresh={false} myUsers={false}/>;
         break;
       case 'investments':
         content = <Investments />;
