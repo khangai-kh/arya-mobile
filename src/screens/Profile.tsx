@@ -225,7 +225,6 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
           <Appbar.Content
             title={
               <View style={dynamicStyles.titleContainer}>
-                  {profile?.additional?.role?.id === 1 && (
                     <>
                       <Text variant="titleMedium" style={dynamicStyles.titleText}>
                           {Number(profile?.role.id) === 2 && (
@@ -251,7 +250,6 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
                           )} {profile?.role.name}
                       </Text>
                     </>
-                  )}
               </View>
             }
           />
@@ -450,7 +448,7 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
                 </Pressable>
               ))}
             </View>
-            {role === 2 && (
+            {(role === 4 && profile?.batch.id === 6) && (
               <Button mode="contained" onPress={() => setStage('startup')} style={dynamicStyles.logoutButton}>
                 Add start up
               </Button>

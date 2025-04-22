@@ -52,14 +52,20 @@ export const UserRegister = ({ navigation, route }: SignUpProps) => {
             </Text>
             <Formik
               initialValues={{
-                fullName: generateRandomFullName(),
-                email: generateRandomEmail(),
-                password: generateRandomPassword(),
+                fullName: '',
+                email: '',
+                password: '',
+                // fullName: generateRandomFullName(),
+                // email: generateRandomEmail(),
+                // password: generateRandomPassword(),
                 termsAccepted: agreed || false, // Initialize with agreed value
                 general: '',
               }}
               validationSchema={userValidationSchema}
-              onSubmit={async (values, { setSubmitting, setErrors }) => {
+              onSubmit={async (
+                values: { fullName: string; email: string; password: string; termsAccepted: boolean; general: string },
+                { setSubmitting, setErrors }
+              ) => {
                 let response;
                 try {
                   const payload = JSON.stringify({
@@ -100,7 +106,7 @@ export const UserRegister = ({ navigation, route }: SignUpProps) => {
                 }, [setFieldValue]);
 
                 return (
-                  <Box mt={32} px={16}>
+                  <Box mt={10} px={16}>
                     <Text variant="titleSmall">Full Name</Text>
                     <PaperTextInput
                       autoCapitalize="none"
@@ -109,6 +115,7 @@ export const UserRegister = ({ navigation, route }: SignUpProps) => {
                       mode="outlined"
                       value={values.fullName}
                       onChangeText={handleChange('fullName')}
+                      placeholderTextColor='#A09FA0'
                       onBlur={handleBlur('fullName')}
                       style={styles.input}
                       theme={{ roundness: 40 }}
@@ -127,6 +134,7 @@ export const UserRegister = ({ navigation, route }: SignUpProps) => {
                       mode="outlined"
                       value={values.email}
                       onChangeText={handleChange('email')}
+                      placeholderTextColor='#A09FA0'
                       onBlur={handleBlur('email')}
                       style={styles.input}
                       theme={{ roundness: 40 }}
@@ -143,6 +151,7 @@ export const UserRegister = ({ navigation, route }: SignUpProps) => {
                       mode="outlined"
                       value={values.password}
                       onChangeText={handleChange('password')}
+                      placeholderTextColor='#A09FA0'
                       onBlur={handleBlur('password')}
                       style={styles.input}
                       theme={{ roundness: 40 }}
@@ -251,7 +260,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    marginTop: 40,
+    marginTop: 30,
   },
   title: {
     textAlign: 'center',
@@ -313,7 +322,6 @@ const styles = StyleSheet.create({
   dividerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 10,
     marginBottom: 30,
     marginHorizontal: 10,
   },

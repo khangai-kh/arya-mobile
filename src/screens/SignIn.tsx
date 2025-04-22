@@ -12,6 +12,7 @@ import { signIn as signInAction } from '../redux/auth/actions';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { ForgotPasswordModal } from '../components/ForgotPasswordModal';
+import { grey100 } from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
 
 // Define validation schema
 const signInValidationSchema = Yup.object().shape({
@@ -53,8 +54,8 @@ export const SignIn = ({ navigation }: SignInProps) => {
             </Text>
             <Formik
               initialValues={{
-                email: 'investor@aryawomen.com',
-                password: '123123',
+                email: '',
+                password: '',
               }}
               validationSchema={signInValidationSchema}
               onSubmit={async (values, { setSubmitting }) => {
@@ -87,6 +88,7 @@ export const SignIn = ({ navigation }: SignInProps) => {
                     autoCapitalize="none"
                     keyboardType="email-address"
                     placeholder="example@example.com"
+                    placeholderTextColor='#A09FA0'
                     mode="outlined"
                     value={values.email}
                     onChangeText={handleChange('email')}
@@ -107,6 +109,7 @@ export const SignIn = ({ navigation }: SignInProps) => {
                     value={values.password}
                     onChangeText={handleChange('password')}
                     onBlur={handleBlur('password')}
+                    placeholderTextColor='#A09FA0'
                     style={styles.input}
                     theme={{ roundness: 40 }}
                     outlineColor="transparent"

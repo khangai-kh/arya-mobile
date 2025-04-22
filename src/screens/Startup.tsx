@@ -413,7 +413,8 @@ export const Startup = ({route, navigation}: StartupProps) => {
                                 name={founder.full_name || ''}
                                 image={founder.photo}
                                 memberRole={founder.role?.name || ''}
-                                status={founder.title}
+                                title={founder?.title || ''}
+                                company={founder.carrier?.company_name || 'Self Employeed'}
                                 following={founder.is_favorited || false}
                                 interests={[]}
                                 isLoading={loadingFollowId === (founder.id || 0)}
@@ -479,22 +480,23 @@ export const Startup = ({route, navigation}: StartupProps) => {
                     <View style={dynamicStyles.foundersContainer}>
                         {investors?.map((founder, index) => (
                              <Member
-                             key={index}
-                             name={founder.full_name || ''}
-                             image={founder.photo}
-                             memberRole={founder.role?.name || ''}
-                             status={founder.title}
-                             following={founder.is_favorited || false}
-                             interests={[]}
-                             isLoading={loadingFollowId === (founder.id || 0)}
-                             style={[
-                                 styles.memberItem,
-                                 index === (startup?.founders?.length ?? 0) - 1 && styles.lastMemberItem,
-                             ]}
-                             onPress={() => {
-                                 navigation.navigate('Member', { id: founder.id });
-                             }}
-                             onFollowPress={() => handleFollowPress(founder.id || 0)}
+                                key={index}
+                                name={founder.full_name || ''}
+                                image={founder.photo}
+                                memberRole={founder.role?.name || ''}
+                                title={founder.title || ''}
+                                company={founder.carrier?.company_name || 'Self Employeed'}
+                                following={founder.is_favorited || false}
+                                interests={[]}
+                                isLoading={loadingFollowId === (founder.id || 0)}
+                                style={[
+                                    styles.memberItem,
+                                    index === (startup?.founders?.length ?? 0) - 1 && styles.lastMemberItem,
+                                ]}
+                                onPress={() => {
+                                    navigation.navigate('Member', { id: founder.id });
+                                }}
+                                onFollowPress={() => handleFollowPress(founder.id || 0)}
                          />
                         ))}
                     </View>

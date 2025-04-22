@@ -1,5 +1,5 @@
 import type { BaseEntityModel } from '../../base-entity.model';
-import { BatchModel, DescribeModel, Image, Industry, InterestModel, ProfileModel, Sector } from '../../general/models';
+import { BatchModel, DescribeModel, Industry, InterestModel, ProfileModel, Sector } from '../../general/models';
 import { StartupBriefModel } from '../../homepage/Startup/startup.model';
 
 export interface UserModel extends BaseEntityModel {
@@ -13,6 +13,7 @@ export interface UserModel extends BaseEntityModel {
     address: null | string;
     photo: string;
     role: ProfileModel;
+    batch: BatchModel;
     interests: InterestModel[];
     describes: DescribeModel[];
     received_references: {
@@ -37,7 +38,6 @@ export interface UserModel extends BaseEntityModel {
         id: number;
         introduction_paragraph: string;
         role: ProfileModel;
-        batch: BatchModel
         payment_method: string;
         is_agreement_accepted: boolean;
         is_confidentiality_accepted: boolean;
