@@ -26,7 +26,7 @@ export type RootState = {
 const authPersistConfig: PersistConfig<AuthState> = {
   key: 'auth',
   storage: storage,
-  whitelist: ['token'],
+  whitelist: ['token', 'role'],
 };
 
 const rootReducer = combineReducers({
