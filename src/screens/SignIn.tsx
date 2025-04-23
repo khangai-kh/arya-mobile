@@ -12,7 +12,6 @@ import { signIn as signInAction } from '../redux/auth/actions';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { ForgotPasswordModal } from '../components/ForgotPasswordModal';
-import { grey100 } from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
 
 // Define validation schema
 const signInValidationSchema = Yup.object().shape({
@@ -54,8 +53,8 @@ export const SignIn = ({ navigation }: SignInProps) => {
             </Text>
             <Formik
               initialValues={{
-                email: '',
-                password: '',
+                email: 'duygu.aydin@gmail.com',
+                password: '123123',
               }}
               validationSchema={signInValidationSchema}
               onSubmit={async (values, { setSubmitting }) => {

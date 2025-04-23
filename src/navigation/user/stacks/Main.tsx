@@ -40,6 +40,7 @@ import { MemberDiscovery } from '../../../screens/MemberDiscovery';
 import { SplashScreen } from '../../../screens/SplashScreen';
 import Members from '../../../screens/Members';
 import UserMembers from '../../../screens/UserMembers';
+import { Events } from '../../../screens/Events';
 
 
 const Stack = createNativeStackNavigator<MainStackParams>();
@@ -135,6 +136,7 @@ export const MainStack = () => {
         <Stack.Screen name="Training" component={Training} options={{ headerShown: false }} />
         <Stack.Screen name="Notifications" component={Notifications} options={{ title: 'Notifications' }} />
         <Stack.Screen name="Profile" component={Profile} options={{ title: 'Profile' }} />
+        <Stack.Screen name="Events" component={Events} options={{ title: 'Events' }} />
         <Stack.Screen name="MemberDiscovery" component={MemberDiscovery} options={{  headerShown: false }} />
         <Stack.Screen name="SplashScreen" component={SplashScreen} options={{  headerShown: false }}/>
         <Stack.Screen name="PaymentLocation" component={PaymentForm} />
