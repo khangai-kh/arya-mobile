@@ -236,7 +236,7 @@ export const Search = (props: SearchProps) => {
           <Text
             variant="titleSmall"
             style={styles.cancelText}
-            onPress={() => navigation.navigate({ name: 'BottomTab', params: { index: 0, filterModel: {}, hideTabBar: false } })}
+            onPress={() => navigation.goBack()}
           >
             Cancel
           </Text>

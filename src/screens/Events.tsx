@@ -420,11 +420,11 @@ const createStyles = (colors: any) =>
     },
     headerContainer: {
       padding: 8,
+      justifyContent: 'space-between',
     },
     header: {
       flexDirection: 'row',
       justifyContent: 'space-between',
-      alignItems: 'flex-end',
     },
     logo: {
       width: 85,
@@ -460,7 +460,6 @@ const createStyles = (colors: any) =>
       fontSize: 12,
     },
     iconRow: {
-      flex: 1,
       flexDirection: 'row',
       justifyContent: 'flex-end',
     },
