@@ -33,6 +33,7 @@ const generateRandomFullName = () => {
 
 export const UserRegister = ({ navigation, route }: SignUpProps) => {
   const agreed = route.params?.agreed as boolean; // Get agreed from route params
+  const type = route.params?.type as number; // Get type from route params
   const { errorMessage, status: signInStatus } = useSelector(
     (state: RootState) => state.auth,
   );
@@ -76,7 +77,11 @@ export const UserRegister = ({ navigation, route }: SignUpProps) => {
                   console.log('User ', payload);
                   response = await API.post('api/users', payload);
                   console.log('User created successfully:', response.data);
-                  navigation.navigate('SignUpSuccess', { userId: response.data });
+                  if(type === 1) {
+                    navigation.navigate('SignIn');
+                  }else{
+                    navigation.navigate('SignUpSuccess', { userId: response.data });
+                  }
                 } catch (error: any) {
                   const registrationErrorMessage = error.response?.data?.detail?.message ||
                     'Registration failed. Please try again.';

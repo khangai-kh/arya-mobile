@@ -120,3 +120,15 @@ export interface EventModel {
 
     [key: string]: any;
 }
+
+export interface EventTypeModel {
+    id: number;
+    type_name: string | null;
+    description:  string | null;
+    icon_dark: string | null;
+    icon_light: string | null;
+    is_active: boolean | null;
+    is_visible_category: boolean | null;
+
+    [key: string]: any;
+}

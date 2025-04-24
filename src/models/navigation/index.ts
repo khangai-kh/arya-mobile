@@ -67,13 +67,16 @@ export type MainStackParams = {
     Search: undefined;
     SignIn: undefined;
     SignUp: {
+      type: number;
       agreed: boolean;
     };
     StartUpForm:undefined;
     SignUpSuccess: {
       userId: string;
     };
-    SplashScreen: undefined;
+    SplashScreen: {
+      type: number;
+    };
     Startup: {
       id: number;
     };

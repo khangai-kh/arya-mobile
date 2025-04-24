@@ -11,10 +11,14 @@ import { DisclosureText } from '../../screens/DisclosureText';
 
 const Stack = createNativeStackNavigator<MainStackParams>();
 
-export const Guest = () => {
+interface GuestProps {
+    isInitialLoad: boolean;
+}
+
+export const Guest = ({ isInitialLoad }: GuestProps) => {
     return (
         <Stack.Navigator
-            initialRouteName="SplashScreen"
+            initialRouteName={isInitialLoad ? 'SplashScreen' : 'SignIn'}
             screenOptions={{
                 headerShown: false,
             }}
@@ -63,7 +67,7 @@ export const Guest = () => {
                             headerShown: false,
                         }}
                     />
-                     <Stack.Screen
+                    <Stack.Screen
                         name="DisclosureText"
                         component={DisclosureText}
                         options={{

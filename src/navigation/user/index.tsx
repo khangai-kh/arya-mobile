@@ -2,7 +2,6 @@
 import { MainStack } from './stacks/Main';
 import React, { Fragment } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { SplashScreen } from '../../screens/SplashScreen';
 
 export const User = () => {
     const Stack = createNativeStackNavigator();

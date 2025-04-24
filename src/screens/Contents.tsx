@@ -19,6 +19,7 @@ export const Contents = () => {
     const { navigate } = useNavigation<UseNavigationProps>();
     const { colors } = useTheme();
     const { token } = useSelector((state: RootState) => state.auth);
+    
 
     const [contents, setContents] = useState<ContentModel[]>([ ]);
     const [inspirations, setInspirations] = useState <ContentModel[]>([ ]);

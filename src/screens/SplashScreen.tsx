@@ -10,13 +10,14 @@ import {
 } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { MainStackParams } from '../models/navigation';
+import { StackScreenProps } from '@react-navigation/stack';
 
-type NavigationType = {
-  navigate: (screen: string) => void;
-};
+type SplashScreenProps = StackScreenProps<MainStackParams, 'SplashScreen'>;
 
-export const SplashScreen = (): JSX.Element => {
-  const navigation = useNavigation<NavigationType>();
+export const SplashScreen = ({ navigation, route }: SplashScreenProps) => {
+
+  let type = route.params?.type;
   const { width, height } = useWindowDimensions();
 
   // currentStep: 0 -> Step 1, 1 -> Step 2, 2 -> Step 3, 3 -> (existing) Step 4
@@ -191,7 +192,10 @@ export const SplashScreen = (): JSX.Element => {
             “Shining stars are not afraid of others shining.”
           </Text>
           <Button mode="contained" style={styles.discoverButton}>
-            <Text variant="titleMedium" style={{ color: '#fff' }}>
+            <Text 
+              variant="titleMedium"
+              style={{ color: '#fff' }}
+              onPress={() => navigation.navigate('SignUp',{ agreed: false, type: 2})}            >
               Discover Arya
             </Text>
           </Button>
@@ -199,7 +203,7 @@ export const SplashScreen = (): JSX.Element => {
             <Text
               variant="titleMedium"
               style={{ color: '#414042' }}
-              onPress={() => navigation.navigate('SignUp')}
+              onPress={() => navigation.navigate('SignUp', { agreed: false, type: 2})}
             >
               Ready to join Arya
             </Text>

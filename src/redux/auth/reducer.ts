@@ -3,6 +3,7 @@ import { signIn, SignInPayload } from './actions';
 
 export type AuthState = {
     token: string | null;
+    logout : number | null;
     tokenType: string | null;
     role: number | null;
     user_id: number | null;
@@ -19,12 +20,17 @@ const initialState: AuthState = {
     message: null,
     errorMessage: null,
     status: 'idle',
+    logout: null,
 };
 
 const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
+        setLogout(state, action: PayloadAction<number>) {
+            state.logout = action.payload;
+            state.token = null;
+        },
         setAuthToken(state, { payload }: PayloadAction<string | null>) {
             state.token = payload;
         },
@@ -39,8 +45,8 @@ const authSlice = createSlice({
                 state.status = 'pending';
             })
             .addCase(signIn.fulfilled, (state, action: PayloadAction<SignInPayload>) => {
-                console.log('Sign-in Payload:', action.payload);
                 state.token = action.payload.token;
+                state.logout = null;
                 state.tokenType = action.payload.token_type;
                 state.role = action.payload.roles.length > 0 ? action.payload.roles[0].role_id : null;
                 state.user_id = action.payload.user_id;
@@ -59,6 +65,6 @@ const authSlice = createSlice({
     },
 });
 
-export const { setAuthToken, setErrorMessage } = authSlice.actions;
+export const { setAuthToken, setErrorMessage, setLogout } = authSlice.actions;
 
 export default authSlice.reducer;

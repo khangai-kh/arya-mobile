@@ -3,10 +3,10 @@ import { ActivityIndicator, Image, Pressable, StyleSheet, TouchableOpacity, useW
 import { StackScreenProps } from '@react-navigation/stack';
 import { Appbar, Avatar, Button, Chip, Text, useTheme, MD3Theme, Portal, Modal, IconButton, TouchableRipple } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { connect, useSelector } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import { ScrollView } from 'react-native-gesture-handler';
 import { MainStackParams } from '../models/navigation';
-import { setAuthToken } from '../redux/auth/reducer';
+import { setAuthToken, setLogout } from '../redux/auth/reducer';
 import { View } from '../components/common/View';
 import { UserModel } from '../models/users/User';
 import { RootState } from '../redux/configureStore';
@@ -30,6 +30,7 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
   const { token } = useSelector((state: RootState) => state.auth);
   const { user_id } = useSelector((state: RootState) => state.auth);
   const { role } = useSelector((state: RootState) => state.auth);
+  const dispatch = useDispatch();
   const { width } = useWindowDimensions();
   const [isLoading, setIsLoading] = useState(false);
   const { colors } = useTheme();
@@ -83,10 +84,10 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
   };
 
   const handleLogout = () => {
-    setAuthTokenProp(null);
+    dispatch(setLogout(1));
     navigation.reset({
       index: 0,
-      routes: [{ name: 'SplashScreen' }],
+      routes: [{ name: 'SignIn' }],
     });
   };
 

@@ -41,6 +41,7 @@ import { SplashScreen } from '../../../screens/SplashScreen';
 import Members from '../../../screens/Members';
 import UserMembers from '../../../screens/UserMembers';
 import { Events } from '../../../screens/Events';
+import SignIn from '../../../screens/SignIn';
 
 
 const Stack = createNativeStackNavigator<MainStackParams>();
@@ -52,23 +53,6 @@ const SearchIconButton = ({ onPress }: { onPress: () => void }) => (
     style={styles.iconButton}
     onPress={onPress}
   />
-);
-
-const StartupHeaderRight = () => (
-  <View style={styles.startupHeaderRight}>
-    <IconButton
-      icon={require('../../../assets/flat-icons/heart-outlined.png')}
-      size={24}
-      style={styles.heartIconButton}
-      onPress={() => {}}
-    />
-    <IconButton
-      icon={require('../../../assets/flat-icons/menu.png')}
-      size={24}
-      style={styles.menuIconButton}
-      onPress={() => {}}
-    />
-  </View>
 );
 
 export const MainStack = () => {
@@ -139,6 +123,7 @@ export const MainStack = () => {
         <Stack.Screen name="Events" component={Events} options={{ title: 'Events' }} />
         <Stack.Screen name="MemberDiscovery" component={MemberDiscovery} options={{  headerShown: false }} />
         <Stack.Screen name="SplashScreen" component={SplashScreen} options={{  headerShown: false }}/>
+        <Stack.Screen name="SignIn" component={SignIn} options={{  headerShown: false }}/>
         <Stack.Screen name="PaymentLocation" component={PaymentForm} />
         <Stack.Screen name="StripePayment" component={StripePayment} />
         <Stack.Screen name="MokaPayment" component={MokaPayment} />
