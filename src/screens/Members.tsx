@@ -5,7 +5,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { IconButton, Text, useTheme } from 'react-native-paper';
 import { Member } from '../components/Member';
 import { MainStackParams } from '../models/navigation';
-import { UserModel, UserModelList } from '../models/users/User/user.model';
+import { UserModelList } from '../models/users/User/user.model';
 import { API } from '../plugins/axios';
 import { DEFAULT_PAGE, PAGE_SIZE } from '../constants/constants';
 import { RootState } from '../redux/configureStore';
@@ -39,6 +39,7 @@ export const Members = (props: MembersProps) => {
   const [loadingFollowId, setLoadingFollowId] = useState<number | null>(null);
 
   console.log(myUsers);
+
   // Check if there are active filters
   const hasActiveFilters = useMemo(() => {
     return (
@@ -76,7 +77,6 @@ export const Members = (props: MembersProps) => {
   }, [filterState, props.filterModel, hasActiveFilters]);
 
   const fetchAnnouncements = useCallback(
-   
     async (pageNum: number) => {
       try {
         console.log('Fetching members with filter:', filterModel);
@@ -108,19 +108,19 @@ export const Members = (props: MembersProps) => {
           },
         });
         return response;
-
       } catch (error) {
         console.error('Error fetching announcements:', error);
         throw error;
       }
     },
-    [filterModel, myUsers] // Added myUsers to dependencies
+    [filterModel, myUsers]
   );
 
   const { isFetching: isFetchingAnnouncements, refetch } = useQuery(
     ['contents', page, PAGE_SIZE, token, filterModel],
     () => fetchAnnouncements(page),
     {
+      staleTime: 5 * 60 * 1000, // 5 minutes
       onSuccess: (data) => {
         if (page === DEFAULT_PAGE) {
           setMembers(data.data);
@@ -130,18 +130,39 @@ export const Members = (props: MembersProps) => {
         setTotalMembers(data.total);
         setHasMore(data.data.length === PAGE_SIZE);
       },
+      onError: (error) => {
+        console.error('Error fetching members:', error);
+      },
       enabled: !isLoadingMore,
     }
   );
 
   useFocusEffect(
     useCallback(() => {
-      if (refresh || Object.keys(filterModel).length > 0) {
-        setPage(DEFAULT_PAGE);
-        setMembers([]);
-        refetch();
-      }
-    }, [refresh, filterModel, refetch])
+      let isActive = true;
+
+      const fetchData = async () => {
+        try {
+          setPage(DEFAULT_PAGE); // Reset page for fresh data
+          await refetch(); // Trigger refetch
+        } catch (error) {
+          console.error('Error refetching members on focus:', error);
+          // Optionally show a user-facing error message
+        }
+      };
+
+      // Debounce to prevent rapid refetching
+      const timeout = setTimeout(() => {
+        if (isActive) {
+          fetchData();
+        }
+      }, 100); // 100ms debounce
+
+      return () => {
+        isActive = false;
+        clearTimeout(timeout); // Cleanup timeout
+      };
+    }, [refetch])
   );
 
   const loadMore = useCallback(async () => {
@@ -231,8 +252,8 @@ export const Members = (props: MembersProps) => {
               name={member.full_name || ''}
               image={member.photo}
               memberRole={member.role?.name || ''}
-              company = {member.carrier?.company_name }
-              title = {member.carrier?.title }
+              company={member.carrier?.company_name}
+              title={member.carrier?.title}
               following={member.is_favorited || false}
               interests={member.interests}
               isLoading={loadingFollowId === (member.id || 0)}

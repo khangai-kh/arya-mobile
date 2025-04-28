@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Image, Pressable, StyleSheet, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { Appbar, Avatar, Button, Chip, Text, useTheme, MD3Theme, Portal, Modal, IconButton, TouchableRipple } from 'react-native-paper';
@@ -17,6 +17,7 @@ import { InterestModel } from '../models/general/models';
 import { ProfileEditForm, ProfileEditFormValues } from '../components/forms/ProfileEditForm';
 import { StartUpForm, StartUpFormValues } from '../components/forms/StartUpForm';
 import { useNavigationContext } from '../contexts/NavigationContext';
+import { useFocusEffect } from '@react-navigation/native';
 
 type ProfileProps = StackScreenProps<MainStackParams, 'Profile'> & {
   setAuthToken: (accessToken: string | null) => void;
@@ -26,7 +27,7 @@ const mapDispatchToProps = {
   setAuthToken,
 };
 
-const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: ProfileProps) => {
+const ProfileComponent = ({ navigation }: ProfileProps) => {
   const { token } = useSelector((state: RootState) => state.auth);
   const { user_id } = useSelector((state: RootState) => state.auth);
   const { role } = useSelector((state: RootState) => state.auth);
@@ -201,6 +202,13 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
       setStage('profile');
     }
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+      // we don’t need a cleanup here
+    }, [refetch])
+  );
 
   if (isDataLoading) {
     return (
@@ -449,7 +457,7 @@ const ProfileComponent = ({ navigation, setAuthToken: setAuthTokenProp }: Profil
                 </Pressable>
               ))}
             </View>
-            {(role === 4 && profile?.batch.id === 6) && (
+            {(role === 4 && profile?.batch && role === 4 && profile?.batch.id === 6) && (
               <Button mode="contained" onPress={() => setStage('startup')} style={dynamicStyles.logoutButton}>
                 Add start up
               </Button>

@@ -86,7 +86,6 @@ const step1ValidationSchema = Yup.object().shape({
 
 const step2ValidationSchema = Yup.object().shape({
   carrier: Yup.object().shape({
-    is_company_owner: Yup.boolean().required('This field is required'),
     company_name: Yup.string().when('is_company_owner', (isCompanyOwner, schema) =>
       isCompanyOwner ? schema.required('Company name is required') : schema.notRequired()
     ),
@@ -562,11 +561,11 @@ export const MembershipForm = ({ navigation, route, initialValues, onSubmit }: M
           {step === 3 && (
             <Formik<Step3FormValues>
               initialValues={{
-                introduction_paragraph: initialValues.additional.introduction_paragraph || '',
-                profile_type: initialValues.additional.role ?? null,
-                batch_type: initialValues.additional.batch ?? null,
-                is_agreement_accepted: initialValues.additional.is_agreement_accepted || false,
-                is_confidentiality_accepted: initialValues.additional.is_confidentiality_accepted || false,
+                introduction_paragraph: initialValues.additional?.introduction_paragraph ?? '',
+                profile_type: initialValues.additional?.role ?? null,
+                batch_type: initialValues.batch ?? null,
+                is_agreement_accepted: initialValues.additional?.is_agreement_accepted ?? false,
+                is_confidentiality_accepted: initialValues.additional?.is_confidentiality_accepted ?? false,
               }}
               validationSchema={step3ValidationSchema}
               onSubmit={(values, actions) => handleStepSubmit(values, actions)}
