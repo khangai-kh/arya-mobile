@@ -203,6 +203,42 @@ const ProfileComponent = ({ navigation }: ProfileProps) => {
     }
   };
 
+  const checkRole = (role: string) => {
+      if (role === 'Investor') {
+        return (
+          <Image
+            resizeMode="contain"
+            source={require('../assets/flat-icons/diamond.png')}
+            style={[dynamicStyles.roleIcon, { tintColor: '#00AEEF' }]}
+          />
+        );
+      } else if (role === 'Premium' || role === 'Other') {
+        return (
+          <Image
+            resizeMode="contain"
+            source={require('../assets/flat-icons/crown.png')}
+            style={[dynamicStyles.roleIcon, { tintColor: '#B61D8D' }]}
+          />
+        );
+      } else if (role === 'Entrepreneur') {
+        return (
+          <Image
+            resizeMode="contain"
+            source={require('../assets/flat-icons/rocket.png')}
+            style={[dynamicStyles.roleIcon, { tintColor: '#F99F1C' }]}
+          />
+        );
+      } else {
+        return (
+          <Image
+            resizeMode="contain"
+            source={require('../assets/flat-icons/crown-lined.png')}
+            style={[dynamicStyles.roleIcon]}
+          />
+        );
+      }
+  };
+
   useFocusEffect(
     useCallback(() => {
       refetch();
@@ -235,29 +271,16 @@ const ProfileComponent = ({ navigation }: ProfileProps) => {
             title={
               <View style={dynamicStyles.titleContainer}>
                     <>
-                      <Text variant="titleMedium" style={dynamicStyles.titleText}>
-                          {Number(profile?.role.id) === 2 && (
-                            <Image
-                              resizeMode="contain"
-                              source={require('../assets/flat-icons/rocket.png')}
-                              style={[dynamicStyles.roleIcon, { tintColor: '#B61D8D' }]}
-                            />
-                          )}
-                          {profile?.role.id === 1 && (
-                            <Image
-                              resizeMode="contain"
-                              source={require('../assets/flat-icons/diamond.png')}
-                              style={[dynamicStyles.roleIcon, { tintColor: '#00AEEF' }]}
-                            />
-                          )}
-                          {Number(profile?.role.id) === 3 && (
-                            <Image
-                              resizeMode="contain"
-                              source={require('../assets/flat-icons/diamond.png')}
-                              style={[dynamicStyles.roleIcon, { tintColor: '#B61D8D' }]}
-                            />
-                          )} {profile?.role.name}
-                      </Text>
+                    <Text
+                            style={dynamicStyles.roleText}
+                          >
+                            {((profile?.role && (profile?.role.name === 'Other') ? 'Premium' : (profile?.role.name)) || '')}
+                          </Text>
+
+                    {checkRole(profile?.role?.name || '')}
+                     
+                     
+                         
                     </>
               </View>
             }
@@ -479,11 +502,11 @@ const ProfileComponent = ({ navigation }: ProfileProps) => {
               role: profile?.role.name,
               photo: profile?.photo,
               full_name: profile?.full_name ?? undefined,
-              company: profile?.carrier.company_name,
-              sector: profile?.carrier.sector
-                ? { id: profile.carrier.sector.id, name: profile.carrier.sector.name }
+              company: profile?.carrier?.company_name ?? undefined,
+              sector: profile?.carrier?.sector
+                ? { id: profile.carrier?.sector.id, name: profile.carrier.sector.name }
                 : undefined,
-              title: profile?.carrier.title,
+              title: profile?.carrier?.title ?? undefined,
               is_mentor: profile?.is_mentor || false,
               portrait_photo : profile?.portrait_photo ?? undefined,
             }}
@@ -586,6 +609,7 @@ const createDynamicStyles = (colors: MD3Theme['colors'], width: number) =>
     titleContainer: {
       flexDirection: 'row',
       alignItems: 'center',
+      gap: 4,
       justifyContent:'center',
     },
     titleText: {
@@ -712,8 +736,10 @@ const createDynamicStyles = (colors: MD3Theme['colors'], width: number) =>
     roleIcon: {
       width: 14,
       height: 14,
-      marginTop:10,
-      marginLeft: 20,
+    },
+    roleText: {
+      fontSize: 14,
+      marginLeft:40,
     },
 });
 

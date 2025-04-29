@@ -63,7 +63,7 @@ export const Member = (props: MemberProps) => {
                     style={dynamicStyles.roleIconInvestor}
                 />
             );
-        } else if (role === 'Premium' || role === 'Premium Entrepreneur' || role === 'Premium Investor') {
+        } else if (role === 'Premium' || role === 'Other' || role === 'Premium Investor') {
             return (
                 <Image
                     resizeMode="contain"
@@ -79,7 +79,16 @@ export const Member = (props: MemberProps) => {
                     style={dynamicStyles.roleIconEntrepreneur}
                 />
             );
+        } else if (role === 'Fremium') {
+            return (
+                <Image
+                    resizeMode="contain"
+                    source={require('../assets/flat-icons/crown-lined.png')}
+                    style={dynamicStyles.roleIconEntrepreneur}
+                />
+            );
         }
+
     };
 
     // const handleGoBack = () => {

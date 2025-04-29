@@ -62,8 +62,8 @@ export const Member = (props: MemberProps) => {
       return (
         <Image
           resizeMode="contain"
-          source={require('../assets/flat-icons/check-circle.png')}
-          style={[componentStyles.roleIcon, { tintColor: '#F99F1C' }]}
+          source={require('../assets/flat-icons/crown-lined.png')}
+          style={[componentStyles.roleIcon]}
         />
       );
     }

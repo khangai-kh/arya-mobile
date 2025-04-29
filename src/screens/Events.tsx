@@ -44,6 +44,9 @@ export const Events = ({ navigation }: EventsProps) => {
   const month = currentDate.getMonth();
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
+  const navigateToAboutUs = () => navigation.navigate('AboutUs');
+  const navigateToNotifications = () => navigation.navigate('Notifications');
+
   const goPrev = () => setCurrentDate((d) => new Date(d.getFullYear(), d.getMonth() - 1, 1));
   const goNext = () => setCurrentDate((d) => new Date(d.getFullYear(), d.getMonth() + 1, 1));
 
@@ -194,42 +197,47 @@ export const Events = ({ navigation }: EventsProps) => {
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       {/* Header Section */}
-      <View style={styles.headerContainer}>
-        <View style={styles.header}>
-          <Image
-            source={require('../assets/arya_up.png')}
-            style={styles.logo}
-            resizeMode="contain"
-          />
-          <View style={styles.headerRight}>
-            {role === 4 && (
-              <View style={[styles.crownRight, { borderBlockColor: colors.primary }]}>
-                <Icon
-                  source={require('../assets/flat-icons/crown.png')}
-                  color={colors.primary}
-                  size={14}
+            <View style={styles.headerContainer}>
+              <View style={styles.header}>
+                <Image
+                  source={require('../assets/arya_up.png')}
+                  style={styles.logo}
+                  resizeMode="contain"
                 />
-                <Text
-                  style={[styles.upgradeButtonLabel, { color: colors.primary }]}
-                  onPress={navigateToMemberShip}
-                >
-                  Upgrade
-                </Text>
+                <View style={styles.headerRight}>
+                {role === 4 && (
+                  <View style={[styles.crownRight,{borderBlockColor:colors.primary}]}  >
+                    <Icon
+                      source={require('../assets/flat-icons/crown.png')}
+                      color={colors.primary}
+                      size={14}
+                    />
+                    <Text style={[styles.upgradeButtonLabel,{color:colors.primary}]} onPress={navigateToMemberShip}>Upgrade</Text>
+                  </View>)}
+                </View>
+                  <View style={styles.iconRow}>
+                    {role !== 4 && (
+                      <IconButton
+                      containerColor={colors.onPrimary}
+                      icon={require('../assets/flat-icons/search.png')}
+                      size={18}
+                      onPress={navigateToSearch}
+                    />)}
+                    <IconButton
+                      containerColor={colors.onPrimary}
+                      icon={require('../assets/flat-icons/bell.png')}
+                      size={18}
+                      onPress={navigateToNotifications}
+                    />
+                    <IconButton
+                      containerColor={colors.onPrimary}
+                      icon={require('../assets/flat-icons/info.png')}
+                      size={18}
+                      onPress={navigateToAboutUs}
+                    />
+                  </View>
               </View>
-            )}
-            <View style={styles.iconRow}>
-              {role !== 4 && (
-                <IconButton
-                  containerColor={colors.onPrimary}
-                  icon={require('../assets/flat-icons/search.png')}
-                  size={18}
-                  onPress={navigateToSearch}
-                />
-              )}
             </View>
-          </View>
-        </View>
-      </View>
 
       {/* Segmented Control */}
       <View style={styles.segment}>
@@ -437,13 +445,15 @@ const createStyles = (colors: any) =>
       height: 20,
     },
     headerRight: {
-      flexDirection: 'row',
-      verticalAlign: 'middle',
-      paddingBottom: 12,
-      paddingLeft: 30,
+      flexDirection:'row',
+      verticalAlign:'middle',
+      paddingBottom:12,
+      paddingLeft:30,
       alignItems: 'center',
     },
     crownRight: {
+      marginLeft:-58,
+      marginTop: 12,
       flexDirection: 'row',
       verticalAlign: 'middle',
       paddingHorizontal: 4,
@@ -461,7 +471,8 @@ const createStyles = (colors: any) =>
     },
     iconRow: {
       flexDirection: 'row',
-      justifyContent: 'flex-end',
+      justifyContent: 'space-between',
+      alignItems: 'center',
     },
     appbarHeader: {
       width: '100%',
